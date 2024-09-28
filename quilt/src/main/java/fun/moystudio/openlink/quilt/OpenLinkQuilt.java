@@ -5,10 +5,16 @@ import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
 import fun.moystudio.openlink.fabriclike.OpenLinkFabricLike;
 
+import java.io.IOException;
+
 public final class OpenLinkQuilt implements ModInitializer {
     @Override
     public void onInitialize(ModContainer mod) {
         // Run the Fabric-like setup.
-        OpenLinkFabricLike.init();
+        try {
+            OpenLinkFabricLike.init();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -97,43 +97,63 @@
 [Architectury Transformer DEBUG]  - H:\IDEAPros\OpenLink\.gradle\loom-cache\remapped_mods\loom_mappings_1_18_2_layered_hash_40359_v2\net\fabricmc\fabric-api\fabric-resource-conditions-api-v1\2.0.3+91b7aa6660\fabric-resource-conditions-api-v1-2.0.3+91b7aa6660.jar
 [Architectury Transformer DEBUG]  - H:\IDEAPros\OpenLink\.gradle\loom-cache\remapped_mods\loom_mappings_1_18_2_layered_hash_40359_v2\net\fabricmc\fabric-api\fabric-resource-loader-v0\0.5.3+047a5ecb60\fabric-resource-loader-v0-0.5.3+047a5ecb60.jar
 [Architectury Transformer DEBUG]  - H:\IDEAPros\OpenLink\.gradle\loom-cache\remapped_mods\loom_mappings_1_18_2_layered_hash_40359_v2\net\fabricmc\fabric-api\fabric-transitive-access-wideners-v1\1.1.0+e747827960\fabric-transitive-access-wideners-v1-1.1.0+e747827960.jar
-[Architectury Transformer] Read classpath in 1.503 s
+[Architectury Transformer] Read classpath in 1.376 s
 [Architectury Transformer DEBUG] Closed File Systems for H:\IDEAPros\OpenLink\fabric-like\build\devlibs\openlink-fabric-like-1.0.0-dev.jar
-[Architectury Transformer DEBUG] Transforming 5 transformer(s) from H:\IDEAPros\OpenLink\fabric-like\build\devlibs\openlink-fabric-like-1.0.0-dev.jar to C:\Users\13884\AppData\Local\Temp\14365843995453148005.jar: 
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RuntimeMixinRefmapDetector@2d8f65a4
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.GenerateFakeFabricMod@1b68ddbd
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@646d64ab
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@59e5ddf
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@536aaa8d
-[Architectury Transformer DEBUG] Transforming from H:\IDEAPros\OpenLink\fabric-like\build\devlibs\openlink-fabric-like-1.0.0-dev.jar to C:\Users\13884\AppData\Local\Temp\14365843995453148005.jar with 5 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
+[Architectury Transformer DEBUG] Transforming 5 transformer(s) from H:\IDEAPros\OpenLink\fabric-like\build\devlibs\openlink-fabric-like-1.0.0-dev.jar to C:\Users\13884\AppData\Local\Temp\3861487156498268328.jar: 
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RuntimeMixinRefmapDetector@1877ab81
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.GenerateFakeFabricMod@305fd85d
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@458c1321
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@11438d26
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@34cd072c
+[Architectury Transformer DEBUG] Transforming from H:\IDEAPros\OpenLink\fabric-like\build\devlibs\openlink-fabric-like-1.0.0-dev.jar to C:\Users\13884\AppData\Local\Temp\3861487156498268328.jar with 5 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing fun/moystudio/openlink/fabriclike/OpenLinkFabricLike with maxs=true frames=true
-[Architectury Transformer DEBUG] Closed File Systems for C:\Users\13884\AppData\Local\Temp\14365843995453148005.jar
+[Architectury Transformer DEBUG] Closed File Systems for C:\Users\13884\AppData\Local\Temp\3861487156498268328.jar
 [Architectury Transformer] Listening at H:\IDEAPros\OpenLink\fabric-like\build\devlibs\openlink-fabric-like-1.0.0-dev.jar
 [Architectury Transformer DEBUG] Closed File Systems for H:\IDEAPros\OpenLink\common\build\devlibs\openlink-common-1.0.0-dev.jar
-[Architectury Transformer DEBUG] Transforming 5 transformer(s) from H:\IDEAPros\OpenLink\common\build\devlibs\openlink-common-1.0.0-dev.jar to C:\Users\13884\AppData\Local\Temp\14663124437388250400.jar: 
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RuntimeMixinRefmapDetector@701fc37a
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.GenerateFakeFabricMod@4148db48
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@282003e1
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@7fad8c79
-[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@71a794e5
-[Architectury Transformer DEBUG] Transforming from H:\IDEAPros\OpenLink\common\build\devlibs\openlink-common-1.0.0-dev.jar to C:\Users\13884\AppData\Local\Temp\14663124437388250400.jar with 5 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
+[Architectury Transformer DEBUG] Transforming 5 transformer(s) from H:\IDEAPros\OpenLink\common\build\devlibs\openlink-common-1.0.0-dev.jar to C:\Users\13884\AppData\Local\Temp\677537006027750856.jar: 
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RuntimeMixinRefmapDetector@37574691
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.GenerateFakeFabricMod@25359ed8
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformExpectPlatform@21a947fe
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.RemapInjectables@5606c0b
+[Architectury Transformer DEBUG]  - dev.architectury.transformer.transformers.TransformPlatformOnly@80ec1f8
+[Architectury Transformer DEBUG] Transforming from H:\IDEAPros\OpenLink\common\build\devlibs\openlink-common-1.0.0-dev.jar to C:\Users\13884\AppData\Local\Temp\677537006027750856.jar with 5 transformer(s) on dev.architectury.transformer.handler.SimpleTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing fun/moystudio/openlink/frpc/Frpc with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing fun/moystudio/openlink/frpc/JsonDownloadFile with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing fun/moystudio/openlink/frpc/JsonFrpcVersion with maxs=true frames=true
+[Architectury Transformer DEBUG] Writing fun/moystudio/openlink/frpc/JsonItems with maxs=true frames=true
 [Architectury Transformer DEBUG] Writing fun/moystudio/openlink/OpenLink with maxs=true frames=true
 [Architectury Transformer DEBUG] Checking whether /openlink.mixins.json is a mixin config.
-[Architectury Transformer DEBUG] Closed File Systems for C:\Users\13884\AppData\Local\Temp\14663124437388250400.jar
+[Architectury Transformer DEBUG] Closed File Systems for C:\Users\13884\AppData\Local\Temp\677537006027750856.jar
 [Architectury Transformer] Listening at H:\IDEAPros\OpenLink\common\build\devlibs\openlink-common-1.0.0-dev.jar
-[Architectury Transformer DEBUG] Temporary jar [C:\Users\13884\AppData\Local\Temp\14365843995453148005.jar] contains packages: fun.moystudio.openlink.fabriclike
+[Architectury Transformer DEBUG] Temporary jar [C:\Users\13884\AppData\Local\Temp\3861487156498268328.jar] contains packages: fun.moystudio.openlink.fabriclike
 [Architectury Transformer DEBUG] Closed File Systems for H:\IDEAPros\OpenLink\fabric-like\build\devlibs\openlink-fabric-like-1.0.0-dev.jar
-[Architectury Transformer DEBUG] Temporary jar [C:\Users\13884\AppData\Local\Temp\14663124437388250400.jar] contains packages: fun.moystudio.openlink
+[Architectury Transformer DEBUG] Temporary jar [C:\Users\13884\AppData\Local\Temp\677537006027750856.jar] contains packages: fun.moystudio.openlink, fun.moystudio.openlink.frpc
 [Architectury Transformer DEBUG] Closed File Systems for H:\IDEAPros\OpenLink\common\build\devlibs\openlink-common-1.0.0-dev.jar
 [Architectury Transformer DEBUG] Classpath entry [H:\IDEAPros\OpenLink\fabric\build\resources\main] contains packages: 
 [Architectury Transformer DEBUG] Classpath entry [H:\IDEAPros\OpenLink\common\build\resources\main] contains packages: 
 [Architectury Transformer DEBUG] Transforming from fun/moystudio/openlink/fabriclike/OpenLinkFabricLike.class to fun/moystudio/openlink/fabriclike/OpenLinkFabricLike.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing fun/moystudio/openlink/fabriclike/OpenLinkFabricLike with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed fun/moystudio/openlink/fabriclike/OpenLinkFabricLike in 1.749 ms
+[Architectury Transformer DEBUG] Transformed fun/moystudio/openlink/fabriclike/OpenLinkFabricLike in 60.87 ms
 [Architectury Transformer DEBUG] Transforming from fun/moystudio/openlink/OpenLink.class to fun/moystudio/openlink/OpenLink.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
 [Architectury Transformer DEBUG] Found class transformer
 [Architectury Transformer DEBUG] Writing fun/moystudio/openlink/OpenLink with maxs=true frames=true
-[Architectury Transformer DEBUG] Transformed fun/moystudio/openlink/OpenLink in 1.266 ms
+[Architectury Transformer DEBUG] Transformed fun/moystudio/openlink/OpenLink in 779.1 μs
+[Architectury Transformer DEBUG] Transforming from fun/moystudio/openlink/frpc/Frpc.class to fun/moystudio/openlink/frpc/Frpc.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing fun/moystudio/openlink/frpc/Frpc with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed fun/moystudio/openlink/frpc/Frpc in 6.920 ms
+[Architectury Transformer DEBUG] Transforming from fun/moystudio/openlink/frpc/JsonFrpcVersion.class to fun/moystudio/openlink/frpc/JsonFrpcVersion.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing fun/moystudio/openlink/frpc/JsonFrpcVersion with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed fun/moystudio/openlink/frpc/JsonFrpcVersion in 952.3 μs
+[Architectury Transformer DEBUG] Transforming from fun/moystudio/openlink/frpc/JsonItems.class to fun/moystudio/openlink/frpc/JsonItems.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing fun/moystudio/openlink/frpc/JsonItems with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed fun/moystudio/openlink/frpc/JsonItems in 1.019 ms
+[Architectury Transformer DEBUG] Transforming from fun/moystudio/openlink/frpc/JsonDownloadFile.class to fun/moystudio/openlink/frpc/JsonDownloadFile.class with 5 transformer(s) on dev.architectury.transformer.handler.TinyRemapperPreparedTransformerHandler
+[Architectury Transformer DEBUG] Found class transformer
+[Architectury Transformer DEBUG] Writing fun/moystudio/openlink/frpc/JsonDownloadFile with maxs=true frames=true
+[Architectury Transformer DEBUG] Transformed fun/moystudio/openlink/frpc/JsonDownloadFile in 541.9 μs
