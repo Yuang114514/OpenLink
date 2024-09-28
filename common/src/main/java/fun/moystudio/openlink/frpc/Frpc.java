@@ -19,6 +19,7 @@ public class Frpc {
     public static int frpcVersionDate=0;
     public static String folderName="";
     public static final File frpcVersionFile=new File("frpc.json");
+    public static File frpcExecutableFile;
     public static final int MAX_BUFFER_SIZE=10485760;
 
     public static void init() throws IOException {
@@ -55,11 +56,11 @@ public class Frpc {
             suffix=".exe";
             zsuffix=".zip";
         }
+        frpcExecutableFile=new File("frpc_"+osName+"_"+osArch+suffix);
         if(checkUpdate()){
             downloadFrpcByUrl(postUrl+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
             hasUpdate=false;
         }
-
     }
 
     public static int getLatestVersionDate() throws IOException{
@@ -99,7 +100,8 @@ public class Frpc {
 
     public static boolean checkUpdate() throws IOException {
         int latestVersionDate=getLatestVersionDate();
-        if(frpcVersionDate<latestVersionDate){
+
+        if(!frpcExecutableFile.exists()||frpcVersionDate<latestVersionDate){
             hasUpdate=true;
             return true;
         }

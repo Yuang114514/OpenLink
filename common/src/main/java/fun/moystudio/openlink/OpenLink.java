@@ -12,7 +12,7 @@ public final class OpenLink {
 
     public static void init() throws IOException {
         LOGGER.info("Initializing OpenLink!");
-        Frpc.init();
+        Frpc.init();//安装/更新frpc版本
         LOGGER.info("\n   ____                       _       _         _    \n" +
                 "  / __ \\                     | |     (_)       | |   \n" +
                 " | |  | | _ __    ___  _ __  | |      _  _ __  | | __\n" +
