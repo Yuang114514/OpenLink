@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "${group}",
+    "id": "openlink",
+    "version": "${version}",
+    "metadata": {
+      "name": "OpenLink",
+      "description": "OpenLink",
+      "contributors": {
+        "MoYStudio": "Team",
+        "Terry_MC": "Author"
+      },
+      "icon": "assets/openlink/icon.png"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": [
+        "fun.moystudio.openlink.quilt.OpenLinkQuilt"
+      ]
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "version": "*"
+      },
+      {
+        "id": "quilt_base",
+        "version": "*"
+      },
+      {
+        "id": "minecraft",
+        "version": ">=1.18.2"
+      }
+    ]
+  },
+  "mixin": [
+    "openlink.mixins.json"
+  ]
+}
