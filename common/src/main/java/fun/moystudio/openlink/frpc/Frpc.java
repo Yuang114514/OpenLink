@@ -2,6 +2,7 @@ package fun.moystudio.openlink.frpc;
 
 import com.google.gson.Gson;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.logic.Extract;
 import oshi.util.FileUtil;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -10,7 +11,7 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Frpc {
-    public static final String postUrl="https://d.of.gs/client/";
+    public static final String postUrl="https://o.of.cd/client/";
     private static String suffix="";
     private static String zsuffix=".tar.gz";
     public static String osName;
@@ -20,7 +21,9 @@ public class Frpc {
     public static String folderName="";
     public static final File frpcVersionFile=new File("frpc.json");
     public static File frpcExecutableFile;
+    public static File frpcArchiveFile=new File("frpc.zip");
     public static final int MAX_BUFFER_SIZE=10485760;
+    public static int latestVersionDate=0;
 
     public static void init() throws IOException {
         Gson gson=new Gson();
@@ -48,7 +51,7 @@ public class Frpc {
             osName="linux";
         } else if (os_name.contains("FreeBSD")){
             osName="freebsd";
-        } else{
+        } else {
             OpenLink.LOGGER.error("What the hell are you using???");
             throw new RuntimeException("[OpenLink] What the hell are you using???");
         }
@@ -58,12 +61,28 @@ public class Frpc {
         }
         frpcExecutableFile=new File("frpc_"+osName+"_"+osArch+suffix);
         if(checkUpdate()){
-            downloadFrpcByUrl(postUrl+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
-            hasUpdate=false;
+            if(!frpcExecutableFile.exists()){
+                update();
+            }
+            OpenLink.LOGGER.info("The update screen will show before the main game screen.");
         }
     }
 
-    public static int getLatestVersionDate() throws IOException{
+    public static void update() throws IOException {
+        downloadFrpcByUrl(postUrl+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+        OpenLink.LOGGER.info("Extracting frpc archive file...");
+        Extract.ExtractBySuffix(frpcArchiveFile.getAbsoluteFile(),zsuffix);
+        OpenLink.LOGGER.info("Extracted frpc archive file sucessfully!");
+        frpcArchiveFile.delete();
+        OpenLink.LOGGER.info("Deleted frpc archive file!");
+        frpcVersionDate=latestVersionDate;
+        try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
+            frpcVersionFileOutput.write(("{\"versiondate\":"+ Integer.toString(latestVersionDate) +"}").getBytes());
+        }
+        hasUpdate=false;
+    }
+
+    public static int getLatestVersionDate() throws IOException{//这玩意是手写的POST(暂时不用后面写的logic包里的POST，因为这个是检测用的)
         Gson gson=new Gson();
         AtomicInteger res= new AtomicInteger(frpcVersionDate);
         URL url=new URL(postUrl);
@@ -91,18 +110,20 @@ public class Frpc {
             });
 
         }
-        try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
-            frpcVersionFileOutput.write(("{\"versiondate\":"+ res.toString() +"}").getBytes());
-        }
 
         return res.get();
     }
 
     public static boolean checkUpdate() throws IOException {
-        int latestVersionDate=getLatestVersionDate();
+        latestVersionDate=getLatestVersionDate();
 
         if(!frpcExecutableFile.exists()||frpcVersionDate<latestVersionDate){
             hasUpdate=true;
+            if(!frpcExecutableFile.exists()){
+                OpenLink.LOGGER.warn("Frpc Executable File does not exist!");
+            } else {
+                OpenLink.LOGGER.info("A frpc update was found! Latest version date:"+Integer.toString(latestVersionDate)+" Old version date:"+Integer.toString(frpcVersionDate));
+            }
             return true;
         }
         hasUpdate=false;
