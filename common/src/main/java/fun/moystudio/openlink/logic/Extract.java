@@ -10,7 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Extract {
-    public static boolean ExtractBySuffix(File file, String suffix,File extractDir) throws IOException {//仅解压10MB以内的文件
+    public static boolean ExtractBySuffix(File file, String suffix,File extractDir) throws Exception {//仅解压10MB以内的文件
         if(!file.exists()) {
             throw new RuntimeException("[OpenLink] The file to extract does not exist!");
         }
@@ -68,7 +68,7 @@ public class Extract {
             throw new RuntimeException("[OpenLink] The suffix of the file to extract is unsupported!");
         }
     }
-    public static boolean ExtractBySuffix(File file, String suffix) throws IOException {
+    public static boolean ExtractBySuffix(File file, String suffix) throws Exception {
         return ExtractBySuffix(file,suffix,file.getParentFile());
     }
 }

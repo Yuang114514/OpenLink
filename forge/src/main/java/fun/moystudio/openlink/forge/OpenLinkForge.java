@@ -8,7 +8,7 @@ import java.io.IOException;
 
 @Mod(OpenLink.MOD_ID)
 public final class OpenLinkForge {
-    public OpenLinkForge() throws IOException {
+    public OpenLinkForge() throws Exception {
         // Run our common setup.
         OpenLink.init();
     }

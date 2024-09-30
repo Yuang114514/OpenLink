@@ -1,0 +1,8 @@
+{
+  "gui.openlink.updatefrpctitle": "见一新Frpc核心！",
+  "text.openlink.yes": "安",
+  "text.openlink.no": "否",
+  "text.openlink.updatingfrpc": "使Frpc核心新也...(或费少许时)",
+  "text.openlink.updatefrpc": "见一新Frpc核心！新核心之时: %s，本核心之时 : %s ，子欲更之？",
+  "gui.openlink.settingscreentitle": "OpenLink 模组之设"
+}

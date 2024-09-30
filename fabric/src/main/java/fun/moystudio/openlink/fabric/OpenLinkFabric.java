@@ -4,8 +4,6 @@ import net.fabricmc.api.ModInitializer;
 
 import fun.moystudio.openlink.fabriclike.OpenLinkFabricLike;
 
-import java.io.IOException;
-
 public final class OpenLinkFabric implements ModInitializer {
     @Override
     public void onInitialize() {
@@ -16,7 +14,7 @@ public final class OpenLinkFabric implements ModInitializer {
         // Run the Fabric-like setup.
         try {
             OpenLinkFabricLike.init();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

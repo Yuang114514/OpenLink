@@ -13,7 +13,7 @@ public final class OpenLinkQuilt implements ModInitializer {
         // Run the Fabric-like setup.
         try {
             OpenLinkFabricLike.init();
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

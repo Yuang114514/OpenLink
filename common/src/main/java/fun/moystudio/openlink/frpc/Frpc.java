@@ -12,8 +12,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Frpc {
     public static final String postUrl="https://o.of.cd/client/";
-    private static String suffix="";
-    private static String zsuffix=".tar.gz";
+    private static String suffix="";//默认Linux执行文件后缀（若为Windows会改为.exe）
+    private static String zsuffix=".tar.gz";//默认Linux压缩后缀（若为windows会改为zip）
     public static String osName;
     public static String osArch;
     public static boolean hasUpdate=false;
@@ -25,7 +25,7 @@ public class Frpc {
     public static final int MAX_BUFFER_SIZE=10485760;
     public static int latestVersionDate=0;
 
-    public static void init() throws IOException {
+    public static void init() throws Exception {
         Gson gson=new Gson();
         if(!frpcVersionFile.exists()){
             OpenLink.LOGGER.warn("frpc.json(frpc version file) does not exist, creating...");
@@ -68,7 +68,7 @@ public class Frpc {
         }
     }
 
-    public static void update() throws IOException {
+    public static void update() throws Exception {
         downloadFrpcByUrl(postUrl+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
         OpenLink.LOGGER.info("Extracting frpc archive file...");
         Extract.ExtractBySuffix(frpcArchiveFile.getAbsoluteFile(),zsuffix);
@@ -82,7 +82,7 @@ public class Frpc {
         hasUpdate=false;
     }
 
-    public static int getLatestVersionDate() throws IOException{//这玩意是手写的POST(暂时不用后面写的logic包里的POST，因为这个是检测用的)
+    public static int getLatestVersionDate() throws Exception{//这玩意是手写的POST(暂时不用后面写的logic包里的POST，因为这个是检测用的)
         Gson gson=new Gson();
         AtomicInteger res= new AtomicInteger(frpcVersionDate);
         URL url=new URL(postUrl);
@@ -114,7 +114,7 @@ public class Frpc {
         return res.get();
     }
 
-    public static boolean checkUpdate() throws IOException {
+    public static boolean checkUpdate() throws Exception {
         latestVersionDate=getLatestVersionDate();
 
         if(!frpcExecutableFile.exists()||frpcVersionDate<latestVersionDate){
@@ -130,7 +130,7 @@ public class Frpc {
         return false;
     }
 
-    private static void downloadFrpcByUrl(String str) throws IOException {
+    private static void downloadFrpcByUrl(String str) throws Exception {
         OpenLink.LOGGER.info("Downloading/Updating frpc from "+str+"...");
         URL url=new URL(str);
         String fileName="frpc"+zsuffix;

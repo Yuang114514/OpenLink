@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.frpc.Frpc;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -24,7 +23,7 @@ public class UpdatingScreen extends Screen {
         if(Frpc.hasUpdate){
             try {
                 Frpc.update();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
             this.onClose();
