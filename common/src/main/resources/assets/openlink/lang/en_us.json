@@ -1,8 +1,8 @@
 {
-  "gui.openlink.updatefrpctitle": "A new Frpc version update was found!",
+  "gui.openlink.updatefrpctitle": "A new Frpc version was found!",
   "text.openlink.yes": "Yes",
   "text.openlink.no": "No",
   "text.openlink.updatingfrpc": "Updating Frpc...(It may takes a while)",
-  "text.openlink.updatefrpc": "A new Frpc version update was found! Latest version date: %s, now version date: %s Would you like to update?",
+  "text.openlink.updatefrpc": "A new Frpc version was found! Latest version date: %s, now version date: %s Would you like to update?",
   "gui.openlink.settingscreentitle": "OpenLink Settings"
 }
