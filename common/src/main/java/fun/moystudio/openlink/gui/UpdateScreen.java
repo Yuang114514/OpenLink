@@ -29,12 +29,11 @@ public class UpdateScreen extends Screen {
         text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatefrpc", Frpc.latestVersionDate,Frpc.frpcVersionDate),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
-        super.init();
     }
 
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
-        this.renderBackground(poseStack);
+        this.renderDirtBackground(0);
         text.renderCentered(poseStack,this.width/2,this.height/10,16,0xffffff);
         super.render(poseStack,i,j,f);
     }

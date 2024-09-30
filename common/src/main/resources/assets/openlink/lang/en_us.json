@@ -3,5 +3,6 @@
   "text.openlink.yes": "Yes",
   "text.openlink.no": "No",
   "text.openlink.updatingfrpc": "Updating frpc...(It may takes a while)",
-  "text.openlink.updatefrpc": "A frpc update was found! Latest version date: %s, now version date: %s Would you like to update?"
+  "text.openlink.updatefrpc": "A frpc update was found! Latest version date: %s, now version date: %s Would you like to update?",
+  "gui.openlink.settingscreentitle": "OpenLink Settings"
 }

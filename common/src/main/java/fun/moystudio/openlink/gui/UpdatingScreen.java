@@ -18,9 +18,6 @@ public class UpdatingScreen extends Screen {
     @Override
     protected void init() {
         text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatingfrpc"),this.width-50);
-        super.init();
-
-
     }
     @Override
     public void tick(){
