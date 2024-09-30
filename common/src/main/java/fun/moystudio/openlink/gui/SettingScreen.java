@@ -23,7 +23,7 @@ public class SettingScreen extends Screen {
     @Override
     public void render(PoseStack poseStack,int i,int j,float f){
         this.renderDirtBackground(0);
-        title.renderCentered(poseStack,this.width/2,this.height/10);
+        title.renderCentered(poseStack,this.width/2,15);
         super.render(poseStack,i,j,f);
     }
 
