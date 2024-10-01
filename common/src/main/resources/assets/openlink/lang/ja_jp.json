@@ -1,0 +1,13 @@
+{
+  "gui.openlink.updatefrpctitle": "新しいFrpcバージョンが見つかりました!",
+  "text.openlink.yes": "はい",
+  "text.openlink.no": "いいえ",
+  "text.openlink.updatingfrpc": "Frpcを更新中...(しばらく時間がかかる場合があります)",
+  "text.openlink.updatefrpc": "新しいFrpcバージョンが見つかりました！最新バージョン日: %s、今バージョン日: %s アップデートしますか？",
+  "gui.openlink.settingscreentitle": "OpenLinkの設定",
+  "gui.openlink.loginscreentitle": "OpenFrpアカウントのログイン",
+  "text.openlink.logintips": "OpenFrpアカウントにログインしてください",
+  "text.openlink.username": "ユーザー名または電子メール",
+  "text.openlink.password": "パスワード",
+  "text.openlink.notcompleted": "ユーザー名またはパスワードが完了していません。"
+}
