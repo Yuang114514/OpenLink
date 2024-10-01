@@ -1,4 +1,4 @@
-package fun.moystudio.openlink.frpc;
+package fun.moystudio.openlink.json;
 
 public class JsonFrpcVersion {
     public int versiondate;

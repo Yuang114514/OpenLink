@@ -1,9 +1,11 @@
 package fun.moystudio.openlink.mixin;
 
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.gui.LoginScreen;
 import fun.moystudio.openlink.gui.SettingButton;
 import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.gui.UpdateScreen;
+import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
@@ -23,6 +25,9 @@ public abstract class TitleMenuMixin extends Screen {
     public void tickMixin(CallbackInfo ci){
         if(Frpc.hasUpdate){
             this.minecraft.setScreen(new UpdateScreen());
+        }
+        if(Request.sessionID==null||Request.Authorization==null){
+            this.minecraft.setScreen(new LoginScreen());
         }
     }
     @Unique

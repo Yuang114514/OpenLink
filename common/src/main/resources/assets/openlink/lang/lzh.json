@@ -4,5 +4,10 @@
   "text.openlink.no": "否",
   "text.openlink.updatingfrpc": "使Frpc核心新也...(或费少许时)",
   "text.openlink.updatefrpc": "见一新Frpc核心！新核心之时: %s，本核心之时 : %s ，子欲更之？",
-  "gui.openlink.settingscreentitle": "OpenLink 模组之设"
+  "gui.openlink.settingscreentitle": "OpenLink 模组之设",
+  "gui.openlink.loginscreentitle": "OpenFrp 尔之账户",
+  "text.openlink.logintips": "请登录尔OpenFrp之账户",
+  "text.openlink.username": "名或邮箱",
+  "text.openlink.password": "密码",
+  "text.openlink.notcompleted": "尚未成"
 }

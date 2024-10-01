@@ -2,8 +2,10 @@ package fun.moystudio.openlink.frpc;
 
 import com.google.gson.Gson;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.json.JsonFrpcVersion;
+import fun.moystudio.openlink.json.JsonItems;
 import fun.moystudio.openlink.logic.Extract;
-import oshi.util.FileUtil;
+import fun.moystudio.openlink.network.Uris;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -11,7 +13,6 @@ import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Frpc {
-    public static final String postUrl="https://o.of.cd/client/";
     private static String suffix="";//默认Linux执行文件后缀（若为Windows会改为.exe）
     private static String zsuffix=".tar.gz";//默认Linux压缩后缀（若为windows会改为zip）
     public static String osName;
@@ -69,7 +70,7 @@ public class Frpc {
     }
 
     public static void update() throws Exception {
-        downloadFrpcByUrl(postUrl+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+        downloadFrpcByUrl(Uris.frpcDownloadUri.toString()+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
         OpenLink.LOGGER.info("Extracting frpc archive file...");
         Extract.ExtractBySuffix(frpcArchiveFile.getAbsoluteFile(),zsuffix);
         OpenLink.LOGGER.info("Extracted frpc archive file sucessfully!");
@@ -85,7 +86,7 @@ public class Frpc {
     public static int getLatestVersionDate() throws Exception{//这玩意是手写的POST(暂时不用后面写的logic包里的POST，因为这个是检测用的)
         Gson gson=new Gson();
         AtomicInteger res= new AtomicInteger(frpcVersionDate);
-        URL url=new URL(postUrl);
+        URL url= Uris.frpcDownloadUri.toURL();
         HttpsURLConnection connection=(HttpsURLConnection)url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type","application/json");
