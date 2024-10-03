@@ -1,0 +1,13 @@
+{
+  "gui.openlink.updatefrpctitle": "Versi baru Frpc telah ditemukan!",
+  "text.openlink.yes": "Ya",
+  "text.openlink.no": "Tidak",
+  "text.openlink.updatingfrpc": "Memperbarui Frpc... (Mungkin membutuhkan waktu beberapa saat)",
+  "text.openlink.updatefrpc": "Versi baru Frpc telah ditemukan! Tanggal versi terakhir: %s, tanggal versi terbaru: %s. Apakah anda ingin memperbarui?",
+  "gui.openlink.settingscreentitle": "Pengaturan OpenLink",
+  "gui.openlink.loginscreentitle": "Masuk ke akun OpenFrp",
+  "text.openlink.logintips": "Silakan masuk ke akun OpenFrp anda",
+  "text.openlink.username": "Nama pengguna atau Email",
+  "text.openlink.password": "Kata sandi",
+  "text.openlink.notcompleted": "Nama pengguna atau kata sandi tidak lengkap."
+}
