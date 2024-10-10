@@ -9,5 +9,9 @@
   "text.openlink.logintips": "請登錄您的OpenFrp帳戶",
   "text.openlink.username": "使用者名或郵箱",
   "text.openlink.password": "密碼",
-  "text.openlink.notcompleted": "使用者名或郵箱或者密碼未填寫完成"
+  "text.openlink.notcompleted": "使用者名或郵箱或者密碼未填寫完成",
+  "text.openlink.setting_log": "隧道日誌",
+  "text.openlink.setting_traffic": "流量變化",
+  "text.openlink.setting_mod": "OpenLink 模組設置",
+  "text.openlink.setting_user": "OpenFrp 用戶資訊"
 }

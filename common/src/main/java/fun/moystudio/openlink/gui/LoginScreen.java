@@ -114,7 +114,7 @@ public class LoginScreen extends Screen {
     }
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
-        this.renderDirtBackground(0);
+        this.renderBackground(poseStack);
         loginTips.renderCentered(poseStack,this.width/2,15,16,0xffffff);
         drawString(poseStack,this.font,new TranslatableComponent("text.openlink.username"),this.width/2-100,this.height/6+43,0xffffff);
         drawString(poseStack,this.font,new TranslatableComponent("text.openlink.password"),this.width/2-100,this.height/6+93,0xffffff);

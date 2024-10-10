@@ -1,30 +1,86 @@
 package fun.moystudio.openlink.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.Button;
+import fun.moystudio.openlink.logic.SettingTabs;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public class SettingScreen extends Screen {
     public SettingScreen() {
         super(new TranslatableComponent("gui.openlink.settingscreentitle"));
     }
-    public MultiLineLabel title;
+    MultiLineLabel title;
+    SettingTabs tab=SettingTabs.LOG;
+    SettingScreenButton buttonLog,buttonTraffic,buttonUser,buttonMod;
+
+    public static final ResourceLocation BACKGROUND_SETTING=new ResourceLocation("openlink","textures/gui/background_setting.png");
+
     @Override
     protected void init(){
         title=MultiLineLabel.create(this.font,new TranslatableComponent("gui.openlink.settingscreentitle"));
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 168, 200, 20, CommonComponents.GUI_DONE, (button) -> {
-            this.onClose();
+        int i=(this.width-10)/4;
+        buttonLog=new SettingScreenButton(5,40,i,20,new TranslatableComponent("text.openlink.setting_log"),(button -> {
+            tab=SettingTabs.LOG;
         }));
+        buttonTraffic=new SettingScreenButton(5+i,40,i,20,new TranslatableComponent("text.openlink.setting_traffic"),(button -> {
+            tab=SettingTabs.TRAFFIC;
+        }));
+        buttonUser=new SettingScreenButton(5+i*2,40,i,20,new TranslatableComponent("text.openlink.setting_user"),(button -> {
+            tab=SettingTabs.USER;
+        }));
+        buttonMod=new SettingScreenButton(5+i*3,40,i,20,new TranslatableComponent("text.openlink.setting_mod"),(button -> {
+            tab=SettingTabs.MOD;
+        }));
+        addRenderableWidget(buttonLog);
+        addRenderableWidget(buttonTraffic);
+        addRenderableWidget(buttonUser);
+        addRenderableWidget(buttonMod);
     }
 
     @Override
     public void render(PoseStack poseStack,int i,int j,float f){
-        this.renderDirtBackground(0);
+        this.renderBackground(poseStack);
+        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
+        RenderSystem.setShaderTexture(0,BACKGROUND_SETTING);
+        blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);
+        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,0.56F);
+        fill(poseStack,5,60,5+this.width-10,60+this.height-100,0);
         title.renderCentered(poseStack,this.width/2,15);
+        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         super.render(poseStack,i,j,f);
+    }
+
+    @Override
+    public void tick(){
+        switch (tab){
+            case LOG -> {
+                buttonLog.active=false;
+                buttonTraffic.active=true;
+                buttonUser.active=true;
+                buttonMod.active=true;
+            }
+            case MOD -> {
+                buttonLog.active=true;
+                buttonTraffic.active=true;
+                buttonUser.active=true;
+                buttonMod.active=false;
+            }
+            case USER -> {
+                buttonLog.active=true;
+                buttonTraffic.active=true;
+                buttonUser.active=false;
+                buttonMod.active=true;
+            }
+            case TRAFFIC -> {
+                buttonLog.active=true;
+                buttonTraffic.active=false;
+                buttonUser.active=true;
+                buttonMod.active=true;
+            }
+        }
     }
 
 }

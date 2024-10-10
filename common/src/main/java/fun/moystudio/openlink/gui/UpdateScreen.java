@@ -33,7 +33,7 @@ public class UpdateScreen extends Screen {
 
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
-        this.renderDirtBackground(0);
+        this.renderBackground(poseStack);
         text.renderCentered(poseStack,this.width/2,this.height/10,16,0xffffff);
         super.render(poseStack,i,j,f);
     }

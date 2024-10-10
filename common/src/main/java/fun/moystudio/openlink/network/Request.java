@@ -3,7 +3,6 @@ package fun.moystudio.openlink.network;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.json.JsonSession;
 
 import javax.net.ssl.HttpsURLConnection;

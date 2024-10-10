@@ -9,5 +9,9 @@
   "text.openlink.logintips": "Please login your OpenFrp account",
   "text.openlink.username": "Username or E-mail",
   "text.openlink.password": "Password",
-  "text.openlink.notcompleted": "Username or password does not completed."
+  "text.openlink.notcompleted": "Username or password does not completed.",
+  "text.openlink.setting_log": "Tunnel Log",
+  "text.openlink.setting_traffic": "Traffic Flow",
+  "text.openlink.setting_mod": "OpenLink Mod Settings",
+  "text.openlink.setting_user": "OpenFrp User Info"
 }
