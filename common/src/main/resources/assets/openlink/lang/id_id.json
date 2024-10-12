@@ -9,5 +9,9 @@
   "text.openlink.logintips": "Silakan masuk ke akun OpenFrp anda",
   "text.openlink.username": "Nama pengguna atau Email",
   "text.openlink.password": "Kata sandi",
-  "text.openlink.notcompleted": "Nama pengguna atau kata sandi tidak lengkap."
+  "text.openlink.notcompleted": "Nama pengguna atau kata sandi tidak lengkap.",
+  "text.openlink.setting_log": "Tunnel Log",
+  "text.openlink.setting_traffic": "Traffic Flow",
+  "text.openlink.setting_mod": "OpenLink Mod Settings",
+  "text.openlink.setting_user": "OpenFrp User Info"
 }

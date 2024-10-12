@@ -45,9 +45,9 @@ public class SettingScreen extends Screen {
         this.renderBackground(poseStack);
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         RenderSystem.setShaderTexture(0,BACKGROUND_SETTING);
-        blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);
+        blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);//这是背景图片
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,0.56F);
-        fill(poseStack,5,60,5+this.width-10,60+this.height-100,0);
+        fill(poseStack,5,60,5+this.width-10,60+this.height-100,0);//就这个(最后那个0是0x000000（颜色）)
         title.renderCentered(poseStack,this.width/2,15);
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         super.render(poseStack,i,j,f);
