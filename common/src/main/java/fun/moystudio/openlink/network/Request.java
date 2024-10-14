@@ -3,7 +3,9 @@ package fun.moystudio.openlink.network;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonSession;
+import fun.moystudio.openlink.json.JsonUserInfo;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -20,6 +22,7 @@ public class Request {
     public final static Map<String,List<String>> DEFAULT_HEADER=new HashMap<>(){{
         put("Content-Type", Collections.singletonList("application/json"));
     }};
+
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body) throws Exception {
         URL postUrl=new URL(url);
         HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
@@ -100,8 +103,21 @@ public class Request {
             JsonSession session=gson.fromJson(new String(fi.readAllBytes()),JsonSession.class);
             sessionID=session.sessionid;
             Authorization=session.authorization;
+            JsonResponseWithData<JsonUserInfo> responseWithData = getUserInfo();
+            if(!responseWithData.flag){
+                sessionID=null;
+                Authorization=null;
+                OpenLink.LOGGER.warn("The session has expired!");
+            }
         } catch (Exception e){
             throw new RuntimeException(e);
         }
+    }
+
+    public static JsonResponseWithData<JsonUserInfo> getUserInfo() throws Exception {
+        if(Authorization==null) return null;
+        Gson gson=new Gson();
+        Pair<String, Map<String, List<String>>> response=POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserInfo",getHeaderWithAuthorization(DEFAULT_HEADER),"{}");
+        return gson.fromJson(response.getFirst(), JsonResponseWithData.class);
     }
 }

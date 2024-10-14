@@ -105,7 +105,6 @@ public class LoginScreen extends Screen {
                 throw new RuntimeException(e);
             }
             JsonResponseWithData<String> sessionID=gson.fromJson(response.getFirst(), JsonResponseWithData.class);
-            //暂时存储为变量
             Request.sessionID=sessionID.data;
             Request.Authorization=response.getSecond().get("Authorization").get(0);
             Request.writeSession();//写入sessioncode.json
@@ -128,4 +127,6 @@ public class LoginScreen extends Screen {
     public boolean shouldCloseOnEsc(){
         return false;
     }
+
+
 }

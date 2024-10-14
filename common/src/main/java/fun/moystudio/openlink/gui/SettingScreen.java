@@ -2,7 +2,11 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.json.JsonResponseWithData;
+import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
+import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -15,6 +19,7 @@ public class SettingScreen extends Screen {
     MultiLineLabel title;
     SettingTabs tab=SettingTabs.LOG;
     SettingScreenButton buttonLog,buttonTraffic,buttonUser,buttonMod;
+    JsonResponseWithData<JsonUserInfo> userInfo=null;
 
     public static final ResourceLocation BACKGROUND_SETTING=new ResourceLocation("openlink","textures/gui/background_setting.png");
 
@@ -30,6 +35,13 @@ public class SettingScreen extends Screen {
         }));
         buttonUser=new SettingScreenButton(5+i*2,40,i,20,new TranslatableComponent("text.openlink.setting_user"),(button -> {
             tab=SettingTabs.USER;
+            try {
+                userInfo = Request.getUserInfo();
+                if(!userInfo.flag)
+                    this.minecraft.setScreen(new LoginScreen());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }));
         buttonMod=new SettingScreenButton(5+i*3,40,i,20,new TranslatableComponent("text.openlink.setting_mod"),(button -> {
             tab=SettingTabs.MOD;
@@ -45,13 +57,12 @@ public class SettingScreen extends Screen {
         this.renderBackground(poseStack);
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         RenderSystem.setShaderTexture(0,BACKGROUND_SETTING);
-        blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);//这是背景图片
-        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,0.56F);
-        fill(poseStack,5,60,5+this.width-10,60+this.height-100,0);//就这个(最后那个0是0x000000（颜色）)
+        blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);
+        fill(poseStack,5,60,this.buttonMod.x+this.buttonMod.getWidth(),60+this.height-75,0x8F000000);
         title.renderCentered(poseStack,this.width/2,15);
-        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         super.render(poseStack,i,j,f);
     }
+
 
     @Override
     public void tick(){
