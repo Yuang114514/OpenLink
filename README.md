@@ -1,2 +1,2 @@
-# OpenLink
+# OpenLink Core
 OpenLink
