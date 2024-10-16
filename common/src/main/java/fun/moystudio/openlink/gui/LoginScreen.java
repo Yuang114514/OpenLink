@@ -86,6 +86,7 @@ public class LoginScreen extends Screen {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+
             JsonResponseWithCode<?> loginFlag = gson.fromJson(response.getFirst(),JsonResponseWithCode.class);
             if(!loginFlag.flag){
                 wrongmsg=loginFlag.msg;

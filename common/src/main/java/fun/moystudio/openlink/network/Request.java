@@ -22,6 +22,7 @@ public class Request {
     public final static Map<String,List<String>> DEFAULT_HEADER=new HashMap<>(){{
         put("Content-Type", Collections.singletonList("application/json"));
     }};
+    public static String token=null;
 
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body) throws Exception {
         URL postUrl=new URL(url);
@@ -118,6 +119,8 @@ public class Request {
         if(Authorization==null) return null;
         Gson gson=new Gson();
         Pair<String, Map<String, List<String>>> response=POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserInfo",getHeaderWithAuthorization(DEFAULT_HEADER),"{}");
-        return gson.fromJson(response.getFirst(), JsonResponseWithData.class);
+        JsonResponseWithData<JsonUserInfo> res=gson.fromJson(response.getFirst(), JsonResponseWithData.class);
+        Request.token=res.data.token;
+        return res;
     }
 }

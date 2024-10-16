@@ -13,5 +13,8 @@
   "text.openlink.setting_log": "Tunnel Log",
   "text.openlink.setting_traffic": "Traffic Flow",
   "text.openlink.setting_mod": "OpenLink Mod Settings",
-  "text.openlink.setting_user": "OpenFrp User Info"
+  "text.openlink.setting_user": "OpenFrp User Info",
+  "text.openlink.usingfrp": "Using OpenFrp proxy",
+  "text.openlink.port": "Proxy remote port",
+  "text.openlink.userproxieslimited": "You've reached the maximum number of proxies.Please delete some proxies!"
 }
