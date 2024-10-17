@@ -16,5 +16,7 @@
   "text.openlink.setting_user": "OpenFrp User Info",
   "text.openlink.usingfrp": "Using OpenFrp proxy",
   "text.openlink.port": "Proxy remote port",
-  "text.openlink.userproxieslimited": "You've reached the maximum number of proxies.Please delete some proxies!"
+  "text.openlink.userproxieslimited": "You've reached the maximum number of proxies.Please delete some proxies!",
+  "text.openlink.remoteportnotfound": "Can not find any available remote port after 5 tries(Maybe you are not lucky today :>)",
+  "text.openlink.frpcstartsucessfully": "[OpenLink] Started proxy sucessfully! Use %s to connect!"
 }

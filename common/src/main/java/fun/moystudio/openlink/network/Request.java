@@ -1,11 +1,10 @@
 package fun.moystudio.openlink.network;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.json.JsonResponseWithData;
-import fun.moystudio.openlink.json.JsonSession;
-import fun.moystudio.openlink.json.JsonUserInfo;
+import fun.moystudio.openlink.json.*;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
@@ -57,6 +56,37 @@ public class Request {
             }
             throw new RuntimeException(e);
         }
+    }
+
+    public static String GET(String url, Map<String,List<String>> header) throws Exception{
+        URL postUrl=new URL(url);
+        HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
+        connection.setRequestMethod("GET");
+        header.forEach(((s, strings) -> {
+            strings.forEach(s1 -> {
+                connection.addRequestProperty(s,s1);
+            });
+        }));
+        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
+            StringBuilder re=new StringBuilder();
+            String line;
+            while((line=br.readLine())!=null){
+                re.append(line.trim());
+            }
+            return re.toString();
+        }catch (Exception e){
+            if(connection.getResponseCode()>=400){
+                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(),"utf-8"));
+                StringBuilder re=new StringBuilder();
+                String line;
+                while((line=br.readLine())!=null){
+                    re.append(line.trim());
+                }
+                return re.toString();
+            }
+            throw new RuntimeException(e);
+        }
+
     }
 
     public static Map<String,List<String>> getHeaderWithCookieByResponse(Pair<String,Map<String, List<String>>> response,Map<String,List<String>> header){
@@ -119,8 +149,16 @@ public class Request {
         if(Authorization==null) return null;
         Gson gson=new Gson();
         Pair<String, Map<String, List<String>>> response=POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserInfo",getHeaderWithAuthorization(DEFAULT_HEADER),"{}");
-        JsonResponseWithData<JsonUserInfo> res=gson.fromJson(response.getFirst(), JsonResponseWithData.class);
+        JsonResponseWithData<JsonUserInfo> res=gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonUserInfo>>(){}.getType());
         Request.token=res.data.token;
+        return res;
+    }
+
+    public static JsonResponseWithData<JsonTotalAndList<JsonNode>> getNodeList() throws Exception {
+        if(Authorization==null) return null;
+        Gson gson=new Gson();
+        Pair<String, Map<String, List<String>>> response=POST(Uris.openFrpAPIUri.toString()+"frp/api/getNodeList",getHeaderWithAuthorization(DEFAULT_HEADER),"{}");
+        JsonResponseWithData<JsonTotalAndList<JsonNode>> res=gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonNode>>>(){}.getType());
         return res;
     }
 }

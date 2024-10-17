@@ -5,6 +5,7 @@ import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.JsonFrpcVersion;
 import fun.moystudio.openlink.json.JsonItems;
 import fun.moystudio.openlink.logic.Extract;
+import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -25,6 +26,7 @@ public class Frpc {
     public static File frpcArchiveFile=new File("frpc.zip");
     public static final int MAX_BUFFER_SIZE=10485760;
     public static int latestVersionDate=0;
+    public static Process runtimeprocess=null;
 
     public static void init() throws Exception {
         Gson gson=new Gson();
@@ -145,5 +147,16 @@ public class Frpc {
         inputStream.close();
         outputStream.close();
         OpenLink.LOGGER.info("Download/Update frpc sucessfully!");
+    }
+
+    public static void runFrpc(int proxyid) throws Exception {
+        Request.getUserInfo();
+        runtimeprocess=Runtime.getRuntime().exec(new String[]{frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)});
+    }
+    public static void stopFrpc(){
+        if(runtimeprocess!=null){
+            runtimeprocess.destroy();
+        }
+        runtimeprocess=null;
     }
 }

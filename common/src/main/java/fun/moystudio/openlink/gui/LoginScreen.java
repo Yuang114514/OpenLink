@@ -1,6 +1,7 @@
 package fun.moystudio.openlink.gui;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.json.JsonResponseWithCode;
@@ -98,14 +99,14 @@ public class LoginScreen extends Screen {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            JsonResponseWithData<Map<String,String>> loginCode=gson.fromJson(response.getFirst(), JsonResponseWithData.class);//返回的code（用于下一步传参）
+            JsonResponseWithData<Map<String,String>> loginCode=gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<Map<String,String>>>(){}.getType());//返回的code（用于下一步传参）
             String code=loginCode.data.get("code");
             try {
                 response=Request.POST(Uris.openFrpAPIUri.toString()+"oauth2/callback?code="+code,headerWithCookie,"{}");//空body
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            JsonResponseWithData<String> sessionID=gson.fromJson(response.getFirst(), JsonResponseWithData.class);
+            JsonResponseWithData<String> sessionID=gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<String>>(){}.getType());
             Request.sessionID=sessionID.data;
             Request.Authorization=response.getSecond().get("Authorization").get(0);
             Request.writeSession();//写入sessioncode.json
