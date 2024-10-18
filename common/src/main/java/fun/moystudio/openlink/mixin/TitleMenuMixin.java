@@ -30,9 +30,7 @@ public abstract class TitleMenuMixin extends Screen {
         if(Request.sessionID==null||Request.Authorization==null){
             this.minecraft.setScreen(new LoginScreen());
         }
-        if(Frpc.runtimeprocess!=null){
-            Frpc.stopFrpc();
-        }
+        Frpc.stopFrpc();
     }
     @Unique
     private static final ResourceLocation OPENLINK_SETTING=new ResourceLocation("openlink","textures/gui/setting.png");
