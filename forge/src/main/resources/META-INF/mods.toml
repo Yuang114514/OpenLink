@@ -11,7 +11,7 @@ authors = "MoYStudio, Terry_MC"
 description = '''
 OpenLink
 '''
-logoFile = "assets/openlink/icon.png"
+logoFile = "icon.png"
 
 [[dependencies.openlink]]
 modId = "forge"
