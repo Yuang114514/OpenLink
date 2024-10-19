@@ -23,8 +23,8 @@ public abstract class TitleMenuMixin extends Screen {
         super(component);
     }
 
-    @Inject(method = "tick", at = @At("TAIL"))
-    public void tickMixin(CallbackInfo ci) {
+    @Inject(method = "render", at = @At("TAIL"))
+    public void renderMixin(int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (Frpc.hasUpdate) {
             this.minecraft.setScreen(new UpdateScreen());
         }
