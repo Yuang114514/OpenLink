@@ -15,6 +15,7 @@ Content of the Policy:
 7. Should SC engage in collaboration with a third party, the policy of that third party shall be effective concurrently with this Policy and shall hold equal priority; works governed by multiple policies will be clearly labeled with the relevant policy information.
 8. SC reserves the right to amend this Policy and related legal rights; the final interpretation of this Policy shall rest with Star Remote Workshop.
 
+
 Footnotes:
 ^1: The applicability of this clause presupposes adherence to this Policy;  
 ^2: The term “sets” excludes the incorporation of modules into your own modpacks;  

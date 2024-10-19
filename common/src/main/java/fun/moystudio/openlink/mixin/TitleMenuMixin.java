@@ -21,7 +21,7 @@ public abstract class TitleMenuMixin extends Screen {
     protected TitleMenuMixin(Component component) {
         super(component);
     }
-
+//啥都没改
     @Inject(method = "tick", at = @At("TAIL"))
     public void tickMixin(CallbackInfo ci) {
         if (Frpc.hasUpdate) {
