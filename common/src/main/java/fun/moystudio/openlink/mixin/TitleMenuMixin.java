@@ -21,26 +21,26 @@ public abstract class TitleMenuMixin extends Screen {
     protected TitleMenuMixin(Component component) {
         super(component);
     }
-
-    @Inject(method = "tick",at = @At("TAIL"))
-    public void tickMixin(CallbackInfo ci){
-        if(Frpc.hasUpdate){
+//啥都没改
+    @Inject(method = "tick", at = @At("TAIL"))
+    public void tickMixin(CallbackInfo ci) {
+        if (Frpc.hasUpdate) {
             this.minecraft.setScreen(new UpdateScreen());
         }
-        if(Request.sessionID==null||Request.Authorization==null){
+        if (Request.sessionID == null || Request.Authorization == null) {
             this.minecraft.setScreen(new LoginScreen());
         }
-        if(Frpc.runtimeprocess!=null){
-            Frpc.stopFrpc();
-        }
+        Frpc.stopFrpc();
     }
-    @Unique
-    private static final ResourceLocation OPENLINK_SETTING=new ResourceLocation("openlink","textures/gui/setting.png");
 
-    @Inject(method = "init",at = @At("TAIL"))
-    public void init(CallbackInfo ci){
-        this.addRenderableWidget(new SettingButton(this.width / 2 + 129, this.height/4+48 + 72 + 12, 20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
-            this.minecraft.setScreen(new SettingScreen());
-        }));
+    @Unique
+    private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting.png");
+
+    @Inject(method = "init", at = @At("TAIL"))
+    public void init(CallbackInfo ci) {
+        this.addRenderableWidget(new SettingButton(this.width / 2 + 129, this.height / 4 + 48 + 72 + 12, 
+            20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
+                this.minecraft.setScreen(new SettingScreen());
+            }));
     }
 }

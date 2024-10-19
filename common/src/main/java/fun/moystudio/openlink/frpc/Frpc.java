@@ -55,8 +55,8 @@ public class Frpc {
         } else if (os_name.contains("FreeBSD")){
             osName="freebsd";
         } else {
-            OpenLink.LOGGER.error("What the hell are you using???");
-            throw new RuntimeException("[OpenLink] What the hell are you using???");
+            OpenLink.LOGGER.error("Unsupported operating system detected!");
+            throw new RuntimeException("[OpenLink] Unsupported operating system detected!");
         }
         if(osName.equals("windows")){
             suffix=".exe";
@@ -67,7 +67,7 @@ public class Frpc {
             if(!frpcExecutableFile.exists()){
                 update();
             }
-            OpenLink.LOGGER.info("The update screen will show before the main game screen.");
+            OpenLink.LOGGER.info("The update screen will show after the main game screen loaded.");
         }
     }
 

@@ -124,14 +124,18 @@ public abstract class ShareToLanScreenMixin extends Screen{
                         JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                         //OpenLink隧道命名规则：openlink_mc_[本地端口号]
                         for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
-                            if (jsonUserProxy.proxyName.startsWith("openlink_mc_")) {
+                            if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
                                 try {
-                                    Pair<String, Map<String, List<String>>> response1=Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
+                                    Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
+                                    OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
                                 } catch (Exception e) {
                                     break;
                                 }
                             }
                         }//删除以前用过的隧道
+                        Thread.sleep(1000);
+                        response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                        userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                         JsonResponseWithData<JsonUserInfo> userinfo=Request.getUserInfo();
                         if(userinfo.data.proxies==userProxies.data.total){
                             throw new Exception(new TranslatableComponent("text.openlink.userproxieslimited").getString());
@@ -155,14 +159,22 @@ public abstract class ShareToLanScreenMixin extends Screen{
                             if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)
                                 return o1.needRealname?-1:1;
                             return 0;
-                        }));//记着调这里的bug（无法打开，显示下面的substring out of bounds）
+                        }));
                         JsonNode node=canUseNodes.get(0);//选取最优节点
                         JsonNewProxy newProxy=new JsonNewProxy();
                         newProxy.name="openlink_mc_"+String.valueOf(i);
                         newProxy.local_port= String.valueOf(i);
                         newProxy.node_id=node.id;
                         Random random=new Random();
-                        int start=Integer.parseInt(node.allowPort.substring(1,5)),end=Integer.parseInt(node.allowPort.substring(7,11));
+                        int start,end;
+                        if(node.allowPort==null||node.allowPort.isBlank()){
+                            start=30000;
+                            end=60000;
+                        }
+                        else{
+                            start=Integer.parseInt(node.allowPort.substring(1,5));
+                            end=Integer.parseInt(node.allowPort.substring(7,11));
+                        }
                         boolean found=false;
                         for (int j = 1; j <= 5; j++) {
                             newProxy.remote_port = random.nextInt(end - start + 1) + start;
@@ -204,7 +216,8 @@ public abstract class ShareToLanScreenMixin extends Screen{
                             Frpc.stopFrpc();
                             throw new Exception("Can not start frpc???");
                         }
-                        Component tmp=new TranslatableComponent("text.openlink.frpcstartsucessfully",runningproxy.connectAddress);
+                        Component tmp=new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+runningproxy.connectAddress+"§r");
+                        this.minecraft.keyboardHandler.setClipboard(runningproxy.connectAddress);
                         this.minecraft.gui.getChat().addMessage(tmp);
                     } catch (Exception e) {
                         Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
