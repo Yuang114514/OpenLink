@@ -27,7 +27,7 @@ public class UpdateScreen extends Screen {
     @Override
     protected void init(){
         List<String> strings=Arrays.asList(new TranslatableComponent("text.openlink.nofrpcfile").getString().split("\n"));
-        List<Component> list = List.of();
+        List<Component> list = new java.util.ArrayList<>(List.of());
         strings.forEach((String)->{
             list.add(new TextComponent(String));
         });
