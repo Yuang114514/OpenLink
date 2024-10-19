@@ -7,10 +7,14 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class UpdateScreen extends Screen {
     public UpdateScreen() {
@@ -22,18 +26,29 @@ public class UpdateScreen extends Screen {
 
     @Override
     protected void init(){
+        List<String> strings=Arrays.asList(new TranslatableComponent("text.openlink.nofrpcfile").getString().split("\n"));
+        List<Component> list = List.of();
+        strings.forEach((String)->{
+            list.add(new TextComponent(String));
+        });
         yes=new Button(this.width/4-40,this.height/5*4-10,80,20,new TranslatableComponent("text.openlink.yes"),button -> {
             this.minecraft.setScreen(new UpdatingScreen());
         });
         no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,new TranslatableComponent("text.openlink.no"),button -> {
             this.onClose();
+        }, (button, poseStack, i, j) -> {
+            if(Frpc.frpcVersionDate==0){
+                renderComponentTooltip(poseStack, list, i, j);
+            }
         });
-        text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatefrpc", Frpc.latestVersionDate,Frpc.frpcVersionDate),this.width-50);
+        if(Frpc.frpcVersionDate==0){
+            no.active=false;
+        }
+        text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatefrpc", Frpc.latestVersionDate, String.valueOf(Frpc.frpcVersionDate == 0 ? "does not exist" : Frpc.frpcVersionDate)),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
-        //以下为原版语言按钮
-        int l = this.height / 4 + 48;
-        this.addRenderableWidget(new ImageButton(this.width / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
+        //以下为原版语言按钮(修改了一下位置)
+        this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
             this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
         }, new TranslatableComponent("narrator.button.language")));
     }

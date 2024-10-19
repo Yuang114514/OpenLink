@@ -116,7 +116,7 @@ public class LoginScreen extends Screen {
         }));
         //以下为原版语言按钮
         int l = this.height / 4 + 48;
-        this.addRenderableWidget(new ImageButton(this.width / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
+        this.addRenderableWidget(new ImageButton(this.width / 2 - 130, this.height / 6 + 168, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
             this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
         }, new TranslatableComponent("narrator.button.language")));
     }

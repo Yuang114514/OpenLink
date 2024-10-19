@@ -21,17 +21,6 @@ public abstract class TitleMenuMixin extends Screen {
     protected TitleMenuMixin(Component component) {
         super(component);
     }
-//啥都没改
-    @Inject(method = "tick", at = @At("TAIL"))
-    public void tickMixin(CallbackInfo ci) {
-        if (Frpc.hasUpdate) {
-            this.minecraft.setScreen(new UpdateScreen());
-        }
-        if (Request.sessionID == null || Request.Authorization == null) {
-            this.minecraft.setScreen(new LoginScreen());
-        }
-        Frpc.stopFrpc();
-    }
 
     @Unique
     private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting.png");
@@ -42,5 +31,12 @@ public abstract class TitleMenuMixin extends Screen {
             20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
                 this.minecraft.setScreen(new SettingScreen());
             }));
+        if (Frpc.hasUpdate) {
+            this.minecraft.setScreen(new UpdateScreen());
+        }
+        if (Request.sessionID == null || Request.Authorization == null) {
+            this.minecraft.setScreen(new LoginScreen());
+        }
+        Frpc.stopFrpc();
     }
 }

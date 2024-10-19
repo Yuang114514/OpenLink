@@ -6,10 +6,13 @@ import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.TranslatableComponent;
+import org.spongepowered.asm.mixin.Unique;
 
 import java.io.IOException;
 
 public class UpdatingScreen extends Screen {
+    @Unique
+    public int tickCount=0;
     public UpdatingScreen() {
         super(new TranslatableComponent("text.openlink.updatefrpc"));
     }
@@ -20,7 +23,8 @@ public class UpdatingScreen extends Screen {
     }
     @Override
     public void tick(){
-        if(Frpc.hasUpdate){
+        tickCount++;
+        if(tickCount>5&&Frpc.hasUpdate){
             try {
                 Frpc.update();
             } catch (Exception e) {

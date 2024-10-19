@@ -64,9 +64,6 @@ public class Frpc {
         }
         frpcExecutableFile=new File("frpc_"+osName+"_"+osArch+suffix);
         if(checkUpdate()){
-            if(!frpcExecutableFile.exists()){
-                update();
-            }
             OpenLink.LOGGER.info("The update screen will show after the main game screen loaded.");
         }
     }
