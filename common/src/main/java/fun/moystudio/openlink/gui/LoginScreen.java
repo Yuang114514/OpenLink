@@ -9,7 +9,9 @@ import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.network.*;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
 import net.minecraft.network.chat.TextComponent;
@@ -112,6 +114,11 @@ public class LoginScreen extends Screen {
             Request.writeSession();//写入sessioncode.json
             this.onClose();
         }));
+        //以下为原版语言按钮
+        int l = this.height / 4 + 48;
+        this.addRenderableWidget(new ImageButton(this.width / 2 - 124, l + 72 + 12, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
+            this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
+        }, new TranslatableComponent("narrator.button.language")));
     }
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
