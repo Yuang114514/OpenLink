@@ -1,7 +1,7 @@
 name: automerge
 on:
 - pull_request_target
-
+- workflow_dispatch
 jobs:
   labeler:
     runs-on: ubuntu-latest
