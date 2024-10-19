@@ -1,5 +1,6 @@
 package fun.moystudio.openlink.frpc;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.JsonFrpcVersion;
@@ -8,8 +9,8 @@ import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
+import javax.net.ssl.HttpsURLConnection;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -86,7 +87,7 @@ public class Frpc {
         Gson gson=new Gson();
         AtomicInteger res= new AtomicInteger(frpcVersionDate);
         URL url= Uris.frpcDownloadUri.toURL();
-        HttpsURLConnection connection=(HttpsURLConnection)url.openConnection();
+        HttpsURLConnection connection=(HttpsURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type","application/json");
         connection.setDoOutput(true);
@@ -101,7 +102,7 @@ public class Frpc {
             while((reline=bufferedReader.readLine())!=null){
                 re.append(reline.trim());
             }
-            JsonItems jsonItems=gson.fromJson(re.toString(),JsonItems.class);
+            JsonItems jsonItems=gson.fromJson(re.toString(),new TypeToken<JsonItems>(){}.getType());
             jsonItems.items.forEach((jsonDownloadFile)->{
                 if(jsonDownloadFile.href.contains("/client/OpenFRP")){
                     res.set(Math.max(res.get(),Integer.valueOf(jsonDownloadFile.href.substring(jsonDownloadFile.href.length() - 9, jsonDownloadFile.href.length() - 1))));

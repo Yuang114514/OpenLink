@@ -10,6 +10,7 @@ public final class OpenLink {
     public static final Logger LOGGER = LogManager.getLogger("OpenLink");
 
     public static void init() throws Exception {
+
         LOGGER.info("Initializing OpenLink!");
         Frpc.init();//安装/检查更新frpc版本
         Request.readSession();//读取以前的SessionID
