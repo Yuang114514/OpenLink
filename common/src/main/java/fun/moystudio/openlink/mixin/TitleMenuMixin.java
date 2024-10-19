@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.gui.components.Button;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -21,7 +22,7 @@ public abstract class TitleMenuMixin extends Screen {
     protected TitleMenuMixin(Component component) {
         super(component);
     }
-//啥都没改
+
     @Inject(method = "tick", at = @At("TAIL"))
     public void tickMixin(CallbackInfo ci) {
         if (Frpc.hasUpdate) {
@@ -38,8 +39,8 @@ public abstract class TitleMenuMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     public void init(CallbackInfo ci) {
-        this.addRenderableWidget(new SettingButton(this.width / 2 + 129, this.height / 4 + 48 + 72 + 12, 
-            20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
+        this.addRenderableWidget(new SettingButton(this.width / 2 + 129, this.height / 4 + 48 + 72 + 12,
+            20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (Button button) -> {
                 this.minecraft.setScreen(new SettingScreen());
             }));
     }
