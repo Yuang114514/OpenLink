@@ -23,15 +23,27 @@ public abstract class TitleMenuMixin extends Screen {
         super(component);
     }
 
+    private long lastRenderTime = 0;
+    private static final long RENDER_INTERVAL_MS = 50;
+
     @Inject(method = "render", at = @At("TAIL"))
     public void renderMixin(int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastRenderTime >= RENDER_INTERVAL_MS) {
+            lastRenderTime = currentTime;
+
+            updateScreenState();
+            Frpc.stopFrpc();
+        }
+    }
+
+    private void updateScreenState() {
         if (Frpc.hasUpdate) {
             this.minecraft.setScreen(new UpdateScreen());
-        }
-        if (Request.sessionID == null || Request.Authorization == null) {
+        } else if (Request.sessionID == null || Request.Authorization == null) {
             this.minecraft.setScreen(new LoginScreen());
         }
-        Frpc.stopFrpc();
     }
 
     @Unique
@@ -40,7 +52,7 @@ public abstract class TitleMenuMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     public void init(CallbackInfo ci) {
         this.addRenderableWidget(new SettingButton(this.width / 2 + 129, this.height / 4 + 48 + 72 + 12,
-            20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (Button button) -> {
+            20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, button -> {
                 this.minecraft.setScreen(new SettingScreen());
             }));
     }
