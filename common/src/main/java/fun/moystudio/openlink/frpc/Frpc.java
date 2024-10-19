@@ -55,8 +55,8 @@ public class Frpc {
         } else if (os_name.contains("FreeBSD")){
             osName="freebsd";
         } else {
-            OpenLink.LOGGER.error("What the hell are you using???");
-            throw new RuntimeException("[OpenLink] What the hell are you using???");
+            OpenLink.LOGGER.error("Unsupported operating system detected.");
+            throw new RuntimeException("[OpenLink] Unsupported operating system detected.");
         }
         if(osName.equals("windows")){
             suffix=".exe";
