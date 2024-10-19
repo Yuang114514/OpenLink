@@ -67,7 +67,7 @@ public class Frpc {
             if(!frpcExecutableFile.exists()){
                 update();
             }
-            OpenLink.LOGGER.info("The update screen will show before the main game screen.");
+            OpenLink.LOGGER.info("The update screen will show after the main game screen loaded.");
         }
     }
 

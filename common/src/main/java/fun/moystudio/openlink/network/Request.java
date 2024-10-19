@@ -58,7 +58,7 @@ public class Request {
         }
     }
 
-    public static String GET(String url, Map<String,List<String>> header) throws Exception{
+    public static String GET(String url, Map<String,List<String>> header) throws Exception{//他甚至不需要用（
         URL postUrl=new URL(url);
         HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
         connection.setRequestMethod("GET");
@@ -138,7 +138,7 @@ public class Request {
             if(!responseWithData.flag){
                 sessionID=null;
                 Authorization=null;
-                OpenLink.LOGGER.warn("The session has expired!");
+                OpenLink.LOGGER.warn("The session has been expired!");
             }
         } catch (Exception e){
             throw new RuntimeException(e);
