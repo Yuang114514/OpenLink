@@ -8,6 +8,7 @@ import fun.moystudio.openlink.json.*;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;

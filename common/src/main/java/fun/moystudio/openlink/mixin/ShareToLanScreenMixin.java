@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.gson.Gson;
 
+import java.io.PrintStream;
 import java.util.*;
 
 @Mixin(ShareToLanScreen.class)
@@ -221,7 +222,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
                         this.minecraft.gui.getChat().addMessage(tmp);
                     } catch (Exception e) {
                         Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
-                         e.printStackTrace();
+                        e.printStackTrace((PrintStream) OpenLink.LOGGER);
                         this.minecraft.gui.getChat().addMessage(tmp);
                     }
                 });

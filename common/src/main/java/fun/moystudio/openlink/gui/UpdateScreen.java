@@ -7,10 +7,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -31,10 +28,10 @@ public class UpdateScreen extends Screen {
         strings.forEach((String)->{
             list.add(new TextComponent(String));
         });
-        yes=new Button(this.width/4-40,this.height/5*4-10,80,20,new TranslatableComponent("text.openlink.yes"),button -> {
+        yes=new Button(this.width/4-40,this.height/5*4-10,80,20,CommonComponents.GUI_YES,button -> {
             this.minecraft.setScreen(new UpdatingScreen());
         });
-        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,new TranslatableComponent("text.openlink.no"),button -> {
+        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {
             this.onClose();
         }, (button, poseStack, i, j) -> {
             if(Frpc.frpcVersionDate==0){

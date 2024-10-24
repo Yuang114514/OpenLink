@@ -2,18 +2,36 @@ package fun.moystudio.openlink;
 
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.network.Request;
+import fun.moystudio.openlink.network.SSLUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import javax.net.ssl.SSLHandshakeException;
+import java.io.PrintStream;
 
 public final class OpenLink {
     public static final String MOD_ID = "openlink";
     public static final Logger LOGGER = LogManager.getLogger("OpenLink");
 
     public static void init() throws Exception {
-
         LOGGER.info("Initializing OpenLink!");
+        //由于某作者的逆天电脑，特意添加跳过ssl功能（危险，不推荐）
+        try{
+            Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}");
+        }catch (SSLHandshakeException e){
+            e.printStackTrace((PrintStream) LOGGER);
+            LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
+            SSLUtils.ignoreSsl();
+        }catch (Exception e){
+            throw new RuntimeException(e);
+        }
         Frpc.init();//安装/检查更新frpc版本
-        Request.readSession();//读取以前的SessionID
+        if(!SSLUtils.SSLIgnored){
+            Request.readSession();//读取以前的SessionID
+        }else{
+            LOGGER.warn("SSL is ignored. The confirm screen will show after the main game screen loaded.");
+        }
+
         //直接用mixin打开更新屏幕就行
         LOGGER.info("\n   ____                       _       _         _    \n" +
                 "  / __ \\                     | |     (_)       | |   \n" +
