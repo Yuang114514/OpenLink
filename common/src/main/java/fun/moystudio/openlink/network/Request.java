@@ -25,37 +25,46 @@ public class Request {
     public static String token=null;
 
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body) throws Exception {
+        return POST(url, header, body, false);
+    }
+
+    public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body, boolean _skip) throws Exception {
         URL postUrl=new URL(url);
         HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
         connection.setRequestMethod("POST");
-        header.forEach(((s, strings) -> {
-            strings.forEach(s1 -> {
-                connection.addRequestProperty(s,s1);
-            });
-        }));
-        connection.setDoOutput(true);
-        try(OutputStream os=connection.getOutputStream()){
-            byte[] input=body.getBytes("utf-8");
-            os.write(input,0,input.length);
-        }
-        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
-            StringBuilder re=new StringBuilder();
-            String line;
-            while((line=br.readLine())!=null){
-                re.append(line.trim());
+        if(!_skip) {
+            header.forEach(((s, strings) -> {
+                strings.forEach(s1 -> {
+                    connection.addRequestProperty(s, s1);
+                });
+            }));
+            connection.setDoOutput(true);
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = body.getBytes("utf-8");
+                os.write(input, 0, input.length);
             }
-            return new Pair<>(re.toString(), connection.getHeaderFields());
-        }catch (Exception e){
-            if(connection.getResponseCode()>=400){
-                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(),"utf-8"));
-                StringBuilder re=new StringBuilder();
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+                StringBuilder re = new StringBuilder();
                 String line;
-                while((line=br.readLine())!=null){
+                while ((line = br.readLine()) != null) {
                     re.append(line.trim());
                 }
                 return new Pair<>(re.toString(), connection.getHeaderFields());
+            } catch (Exception e) {
+                if (connection.getResponseCode() >= 400) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "utf-8"));
+                    StringBuilder re = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        re.append(line.trim());
+                    }
+                    return new Pair<>(re.toString(), connection.getHeaderFields());
+                }
+                throw new RuntimeException(e);
             }
-            throw new RuntimeException(e);
+        }
+        else {
+            return null;
         }
     }
 

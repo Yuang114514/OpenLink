@@ -17,9 +17,9 @@ public final class OpenLink {
         LOGGER.info("Initializing OpenLink!");
         //由于某作者的逆天电脑，特意添加跳过ssl功能（危险，不推荐）
         try{
-            Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}");
+            Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}",true);
         }catch (SSLHandshakeException e){
-            e.printStackTrace
+            e.printStackTrace();
             LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
             SSLUtils.ignoreSsl();
         }catch (Exception e){
