@@ -160,7 +160,8 @@ public class Request {
         Gson gson=new Gson();
         Pair<String, Map<String, List<String>>> response=POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserInfo",getHeaderWithAuthorization(DEFAULT_HEADER),"{}");
         JsonResponseWithData<JsonUserInfo> res=gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonUserInfo>>(){}.getType());
-        Request.token=res.data.token;
+        if(res.data!=null)
+            Request.token=res.data.token;
         return res;
     }
 
