@@ -222,7 +222,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
                         this.minecraft.gui.getChat().addMessage(tmp);
                     } catch (Exception e) {
                         Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
-                        e.printStackTrace((PrintStream) OpenLink.LOGGER);
+                        e.printStackTrace();
                         this.minecraft.gui.getChat().addMessage(tmp);
                     }
                 });

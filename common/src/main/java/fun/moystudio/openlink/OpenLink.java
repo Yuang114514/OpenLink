@@ -19,7 +19,7 @@ public final class OpenLink {
         try{
             Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}");
         }catch (SSLHandshakeException e){
-            e.printStackTrace((PrintStream) LOGGER);
+            e.printStackTrace
             LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
             SSLUtils.ignoreSsl();
         }catch (Exception e){
