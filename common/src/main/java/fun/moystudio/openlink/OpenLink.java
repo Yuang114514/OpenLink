@@ -3,6 +3,7 @@ package fun.moystudio.openlink;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
+import fun.moystudio.openlink.network.Uris;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +18,7 @@ public final class OpenLink {
         LOGGER.info("Initializing OpenLink!");
         //由于某作者的逆天电脑，特意添加跳过ssl功能（危险，不推荐）
         try{
-            Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}",true);
+            Request.POST(Uris.frpcDownloadUri.toString(),Request.DEFAULT_HEADER,"{}",true);
         }catch (SSLHandshakeException e){
             e.printStackTrace();
             LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
