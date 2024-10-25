@@ -16,9 +16,9 @@ public final class OpenLink {
 
     public static void init() throws Exception {
         LOGGER.info("Initializing OpenLink!");
-        //由于某作者的逆天电脑，特意添加跳过ssl功能（危险，不推荐）
+        //由于某作者的逆天电脑，特意添加跳过ssl功能
         try{
-            Request.POST(Uris.frpcDownloadUri.toString(),Request.DEFAULT_HEADER,"{}",true);
+            Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}",true);
         }catch (SSLHandshakeException e){
             e.printStackTrace();
             LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
@@ -28,8 +28,11 @@ public final class OpenLink {
         }
         if(!SSLUtils.SSLIgnored){
             Frpc.init();//安装/检查更新frpc版本
+        }
+        if(!SSLUtils.SSLIgnored){
             Request.readSession();//读取以前的SessionID
-        }else{
+        }
+        if(SSLUtils.SSLIgnored){
             LOGGER.warn("SSL is ignored. The confirm screen will show after the main game screen loaded.");
         }
 

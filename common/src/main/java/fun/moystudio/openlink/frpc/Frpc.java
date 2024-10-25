@@ -7,10 +7,12 @@ import fun.moystudio.openlink.json.JsonFrpcVersion;
 import fun.moystudio.openlink.json.JsonItems;
 import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.network.Request;
+import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
 
 import java.io.*;
 import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLHandshakeException;
 import java.net.URL;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -21,7 +23,7 @@ public class Frpc {
     public static String osArch;
     public static boolean hasUpdate=false;
     public static int frpcVersionDate=0;
-    public static String folderName="";
+    public static String folderName="OpenFRP_0.44.9_83c15a60_20221016/";
     public static final File frpcVersionFile=new File("frpc.json");
     public static File frpcExecutableFile;
     public static File frpcArchiveFile=new File("frpc.zip");
@@ -85,33 +87,40 @@ public class Frpc {
 
     public static int getLatestVersionDate() throws Exception{//这玩意是手写的POST(暂时不用后面写的logic包里的POST，因为这个是检测用的)
         Gson gson=new Gson();
-        AtomicInteger res= new AtomicInteger(frpcVersionDate);
+        AtomicInteger res= new AtomicInteger(Math.max(20240914,frpcVersionDate));
         URL url= Uris.frpcDownloadUri.toURL();
-        HttpsURLConnection connection=(HttpsURLConnection) url.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type","application/json");
-        connection.setDoOutput(true);
-        String jsonInput="{\"action\":\"get\",\"items\":{\"href\":\"/client/\",\"what\":1}}";
-        try(OutputStream os=connection.getOutputStream()){
-            byte[] in=jsonInput.getBytes("utf-8");
-            os.write(in,0,in.length);
-        }
-        try(BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
-            StringBuilder re=new StringBuilder();
-            String reline=null;
-            while((reline=bufferedReader.readLine())!=null){
-                re.append(reline.trim());
+        try{
+            HttpsURLConnection connection=(HttpsURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/json");
+            connection.setDoOutput(true);
+            String jsonInput="{\"action\":\"get\",\"items\":{\"href\":\"/client/\",\"what\":1}}";
+            try(OutputStream os=connection.getOutputStream()){
+                byte[] in=jsonInput.getBytes("utf-8");
+                os.write(in,0,in.length);
             }
-            JsonItems jsonItems=gson.fromJson(re.toString(),new TypeToken<JsonItems>(){}.getType());
-            jsonItems.items.forEach((jsonDownloadFile)->{
-                if(jsonDownloadFile.href.contains("/client/OpenFRP")){
-                    res.set(Math.max(res.get(),Integer.valueOf(jsonDownloadFile.href.substring(jsonDownloadFile.href.length() - 9, jsonDownloadFile.href.length() - 1))));
-                    folderName=jsonDownloadFile.href.substring(jsonDownloadFile.href.length()-33);
+            try(BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
+                StringBuilder re=new StringBuilder();
+                String reline=null;
+                while((reline=bufferedReader.readLine())!=null){
+                    re.append(reline.trim());
                 }
-            });
+                JsonItems jsonItems=gson.fromJson(re.toString(),new TypeToken<JsonItems>(){}.getType());
+                jsonItems.items.forEach((jsonDownloadFile)->{
+                    if(jsonDownloadFile.href.contains("/client/OpenFRP")){
+                        res.set(Math.max(res.get(),Integer.valueOf(jsonDownloadFile.href.substring(jsonDownloadFile.href.length() - 9, jsonDownloadFile.href.length() - 1))));
+                        folderName=jsonDownloadFile.href.substring(jsonDownloadFile.href.length()-33);
+                    }
+                });
 
+            }
+        }catch (SSLHandshakeException e){
+            e.printStackTrace();
+            OpenLink.LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
+            SSLUtils.ignoreSsl();
+        }catch (Exception e){
+            throw new RuntimeException(e);
         }
-
         return res.get();
     }
 
