@@ -5,7 +5,6 @@ import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.gui.*;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
-import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
@@ -32,6 +31,12 @@ public abstract class TitleMenuMixin extends Screen {
             this.minecraft.setScreen(new ConfirmScreenWithLanguageButton(confirmed->{
                 if(confirmed){
                     SSLUtils.SSLIgnored=false;
+                    try {
+                        Frpc.init();//安装/检查更新frpc版本
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    Request.readSession();//读取以前的SessionID
                 }
                 else{
                     OpenLink.LOGGER.error("Minecraft closed because of SSL.");
@@ -43,9 +48,7 @@ public abstract class TitleMenuMixin extends Screen {
             this.minecraft.setScreen(new UpdateScreen());
         }
         if (Request.sessionID == null || Request.Authorization == null) {
-            Request.readSession();
-            if(Request.sessionID == null || Request.Authorization == null)
-                this.minecraft.setScreen(new LoginScreen());
+            this.minecraft.setScreen(new LoginScreen());
         }
         Frpc.stopFrpc();
     }

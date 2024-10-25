@@ -25,8 +25,8 @@ public final class OpenLink {
         }catch (Exception e){
             throw new RuntimeException(e);
         }
-        Frpc.init();//安装/检查更新frpc版本
         if(!SSLUtils.SSLIgnored){
+            Frpc.init();//安装/检查更新frpc版本
             Request.readSession();//读取以前的SessionID
         }else{
             LOGGER.warn("SSL is ignored. The confirm screen will show after the main game screen loaded.");
