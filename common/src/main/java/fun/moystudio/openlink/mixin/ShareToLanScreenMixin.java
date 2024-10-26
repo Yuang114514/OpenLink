@@ -14,10 +14,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.*;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameType;
@@ -217,8 +214,12 @@ public abstract class ShareToLanScreenMixin extends Screen{
                             Frpc.stopFrpc();
                             throw new Exception("Can not start frpc???");
                         }
-                        Component tmp=new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+runningproxy.connectAddress+"§r");
-                        this.minecraft.keyboardHandler.setClipboard(runningproxy.connectAddress);
+                        JsonUserProxy finalRunningproxy = runningproxy;
+                        Component tmp= ComponentUtils.wrapInSquareBrackets((new TranslatableComponent("text.openlink.frpcstartsucessfully")).withStyle((style -> {
+                            return style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
+                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))
+                                    .withInsertion(finalRunningproxy.connectAddress);
+                        })));
                         this.minecraft.gui.getChat().addMessage(tmp);
                     } catch (Exception e) {
                         Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
