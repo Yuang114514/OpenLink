@@ -11,5 +11,12 @@
   "text.openlink.setting_log": "隧道日志",
   "text.openlink.setting_traffic": "流量变化",
   "text.openlink.setting_mod": "OpenLink 模组设置",
-  "text.openlink.setting_user": "OpenFrp 用户信息"
+  "text.openlink.setting_user": "OpenFrp 用户信息",
+  "text.openlink.usingfrp": "使用 OpenFrp 联机隧道",
+  "text.openlink.port": "远程端口(可选)",
+  "text.openlink.userproxieslimited": "您的OF账户已创建隧道数达到允许的最大数目。请删除一些隧道后再次尝试！",
+  "text.openlink.remoteportnotfound": "在 5 次尝试后找不到任何可用的远程端口(也许你今天太不幸运了 :> )",
+  "text.openlink.frpcstartsucessfully": "[OpenLink] OF代理成功启动! IP:",
+  "text.openlink.nofrpcfile": "无法在游戏目录中找到 frpc 可执行文件，\n请下载frpc。",
+  "text.openlink.sslignored": "由于您的网络，SSL已被忽略。您的网络请求将不安全。您是否仍要使用 OpenLink？"
 }
