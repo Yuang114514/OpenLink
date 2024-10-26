@@ -8,6 +8,7 @@ import fun.moystudio.openlink.network.SSLUtils;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Mixin;
@@ -42,7 +43,8 @@ public abstract class TitleMenuMixin extends Screen {
                     OpenLink.LOGGER.error("Minecraft closed because of SSL.");
                     this.minecraft.close();
                 }
-            },new TranslatableComponent("text.openlink.sslignored"),new TranslatableComponent("text.openlink.sslignored")));
+                this.minecraft.setScreen(null);
+            },new TextComponent("SSL Handshake Error"),new TranslatableComponent("text.openlink.sslignored")));
         }
         if (Frpc.hasUpdate) {
             this.minecraft.setScreen(new UpdateScreen());
