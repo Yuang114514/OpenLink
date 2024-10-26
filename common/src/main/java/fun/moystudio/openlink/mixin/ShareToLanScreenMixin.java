@@ -199,7 +199,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
                         //启动Frpc
                         Frpc.runFrpc((int) runningproxy.id);
                         //check
-                        Thread.sleep(3000);
+                        Thread.sleep(5000);
                         response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                         userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                         runningproxy=null;
