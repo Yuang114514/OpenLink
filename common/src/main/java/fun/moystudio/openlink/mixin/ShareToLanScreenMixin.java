@@ -215,11 +215,8 @@ public abstract class ShareToLanScreenMixin extends Screen{
                             throw new Exception("Can not start frpc???");
                         }
                         JsonUserProxy finalRunningproxy = runningproxy;
-                        Component tmp= ComponentUtils.wrapInSquareBrackets((new TranslatableComponent("text.openlink.frpcstartsucessfully")).withStyle((style -> {
-                            return style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
-                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))
-                                    .withInsertion(finalRunningproxy.connectAddress);
-                        })));
+                        Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully")).withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))));
                         this.minecraft.gui.getChat().addMessage(tmp);
                     } catch (Exception e) {
                         Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
