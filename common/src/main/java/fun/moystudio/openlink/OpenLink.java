@@ -16,7 +16,7 @@ public final class OpenLink {
 
     public static void init() throws Exception {
         LOGGER.info("Initializing OpenLink!");
-        //由于某作者的逆天电脑，特意添加跳过ssl功能
+        //跳过ssl功能
         try{
             Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}",true);
         }catch (SSLHandshakeException e){

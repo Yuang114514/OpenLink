@@ -14,6 +14,7 @@ import javax.net.ssl.X509TrustManager;
     @author https://www.cnblogs.com/xjbBill
     如有侵权，请联系本mod作者删除
  **/
+
 public class SSLUtils {
     public static boolean SSLIgnored=false;
 
