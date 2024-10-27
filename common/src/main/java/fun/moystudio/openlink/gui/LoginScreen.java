@@ -85,7 +85,7 @@ public class LoginScreen extends Screen {
         }, new TranslatableComponent("narrator.button.language")));
 
         //注册
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 200, 200, 20, new TranslatableComponent("text.openlink.no_account"), (button) -> {
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 143, 200, 20, new TranslatableComponent("text.openlink.no_account"), (button) -> {
             browser.openBrowser();
         }));
     }
