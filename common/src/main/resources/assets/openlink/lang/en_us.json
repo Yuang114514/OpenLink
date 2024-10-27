@@ -1,7 +1,7 @@
 {
-  "gui.openlink.updatefrpctitle": "A new Frpc version was found!",
-  "text.openlink.updatingfrpc": "Updating Frpc...(It may takes a while)",
-  "text.openlink.updatefrpc": "A new Frpc version was found! Latest version date: %s, now version date: %s Would you like to update?",
+  "gui.openlink.updatefrpctitle": "§l§gA new Frpc version was found!",
+  "text.openlink.updatingfrpc": "§o§sUpdating Frpc...§8(It may takes a while)",
+  "text.openlink.updatefrpc": "§l§gA new Frpc version was found! §r§g Latest version date:§l§u %s §r§g, §gnow version date:§l§u %s §r§g. §6Would you like to update?",
   "gui.openlink.settingscreentitle": "OpenLink Settings",
   "gui.openlink.loginscreentitle": "Natayark account Login",
   "text.openlink.logintips": "Please login your Natayark account",
@@ -15,9 +15,9 @@
   "text.openlink.setting_user": "OpenFrp User Info",
   "text.openlink.usingfrp": "Using OpenFrp proxy",
   "text.openlink.port": "Proxy remote port(Optional)",
-  "text.openlink.userproxieslimited": "§4You've reached the maximum number of proxies.Please delete some proxies!",
-  "text.openlink.remoteportnotfound": "§3Can not find any available remote port after 5 tries(Maybe you are not lucky today :>)",
+  "text.openlink.userproxieslimited": "§cYou've reached the maximum number of proxies.Please delete some proxies!",
+  "text.openlink.remoteportnotfound": "§cCan not find any available remote port after 5 tries§o§k§i(Maybe you are not lucky today :>)",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] Started proxy successfully! Click to copy §n[IP]",
   "text.openlink.nofrpcfile": "§m§lUnable to find frpc executable file in game directory,\n§oplease download it.",
-  "text.openlink.sslignored": "§l§mBecause of your network, SSL has been ignored. Your network request will not be secure. Do you still want to use OpenLink?"
+  "text.openlink.sslignored": "§l§mBecause of your network, SSL has been ignored. Your network request will not be secure.§c§o Do you still want to use OpenLink?"
 }
