@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.json.JsonResponseWithCode;
 import fun.moystudio.openlink.json.JsonResponseWithData;
+import fun.moystudio.openlink.logic.WebBrowser;
 import fun.moystudio.openlink.network.*;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -28,7 +29,7 @@ public class LoginScreen extends Screen {
     EditBox username;
     EditBox password;
     String wrongmsg = "";
-    boolean browserOpened = false;
+    WebBrowser browser=new WebBrowser(Uris.openidLoginUri.toString());
 
     @Override
     protected void init() {
@@ -83,19 +84,10 @@ public class LoginScreen extends Screen {
             this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
         }, new TranslatableComponent("narrator.button.language")));
 
-        // 注册文字提示
-        TranslatableComponent registerText = new TranslatableComponent("text.openlink.no_account");
-        int textX = this.width / 2 - 100;
-        int textY = this.height / 6 + 200;
-
-    this.addRenderableWidget(new Button(this.width / 2 - 100, textY, 200, 20, registerText, (button) -> {
-        // 打开注册链接
-        try {
-            Desktop.getDesktop().browse(new URI("https://openid.17a.ink/register"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }));
+        //注册
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 200, 200, 20, new TranslatableComponent("text.openlink.no_account"), (button) -> {
+            browser.openBrowser();
+        }));
     }
 
     @Override
