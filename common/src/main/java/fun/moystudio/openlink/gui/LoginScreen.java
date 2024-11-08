@@ -15,8 +15,6 @@ import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
-import java.awt.Desktop;
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
 

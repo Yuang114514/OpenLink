@@ -7,7 +7,6 @@ import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -16,7 +15,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.network.chat.*;
 import net.minecraft.util.HttpUtil;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.gson.Gson;
 
-import java.io.PrintStream;
 import java.util.*;
 
 @Mixin(ShareToLanScreen.class)
@@ -141,7 +138,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
                         JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
                         List<JsonNode> canUseNodes=new ArrayList<>();
                         for(JsonNode now:nodelist.data.list){
-                            if(!now.group.contains(userinfo.data.group)||!now.protocolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
+                            if(!now.group.contains(userinfo.data.group)||!now.protolcolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
                                 continue;
                             }
                             canUseNodes.add(now);
