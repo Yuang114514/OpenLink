@@ -4,8 +4,11 @@ import com.google.common.reflect.TypeToken;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.gui.SettingButton;
+import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.network.Request;
+import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
@@ -14,6 +17,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,19 +27,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import com.google.gson.Gson;
-
-import java.util.*;
 
 @Mixin(ShareToLanScreen.class)
 public abstract class ShareToLanScreenMixin extends Screen{
+    @Unique
+    private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting.png");
     @Shadow private GameType gameMode;
 
     @Shadow private boolean commands;
 
     @Unique boolean isUsingFrp=true;
 
-    @Unique EditBox editBox;
+    @Unique
+    private static EditBox editBox;
 
     @Unique CycleButton<Boolean> usingfrp;
 
@@ -49,12 +53,17 @@ public abstract class ShareToLanScreenMixin extends Screen{
     public void init(CallbackInfo ci) {
         editBox=new EditBox(this.font,this.width / 2 + 5, 130, 150, 20,new TranslatableComponent("text.openlink.port"));
         editBox.setSuggestion(new TranslatableComponent("text.openlink.port").getString());
+        editBox.setValue(Frpc.lastPortValue);
         this.addRenderableWidget(editBox);
         usingfrp=CycleButton.onOffBuilder(isUsingFrp).create(this.width / 2 - 155, 130, 150, 20, new TranslatableComponent("text.openlink.usingfrp"),((cycleButton, bool) -> {
             this.isUsingFrp=bool;
             editBox.setVisible(isUsingFrp);
         }));
         this.addRenderableWidget(usingfrp);
+        this.addRenderableWidget(new SettingButton(this.width / 2 + 5+150+10, this.height - 28,
+                20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
+            this.minecraft.setScreen(new SettingScreen(this));
+        }));
     }
 
     @Override
@@ -113,114 +122,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
                     if(!isUsingFrp){
                         return;
                     }
-                    Gson gson=new Gson();
-                    try {
-                        Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-                        JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-                        //OpenLink隧道命名规则：openlink_mc_[本地端口号]
-                        for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
-                            if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
-                                try {
-                                    Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
-                                    OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
-                                } catch (Exception e) {
-                                    break;
-                                }
-                            }
-                        }//删除以前用过的隧道
-                        Thread.sleep(1000);
-                        response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-                        userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-                        JsonResponseWithData<JsonUserInfo> userinfo=Request.getUserInfo();
-                        if(userinfo.data.proxies==userProxies.data.total){
-                            throw new Exception(new TranslatableComponent("text.openlink.userproxieslimited").getString());
-                        }
-                        JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
-                        List<JsonNode> canUseNodes=new ArrayList<>();
-                        for(JsonNode now:nodelist.data.list){
-                            if(!now.group.contains(userinfo.data.group)||!now.protolcolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
-                                continue;
-                            }
-                            canUseNodes.add(now);
-                        }
-                        if(canUseNodes.isEmpty()){
-                            throw new Exception("Unable to use any node???");
-                        }
-                        canUseNodes.sort(((o1, o2) -> {
-                            if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)<1e-5)
-                                return o2.bandwidth*o2.bandwidthMagnification>o1.bandwidth*o1.bandwidthMagnification?1:-1;
-                            if(o1.classify!=o2.classify)
-                                return (int)(o1.classify-o2.classify);
-                            if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)
-                                return o1.needRealname?-1:1;
-                            return 0;
-                        }));
-                        JsonNode node=canUseNodes.get(0);//选取最优节点
-                        JsonNewProxy newProxy=new JsonNewProxy();
-                        newProxy.name="openlink_mc_"+String.valueOf(i);
-                        newProxy.local_port= String.valueOf(i);
-                        newProxy.node_id=node.id;
-                        Random random=new Random();
-                        int start,end;
-                        if(node.allowPort==null||node.allowPort.isBlank()){
-                            start=30000;
-                            end=60000;
-                        }
-                        else{
-                            start=Integer.parseInt(node.allowPort.substring(1,5));
-                            end=Integer.parseInt(node.allowPort.substring(7,11));
-                        }
-                        boolean found=false;
-                        for (int j = 1; j <= 5; j++) {
-                            newProxy.remote_port = random.nextInt(end - start + 1) + start;
-                            if((!editBox.getValue().isBlank())){
-                                newProxy.remote_port=Integer.parseInt(editBox.getValue());
-                            }
-                            response=Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
-                            if(gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag){
-                                found=true;
-                                break;
-                            }
-                        }//创建隧道
-                        if(!found) throw new Exception(new TranslatableComponent("text.openlink.remoteportnotfound").getString());
-                        response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-                        userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-                        JsonUserProxy runningproxy=null;
-                        for(JsonUserProxy jsonUserProxy:userProxies.data.list){
-                            if(jsonUserProxy.proxyName.equals("openlink_mc_"+String.valueOf(i))){
-                                runningproxy=jsonUserProxy;
-                                break;
-                            }
-                        }
-                        if(runningproxy==null) throw new Exception("Can not find the proxy???");
-                        //启动Frpc
-                        Frpc.runFrpc((int) runningproxy.id);
-                        //check
-                        Thread.sleep(5000);
-                        response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-                        userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-                        runningproxy=null;
-                        for(JsonUserProxy jsonUserProxy:userProxies.data.list){
-                            if(jsonUserProxy.proxyName.equals("openlink_mc_"+String.valueOf(i))){
-                                runningproxy=jsonUserProxy;
-                                break;
-                            }
-                        }
-                        if(runningproxy==null) throw new Exception("Can not find the proxy???");
-                        if(!runningproxy.online){
-                            Frpc.stopFrpc();
-                            throw new Exception("Can not start frpc???");
-                        }
-                        JsonUserProxy finalRunningproxy = runningproxy;
-                        Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully",finalRunningproxy.connectAddress))
-                                .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))));
-                        this.minecraft.gui.getChat().addMessage(tmp);
-                    } catch (Exception e) {
-                        Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
-                        e.printStackTrace();
-                        this.minecraft.gui.getChat().addMessage(tmp);
-                    }
+                    Frpc.openFrp(i,editBox.getValue());
                 });
             }
         }

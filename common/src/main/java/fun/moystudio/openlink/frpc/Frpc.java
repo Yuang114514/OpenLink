@@ -2,18 +2,24 @@ package fun.moystudio.openlink.frpc;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.json.JsonFrpcVersion;
-import fun.moystudio.openlink.json.JsonItems;
+import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.*;
 
 import java.io.*;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Frpc {
@@ -30,6 +36,7 @@ public class Frpc {
     public static final int MAX_BUFFER_SIZE=10485760;
     public static int latestVersionDate=0;
     public static Process runtimeprocess=null;
+    public static String lastPortValue=null;
 
     public static void init() throws Exception {
         Gson gson=new Gson();
@@ -165,5 +172,129 @@ public class Frpc {
             runtimeprocess.destroy();
         }
         runtimeprocess=null;
+    }
+    public static boolean openFrp(int i,String val){
+        Frpc.stopFrpc();
+        Gson gson=new Gson();
+        try {
+            if(SSLUtils.SSLIgnored){
+                //SSL警告
+                Minecraft.getInstance().gui.getChat().addMessage(new TranslatableComponent("text.openlink.sslwarning"));
+            }
+            Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+            JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
+            //OpenLink隧道命名规则：openlink_mc_[本地端口号]
+            for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
+                if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
+                    try {
+                        Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
+                        OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
+                    } catch (Exception e) {
+                        break;
+                    }
+                }
+            }//删除以前用过的隧道
+            Thread.sleep(1000);
+            response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+            userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
+            JsonResponseWithData<JsonUserInfo> userinfo=Request.getUserInfo();
+            if(userinfo.data.proxies==userProxies.data.total){
+                throw new Exception(new TranslatableComponent("text.openlink.userproxieslimited").getString());
+            }
+            JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
+            List<JsonNode> canUseNodes=new ArrayList<>();
+            for(JsonNode now:nodelist.data.list){
+                if(!now.group.contains(userinfo.data.group)||!now.protolcolSupport.get("tcp")||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
+                    continue;
+                }
+                canUseNodes.add(now);
+            }
+            if(canUseNodes.isEmpty()){
+                throw new Exception("Unable to use any node???");
+            }
+            canUseNodes.sort(((o1, o2) -> {
+                if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)<1e-5)
+                    return o2.bandwidth*o2.bandwidthMagnification>o1.bandwidth*o1.bandwidthMagnification?1:-1;
+                if(o1.classify!=o2.classify)
+                    return (int)(o1.classify-o2.classify);
+                if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)
+                    return o1.needRealname?-1:1;
+                return 0;
+            }));
+            JsonNode node=canUseNodes.get(0);//选取最优节点
+            JsonNewProxy newProxy=new JsonNewProxy();
+            newProxy.name="openlink_mc_"+String.valueOf(i);
+            newProxy.local_port= String.valueOf(i);
+            newProxy.node_id=node.id;
+            Random random=new Random();
+            int start,end;
+            if(node.allowPort==null||node.allowPort.isBlank()){
+                start=30000;
+                end=60000;
+            }
+            else{
+                start=Integer.parseInt(node.allowPort.substring(1,5));
+                end=Integer.parseInt(node.allowPort.substring(7,11));
+            }
+            boolean found=false;
+            if(val.isBlank()&&!lastPortValue.isBlank()){
+                val=lastPortValue;
+            }
+            for (int j = 1; j <= 5; j++) {
+                newProxy.remote_port = random.nextInt(end - start + 1) + start;
+                if((!val.isBlank())){
+                    newProxy.remote_port=Integer.parseInt(val);
+                }
+                response=Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
+                if(gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag){
+                    found=true;
+                    break;
+                }
+            }//创建隧道
+            if(!found) throw new Exception(new TranslatableComponent("text.openlink.remoteportnotfound").getString());
+            lastPortValue=String.valueOf(newProxy.remote_port);
+            response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+            userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
+            JsonUserProxy runningproxy=null;
+            for(JsonUserProxy jsonUserProxy:userProxies.data.list){
+                if(jsonUserProxy.proxyName.equals("openlink_mc_"+String.valueOf(i))){
+                    runningproxy=jsonUserProxy;
+                    break;
+                }
+            }
+            if(runningproxy==null) throw new Exception("Can not find the proxy???");
+            //启动Frpc
+            Frpc.runFrpc((int) runningproxy.id);
+            //check
+            Thread.sleep(5000);
+            response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+            userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
+            runningproxy=null;
+            for(JsonUserProxy jsonUserProxy:userProxies.data.list){
+                if(jsonUserProxy.proxyName.equals("openlink_mc_"+String.valueOf(i))){
+                    runningproxy=jsonUserProxy;
+                    break;
+                }
+            }
+            if(runningproxy==null) throw new Exception("Can not find the proxy???");
+            if(!runningproxy.online){
+                Frpc.stopFrpc();
+                throw new Exception("Can not start frpc???");
+            }
+            JsonUserProxy finalRunningproxy = runningproxy;
+            Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully",finalRunningproxy.connectAddress))
+                    .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
+                            .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))));
+            Minecraft.getInstance().gui.getChat().addMessage(tmp);
+        } catch (Exception e) {
+            Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
+            e.printStackTrace();
+            Minecraft.getInstance().gui.getChat().addMessage(tmp);
+            tmp=ComponentUtils.wrapInSquareBrackets(new TranslatableComponent("text.openlink.clicktorestart"))
+                            .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/proxyrestart"))));
+            Minecraft.getInstance().gui.getChat().addMessage(tmp);
+            return false;
+        }
+        return true;
     }
 }

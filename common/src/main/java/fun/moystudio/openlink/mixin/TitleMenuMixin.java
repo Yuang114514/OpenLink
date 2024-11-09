@@ -59,7 +59,7 @@ public abstract class TitleMenuMixin extends Screen {
     public void init(CallbackInfo ci) {
         this.addRenderableWidget(new SettingButton(this.width / 2 + 129, this.height / 4 + 48 + 72 + 12, 
             20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
-                this.minecraft.setScreen(new SettingScreen());
+                this.minecraft.setScreen(new SettingScreen(null));
             }));
     }
 }

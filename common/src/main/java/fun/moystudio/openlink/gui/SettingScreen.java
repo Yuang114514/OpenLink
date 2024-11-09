@@ -13,15 +13,22 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 public class SettingScreen extends Screen {
-    public SettingScreen() {
+    public SettingScreen(Screen last) {
         super(new TranslatableComponent("gui.openlink.settingscreentitle"));
+        lastscreen=last;
     }
     MultiLineLabel title;
+    Screen lastscreen=null;
     SettingTabs tab=SettingTabs.LOG;
     SettingScreenButton buttonLog,buttonTraffic,buttonUser,buttonMod;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
 
     public static final ResourceLocation BACKGROUND_SETTING=new ResourceLocation("openlink","textures/gui/background_setting.png");
+
+    @Override
+    public void onClose(){
+        this.minecraft.setScreen(lastscreen);
+    }
 
     @Override
     protected void init(){
