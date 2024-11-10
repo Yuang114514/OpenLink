@@ -204,7 +204,7 @@ public class Frpc {
             JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
             List<JsonNode> canUseNodes=new ArrayList<>();
             for(JsonNode now:nodelist.data.list){
-                if(!now.group.contains(userinfo.data.group)||!now.protolcolSupport.get("tcp")||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
+                if(!now.group.contains(userinfo.data.group)||!now.protocolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
                     continue;
                 }
                 canUseNodes.add(now);

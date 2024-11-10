@@ -7,5 +7,8 @@ public class JsonNode {
     public String comments,group,hostname,name,port,description,allowPort;
     public long classify,id,status;
     public double bandwidthMagnification,bandwidth,maxOnlineMagnification,unitcostEc;
-    public Map<String, Boolean> protolcolSupport;
+    public static class protocol {
+        public boolean tcp,udp,http,https,stcp,xtcp;
+    }
+    public protocol protocolSupport;
 }
