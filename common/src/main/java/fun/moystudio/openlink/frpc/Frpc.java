@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.Extract;
+import fun.moystudio.openlink.logic.OnlineModeTabs;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
@@ -37,6 +38,8 @@ public class Frpc {
     public static int latestVersionDate=0;
     public static Process runtimeprocess=null;
     public static String lastPortValue=null;
+    public static OnlineModeTabs onlineModeTabs=OnlineModeTabs.ONLINE_MODE;
+    public static boolean allowPvp=true;
 
     public static void init() throws Exception {
         Gson gson=new Gson();
@@ -242,7 +245,7 @@ public class Frpc {
             }
             for (int j = 1; j <= 5; j++) {
                 newProxy.remote_port = random.nextInt(end - start + 1) + start;
-                if(val!=null&&!val.isBlank()){
+                if(val!=null&&!val.isBlank()&&j==1){
                     newProxy.remote_port=Integer.parseInt(val);
                 }
                 response=Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
