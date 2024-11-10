@@ -237,12 +237,12 @@ public class Frpc {
                 end=Integer.parseInt(node.allowPort.substring(7,11));
             }
             boolean found=false;
-            if(val.isBlank()&&!lastPortValue.isBlank()){
+            if((val==null||val.isBlank())&&lastPortValue!=null&&!lastPortValue.isBlank()){
                 val=lastPortValue;
             }
             for (int j = 1; j <= 5; j++) {
                 newProxy.remote_port = random.nextInt(end - start + 1) + start;
-                if((!val.isBlank())){
+                if(val!=null&&!val.isBlank()){
                     newProxy.remote_port=Integer.parseInt(val);
                 }
                 response=Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
