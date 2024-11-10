@@ -15,7 +15,7 @@ public class ClientCommands {
     @SubscribeEvent
     public static void onClientCommandRegistering(RegisterClientCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher=event.getDispatcher();
-        LiteralCommandNode<CommandSourceStack> commandNode=dispatcher.register(Commands.literal("proxyrestart")
+        dispatcher.register(Commands.literal("proxyrestart")
                 .executes(context -> Frpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
     }
 }

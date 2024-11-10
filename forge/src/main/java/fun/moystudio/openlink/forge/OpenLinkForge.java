@@ -1,6 +1,5 @@
 package fun.moystudio.openlink.forge;
 
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import fun.moystudio.openlink.OpenLink;
