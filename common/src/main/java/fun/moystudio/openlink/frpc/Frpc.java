@@ -282,7 +282,7 @@ public class Frpc {
                 throw new Exception("Can not start frpc???");
             }
             JsonUserProxy finalRunningproxy = runningproxy;
-            Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully",finalRunningproxy.connectAddress))
+            Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+finalRunningproxy.connectAddress))
                     .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
                             .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))));
             Minecraft.getInstance().gui.getChat().addMessage(tmp);
