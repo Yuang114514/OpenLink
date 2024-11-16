@@ -1,16 +1,11 @@
 package fun.moystudio.openlink.mixin;
 
-import com.google.common.reflect.TypeToken;
-import com.mojang.datafixers.util.Pair;
-import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.gui.SettingButton;
 import fun.moystudio.openlink.gui.SettingScreen;
-import fun.moystudio.openlink.json.*;
+import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
-import fun.moystudio.openlink.network.Request;
-import fun.moystudio.openlink.network.SSLUtils;
-import fun.moystudio.openlink.network.Uris;
+import fun.moystudio.openlink.logic.UUIDFixer;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -29,15 +24,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.Collections;
+
 @Mixin(ShareToLanScreen.class)
 public abstract class ShareToLanScreenMixin extends Screen{
     @Unique
     private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting.png");
+
     @Shadow private GameType gameMode;
 
     @Shadow private boolean commands;
-
-    @Unique boolean isUsingFrp=true;
 
     @Unique
     private static EditBox editBox;
@@ -58,17 +54,17 @@ public abstract class ShareToLanScreenMixin extends Screen{
     public void init(CallbackInfo ci) {
         editBox=new EditBox(this.font,this.width / 2 + 5, 160, 150, 20,new TranslatableComponent("text.openlink.port"));
         editBox.setSuggestion(new TranslatableComponent("text.openlink.port").getString());
-        editBox.setValue(Frpc.lastPortValue);
+        editBox.setValue(LanConfig.cfg.last_port_value);
         this.addRenderableWidget(editBox);
-        usingfrp=CycleButton.onOffBuilder(isUsingFrp).create(this.width / 2 - 155, 160, 150, 20, new TranslatableComponent("text.openlink.usingfrp"),((cycleButton, bool) -> {
-            this.isUsingFrp=bool;
-            editBox.setVisible(isUsingFrp);
+        usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, new TranslatableComponent("text.openlink.usingfrp"),((cycleButton, bool) -> {
+            LanConfig.cfg.use_frp=bool;
+            editBox.setVisible(LanConfig.cfg.use_frp);
         }));
         onlinemode=CycleButton.builder((OnlineModeTabs o)-> o.component)
                 .withValues(OnlineModeTabs.values())
-                .withInitialValue(Frpc.onlineModeTabs)
-                .create(this.width / 2 - 155, 130, 150, 20, new TranslatableComponent("cycle.openlink.onlinemode"),   (button, o)->Frpc.onlineModeTabs=o);
-        allowpvp=CycleButton.onOffBuilder(Frpc.allowPvp).create(this.width / 2 + 5, 130, 150, 20, new TranslatableComponent("mco.configure.world.pvp"),(cycleButton, object) -> Frpc.allowPvp=object);
+                .withInitialValue(LanConfig.getAuthMode())
+                .create(this.width / 2 - 155, 130, 150, 20, new TranslatableComponent("text.openlink.onlinemodebutton"),   (button, o)->LanConfig.setAuthMode(o));
+        allowpvp=CycleButton.onOffBuilder(LanConfig.cfg.allow_pvp).create(this.width / 2 + 5, 130, 150, 20, new TranslatableComponent("mco.configure.world.pvp"),(cycleButton, object) -> LanConfig.cfg.allow_pvp=object);
         this.addRenderableWidget(usingfrp);
         this.addRenderableWidget(onlinemode);
         this.addRenderableWidget(allowpvp);
@@ -82,7 +78,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
     public void tick(){
         String val = editBox.getValue();
         couldShare=true;
-        if(val.isBlank()||!isUsingFrp){
+        if(val.isBlank()||!LanConfig.cfg.use_frp){
             editBox.setSuggestion(new TranslatableComponent("text.openlink.port").getString());
             return;
         }
@@ -120,8 +116,6 @@ public abstract class ShareToLanScreenMixin extends Screen{
                     this.minecraft.setScreen((Screen)null);
                     int i = HttpUtil.getAvailablePort();
                     TranslatableComponent component;
-                    this.minecraft.getSingleplayerServer().setUsesAuthentication(Frpc.onlineModeTabs==OnlineModeTabs.ONLINE_MODE);
-                    this.minecraft.getSingleplayerServer().setPvpAllowed(Frpc.allowPvp);
                     if (this.minecraft.getSingleplayerServer().publishServer(this.gameMode, this.commands, i)) {
                         component = new TranslatableComponent("commands.publish.started", new Object[]{i});
                     } else {
@@ -132,11 +126,20 @@ public abstract class ShareToLanScreenMixin extends Screen{
                     }
                     this.minecraft.gui.getChat().addMessage(component);
                     this.minecraft.updateTitle();
-                    //以上是(被我修改了一点的)原版的代码，以下是OpenLink的Frp启动及隧道创建，节点选择等主要功能
-                    if(!isUsingFrp){
+                    this.minecraft.getSingleplayerServer().setUsesAuthentication(LanConfig.getAuthMode()==OnlineModeTabs.ONLINE_MODE);
+                    this.minecraft.getSingleplayerServer().setPvpAllowed(LanConfig.cfg.allow_pvp);
+                    UUIDFixer.EnableUUIDFixer=LanConfig.getAuthMode()==OnlineModeTabs.OFFLINE_FIXUUID;
+                    UUIDFixer.ForceOfflinePlayers=Collections.emptyList();//暂时用着，后面再改
+                    //以上是(被我修改了一点的)原版的代码，以下是OpenLink的Frpc启动及隧道创建，节点选择等主要功能
+                    if(!LanConfig.cfg.use_frp){
                         return;
                     }
                     Frpc.openFrp(i,editBox.getValue());
+                    try {
+                        LanConfig.writeConfig();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 });
             }
         }

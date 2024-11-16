@@ -22,5 +22,7 @@
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 SSL ignoring may make your user and password INSECURE. \n§c§o§lPlease don't send IP to anyone YOU DON'T TRUST!",
   "text.openlink.clicktorestart": "§o§l§cClick to restart the remote proxy",
   "cycle.openlink.onlinemode": "Online Mode",
-  "cycle.openlink.offlinemode": "Offline Mode"
+  "cycle.openlink.offlinemode": "Offline Mode",
+  "cycle.openlink.fixuuid": "Offline Mode+UUID Fix",
+  "text.openlink.onlinemodebutton": "Auth Mode"
 }

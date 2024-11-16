@@ -5,16 +5,11 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.*;
 
 
-/**
-    @author zirranYa
- **/
-
-
 public class SSLUtils {
 
-    private boolean sslIgnored = false;
+    public static boolean sslIgnored = false;
 
-    private void trustAllHttpsCertificates() throws Exception {
+    private static void trustAllHttpsCertificates() throws Exception {
         TrustManager[] trustAllCerts = new TrustManager[]{new miTM()};
         SSLContext sc = SSLContext.getInstance("SSL");
         sc.init(null, trustAllCerts, null);
@@ -41,14 +36,10 @@ public class SSLUtils {
         }
     }
 
-    public void ignoreSsl() throws Exception {
+    public static void ignoreSsl() throws Exception {
         sslIgnored = true;
         HostnameVerifier hv = (urlHostName, session) -> true;
         trustAllHttpsCertificates();
         HttpsURLConnection.setDefaultHostnameVerifier(hv);
-    }
-
-    public boolean isSslIgnored() {
-        return sslIgnored;
     }
 }

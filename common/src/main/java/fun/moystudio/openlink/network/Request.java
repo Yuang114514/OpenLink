@@ -8,24 +8,34 @@ import fun.moystudio.openlink.json.*;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Request {
     public static String sessionID=null;
     public static String Authorization=null;
-    public static final File sessionCodeJson=new File("sessioncode.json");
+    public static final File sessionCodeJson=new File(OpenLink.CONFIG_DIR+"sessioncode.json");
     public final static Map<String,List<String>> DEFAULT_HEADER=new HashMap<>(){{
         put("Content-Type", Collections.singletonList("application/json"));
     }};
     public static String token=null;
 
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body) throws Exception {
-        return POST(url, header, body, false);
+        AtomicReference<Pair<String, Map<String, List<String>>>> res = new AtomicReference<>();
+        Thread thread = new Thread(()->{
+            try {
+                res.set(POST(url, header, body, false));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        },"Request thread");
+        thread.start();
+        thread.join();
+        return res.get();
     }
 
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body, boolean _skip) throws Exception {
@@ -68,36 +78,36 @@ public class Request {
         }
     }
 
-    public static String GET(String url, Map<String,List<String>> header) throws Exception{//他甚至不需要用（
-        URL postUrl=new URL(url);
-        HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
-        connection.setRequestMethod("GET");
-        header.forEach(((s, strings) -> {
-            strings.forEach(s1 -> {
-                connection.addRequestProperty(s,s1);
-            });
-        }));
-        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
-            StringBuilder re=new StringBuilder();
-            String line;
-            while((line=br.readLine())!=null){
-                re.append(line.trim());
-            }
-            return re.toString();
-        }catch (Exception e){
-            if(connection.getResponseCode()>=400){
-                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(),"utf-8"));
-                StringBuilder re=new StringBuilder();
-                String line;
-                while((line=br.readLine())!=null){
-                    re.append(line.trim());
-                }
-                return re.toString();
-            }
-            throw new RuntimeException(e);
-        }
-
-    }
+//    public static String GET(String url, Map<String,List<String>> header) throws Exception{//他甚至不需要用（zirran先别删awa）
+//        URL postUrl=new URL(url);
+//        HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
+//        connection.setRequestMethod("GET");
+//        header.forEach(((s, strings) -> {
+//            strings.forEach(s1 -> {
+//                connection.addRequestProperty(s,s1);
+//            });
+//        }));
+//        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
+//            StringBuilder re=new StringBuilder();
+//            String line;
+//            while((line=br.readLine())!=null){
+//                re.append(line.trim());
+//            }
+//            return re.toString();
+//        }catch (Exception e){
+//            if(connection.getResponseCode()>=400){
+//                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(),"utf-8"));
+//                StringBuilder re=new StringBuilder();
+//                String line;
+//                while((line=br.readLine())!=null){
+//                    re.append(line.trim());
+//                }
+//                return re.toString();
+//            }
+//            throw new RuntimeException(e);
+//        }
+//
+//    }
 
     public static Map<String,List<String>> getHeaderWithCookieByResponse(Pair<String,Map<String, List<String>>> response,Map<String,List<String>> header){
         if(!response.getSecond().containsKey("Set-Cookie")){

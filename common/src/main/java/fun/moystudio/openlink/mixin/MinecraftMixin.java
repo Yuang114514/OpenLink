@@ -1,6 +1,7 @@
 package fun.moystudio.openlink.mixin;
 
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.social.PlayerSocialManager;
@@ -13,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
-public class MinecraftMixin {
+public abstract class MinecraftMixin {
     @Shadow @Final private PlayerSocialManager playerSocialManager;
 
     @Shadow @Final private static Logger LOGGER;
@@ -24,7 +25,7 @@ public class MinecraftMixin {
     }
     @Inject(method = "prepareForMultiplayer",at = @At("TAIL"))
     public void prepareForMultiplayer(CallbackInfo ci) {
-        if(Frpc.onlineModeTabs!=OnlineModeTabs.ONLINE_MODE){
+        if(LanConfig.getAuthMode()!=OnlineModeTabs.ONLINE_MODE){
             LOGGER.warn("Server will run in offline mode!");
             this.playerSocialManager.stopOnlineMode();
         }

@@ -28,10 +28,10 @@ public abstract class TitleMenuMixin extends Screen {
 
     @Inject(method = "tick",at=@At("TAIL"))
     public void tick(CallbackInfo ci){
-        if (SSLUtils.SSLIgnored){
+        if (SSLUtils.sslIgnored){
             this.minecraft.setScreen(new ConfirmScreenWithLanguageButton(confirmed->{
                 if(confirmed){
-                    SSLUtils.SSLIgnored=false;
+                    SSLUtils.sslIgnored=false;
                     try {
                         Frpc.init();//安装/检查更新frpc版本
                     } catch (Exception e) {

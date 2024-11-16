@@ -9,6 +9,7 @@
     "TitleMenuMixin"
   ],
   "mixins": [
+    "PlayerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
