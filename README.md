@@ -6,4 +6,10 @@
 
 ## 合作
 
-目前模组支持OpenFrp（正在做）、SakuraFrp（计划做）、自己搭一个（计划做）内穿的便捷化操作，让你不再劳累于选择隧道与填写表单。
+[![Crowdin](https://badges.crowdin.net/openlink/localized.svg)](https://crowdin.com/project/openlink)
+
+## [OpenLink本地化计划/OpenLink's Localization Plan]
+> 简体中文：Star Carefree；
+> 繁体中文（台湾、香港）：Rimon12_HK；
+> Indonesian：Floo；
+> 文言文：Yamisafa。
