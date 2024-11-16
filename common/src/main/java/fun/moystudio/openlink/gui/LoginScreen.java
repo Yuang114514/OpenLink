@@ -19,10 +19,11 @@ import java.util.List;
 import java.util.Map;
 
 public class LoginScreen extends Screen {
-    public LoginScreen() {
+    public LoginScreen(Screen last) {
         super(new TranslatableComponent("gui.openlink.loginscreentitle"));
+        lastscreen=last;
     }
-
+    Screen lastscreen=null;
     MultiLineLabel loginTips;
     EditBox username;
     EditBox password;
@@ -101,5 +102,10 @@ public class LoginScreen extends Screen {
     @Override
     public boolean shouldCloseOnEsc() {
         return false;
+    }
+
+    @Override
+    public void onClose(){
+        this.minecraft.setScreen(lastscreen);
     }
 }

@@ -49,9 +49,6 @@ public abstract class TitleMenuMixin extends Screen {
         if (Frpc.hasUpdate) {
             this.minecraft.setScreen(new UpdateScreen());
         }
-        if (Request.sessionID == null || Request.Authorization == null) {
-            this.minecraft.setScreen(new LoginScreen());
-        }
         Frpc.stopFrpc();
     }
 

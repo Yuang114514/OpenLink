@@ -17,7 +17,7 @@ public class LanConfig {
         return OnlineModeTabs.valueOf(cfg.auth_mode);
     }
     public static void setAuthMode(OnlineModeTabs o){
-        cfg.auth_mode=o.toString();
+        cfg.auth_mode=o.name();
     }
     public static void readConfig() throws Exception {
         Gson gson=new Gson();

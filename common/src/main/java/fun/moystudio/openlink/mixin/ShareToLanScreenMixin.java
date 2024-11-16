@@ -6,6 +6,7 @@ import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
 import fun.moystudio.openlink.logic.UUIDFixer;
+import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -14,6 +15,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +26,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 @Mixin(ShareToLanScreen.class)
 public abstract class ShareToLanScreenMixin extends Screen{
@@ -76,8 +80,17 @@ public abstract class ShareToLanScreenMixin extends Screen{
 
     @Override
     public void tick(){
-        String val = editBox.getValue();
         couldShare=true;
+        String val = editBox.getValue();
+        if(Request.sessionID==null||Request.Authorization==null){
+            LanConfig.cfg.use_frp=false;
+            this.usingfrp.setValue(false);
+            this.usingfrp.active=false;
+            return;
+        }
+        else{
+            this.usingfrp.active=true;
+        }
         if(val.isBlank()||!LanConfig.cfg.use_frp){
             editBox.setSuggestion(new TranslatableComponent("text.openlink.port").getString());
             return;
@@ -112,7 +125,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
             Button button=(Button)(par1);
             if(button.getMessage().equals(new TranslatableComponent("lanServer.start"))){
                 return new Button(this.width / 2 - 155, this.height - 28, 150, 20, new TranslatableComponent("lanServer.start"), (button1) -> {
-                    if(!this.couldShare) return;
+                    if(!this.couldShare)return;
                     this.minecraft.setScreen((Screen)null);
                     int i = HttpUtil.getAvailablePort();
                     TranslatableComponent component;
@@ -140,7 +153,16 @@ public abstract class ShareToLanScreenMixin extends Screen{
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                });
+                },((button1, poseStack, i, j) -> {
+                    if(Request.sessionID==null||Request.Authorization==null){
+                        List<Component> list=new ArrayList<>();
+                        String[] list1=new TranslatableComponent("text.openlink.lanlogintips").getString().split("\n");
+                        for(String s:list1){
+                            list.add(new TextComponent(s));
+                        }
+                        renderComponentTooltip(poseStack,list,i,j);
+                    }
+                }));
             }
         }
         return par1;

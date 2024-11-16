@@ -45,7 +45,7 @@ public class SettingScreen extends Screen {
             try {
                 userInfo = Request.getUserInfo();
                 if(!userInfo.flag)
-                    this.minecraft.setScreen(new LoginScreen());
+                    this.minecraft.setScreen(new LoginScreen(this));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -73,6 +73,9 @@ public class SettingScreen extends Screen {
 
     @Override
     public void tick(){
+        if (Request.sessionID == null || Request.Authorization == null) {
+            this.minecraft.setScreen(new LoginScreen(this));
+        }
         switch (tab){
             case LOG -> {
                 buttonLog.active=false;

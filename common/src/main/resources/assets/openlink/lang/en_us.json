@@ -24,5 +24,6 @@
   "cycle.openlink.onlinemode": "Online Mode",
   "cycle.openlink.offlinemode": "Offline Mode",
   "cycle.openlink.fixuuid": "Offline Mode+UUID Fix",
-  "text.openlink.onlinemodebutton": "Auth Mode"
+  "text.openlink.onlinemodebutton": "Auth Mode",
+  "text.openlink.lanlogintips": "Please login your Natayark account\nin Openlink Settings first(if you want to use proxies)"
 }
