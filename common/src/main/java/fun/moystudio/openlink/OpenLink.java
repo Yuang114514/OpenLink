@@ -9,11 +9,13 @@ import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
+import java.util.prefs.Preferences;
 
 public final class OpenLink {
     public static final String MOD_ID = "openlink";
     public static final Logger LOGGER = LogManager.getLogger("OpenLink");
     public static final String CONFIG_DIR = "config" + File.separator + MOD_ID + File.separator;
+    public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
 
     public static void init() throws Exception {
         LOGGER.info("Initializing OpenLink!");

@@ -14,14 +14,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.prefs.Preferences;
 
 public class Request {
     public static String sessionID=null;
     public static String Authorization=null;
-    public static final File sessionCodeJson=new File(OpenLink.CONFIG_DIR+"sessioncode.json");
     public final static Map<String,List<String>> DEFAULT_HEADER=new HashMap<>(){{
         put("Content-Type", Collections.singletonList("application/json"));
     }};
+
     public static String token=null;
 
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body) throws Exception {
@@ -128,32 +129,18 @@ public class Request {
     }
 
     public static void writeSession() {
-        try {
-            sessionCodeJson.createNewFile();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        if(sessionID==null||Authorization==null){
-            OpenLink.LOGGER.error("Can not write sessioncode.json(SessionID or Authorization does not exist)");
-            return;
-        }
-        try (FileOutputStream fo = new FileOutputStream(sessionCodeJson)){
-            fo.write(("{\"sessionid\":\""+sessionID+"\",\"authorization\":\""+Authorization+"\"}").getBytes());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        OpenLink.PREFERENCES.put("sessionid",sessionID);
+        OpenLink.PREFERENCES.put("authorization",Authorization);
     }
 
     public static void readSession() {
-        Gson gson=new Gson();
-        if(!sessionCodeJson.exists()){
-            OpenLink.LOGGER.error("Can not read sessioncode.json(sessioncode.json does not exist!)");
+        sessionID=OpenLink.PREFERENCES.get("sessionid",null);
+        Authorization=OpenLink.PREFERENCES.get("authorization",null);
+        if(sessionID==null||Authorization==null){
+            OpenLink.LOGGER.warn("The session does not exists in user preferences!");
             return;
         }
-        try (FileInputStream fi=new FileInputStream(sessionCodeJson)){
-            JsonSession session=gson.fromJson(new String(fi.readAllBytes()),JsonSession.class);
-            sessionID=session.sessionid;
-            Authorization=session.authorization;
+        try{
             JsonResponseWithData<JsonUserInfo> responseWithData = getUserInfo();
             if(!responseWithData.flag){
                 sessionID=null;

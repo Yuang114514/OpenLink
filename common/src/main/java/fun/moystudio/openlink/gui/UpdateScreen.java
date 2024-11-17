@@ -10,6 +10,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class UpdateScreen extends Screen {
     @Override
     protected void init(){
         List<String> strings=Arrays.asList(new TranslatableComponent("text.openlink.nofrpcfile").getString().split("\n"));
-        List<Component> list = new java.util.ArrayList<>(List.of());
+        List<Component> list = new ArrayList<>();
         strings.forEach((String)->{
             list.add(new TextComponent(String));
         });
