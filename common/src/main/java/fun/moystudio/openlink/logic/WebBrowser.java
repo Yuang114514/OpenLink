@@ -1,9 +1,6 @@
 package fun.moystudio.openlink.logic;
-
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
-import fun.moystudio.openlink.network.Uris;
-
 import java.lang.reflect.Method;
 
 public class WebBrowser {
@@ -19,8 +16,8 @@ public class WebBrowser {
             try {
                 switch (Frpc.osName) {
                     case "windows" ->
-                        browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
-                    case "darwin" -> {
+                            browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
+                    case "darwin" -> {//百科搜的macOS没用过
                         Class fileMgr = Class.forName("com.apple.eio.FileManager");
                         Method openURL = fileMgr.getDeclaredMethod("openURL", String.class);
                         openURL.invoke(null, url);

@@ -30,7 +30,7 @@ public class Frpc {
     public static boolean hasUpdate = false;
     public static int frpcVersionDate = 0;
     public static String folderName = DEFAULT_FOLDER_NAME;
-    public static final File frpcVersionFile = new File(OpenLink.CONFIG_DIR+"frpc.json");
+    public static final File frpcVersionFile = new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"frpc.json");
     public static File frpcExecutableFile;
     public static File frpcArchiveFile;
     public static int latestVersionDate = 0;
@@ -71,8 +71,8 @@ public class Frpc {
             suffix=".exe";
             zsuffix=".zip";
         }
-        frpcExecutableFile=new File("frpc_"+osName+"_"+osArch+suffix);
-        frpcArchiveFile=new File("frpc"+zsuffix);
+        frpcExecutableFile=new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"frpc_"+osName+"_"+osArch+suffix);
+        frpcArchiveFile=new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"frpc"+zsuffix);
         if(checkUpdate()){
             OpenLink.LOGGER.info("The update screen will show after the main game screen loaded.");
         }
@@ -154,7 +154,7 @@ public class Frpc {
                 URL url = new URL(str);
                 String fileName = "frpc" + zsuffix;
                 BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
-                FileOutputStream outputStream = new FileOutputStream(fileName);
+                FileOutputStream outputStream = new FileOutputStream(frpcArchiveFile);
                 byte[] buffer = new byte[MAX_BUFFER_SIZE];
                 int read;
                 while ((read = inputStream.read(buffer, 0, MAX_BUFFER_SIZE)) != -1) {

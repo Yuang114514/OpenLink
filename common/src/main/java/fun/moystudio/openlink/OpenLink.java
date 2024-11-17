@@ -9,18 +9,26 @@ import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.prefs.Preferences;
+import java.util.stream.Stream;
 
 public final class OpenLink {
     public static final String MOD_ID = "openlink";
     public static final Logger LOGGER = LogManager.getLogger("OpenLink");
     public static final String CONFIG_DIR = "config" + File.separator + MOD_ID + File.separator;
     public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
+    public static final String EXECUTABLE_FILE_STORAGE_PATH = Path.of(getLocalStoragePos()).resolve(".openlink").toString()+File.separator;
 
     public static void init() throws Exception {
         LOGGER.info("Initializing OpenLink!");
         File configdir=new File(CONFIG_DIR);
+        File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         configdir.mkdirs();
+        exedir.mkdirs();
         //跳过ssl功能
         try{
             Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}",true);
@@ -50,5 +58,23 @@ public final class OpenLink {
                 "         | |                                         \n" +
                 "         |_|                                         ");
 
+    }
+
+    private static String getLocalStoragePos() {
+        Path userHome = Paths.get(System.getProperty("user.home"));
+        Path oldPath = userHome.resolve(".openlink");
+        if (Files.exists(oldPath)) {
+            return userHome.toString();
+        }
+
+        String macAppSupport = System.getProperty("os.name").contains("OS X") ? userHome.resolve("Library/Application Support").toString() : null;
+        String localAppData = System.getenv("LocalAppData");
+
+        String xdgDataHome = System.getenv("XDG_DATA_HOME");
+        if (xdgDataHome == null) {
+            xdgDataHome = userHome.resolve(".local/share").toString();
+        }
+
+        return Stream.of(localAppData, macAppSupport).filter(Objects::nonNull).findFirst().orElse(xdgDataHome);
     }
 }
