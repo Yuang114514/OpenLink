@@ -17,6 +17,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -172,17 +175,36 @@ public class Frpc {
     }
 
     public static void runFrpc(int proxyid) throws Exception {
+        // 名称
+        // 日期
+        // 启动时间
+        // 隧道ID
+        // Frp服务提供商名称
+        LocalTime localTime = LocalTime.now();
+        LocalDate localDate = LocalDate.now();
+        File logFile=new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"logs"+File.separator+
+                localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"_"+
+                localTime.getHour()+"."+localTime.getMinute()+"."+localTime.getSecond()+"_"+
+                Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+".log");
+        OpenLink.LOGGER.info("Frpc Log File Path:"+logFile);
+        logFile.createNewFile();
+        new FileOutputStream(logFile).write((Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+"\n"+
+                        localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\n"+
+                        localTime.getHour()+":"+localTime.getMinute()+":"+localTime.getSecond()+"\n"+
+                        proxyid+"\n"+
+                        "OpenFrp"+"\n"
+        ).getBytes("utf-8"));
         Request.getUserInfo();
-        runtimeProcess =Runtime.getRuntime().exec(new String[]{frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)});
+        runtimeProcess=new ProcessBuilder(new String[]{frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)}).redirectOutput(ProcessBuilder.Redirect.appendTo(logFile)).start();
     }
     public static void stopFrpc(){
-        if(runtimeProcess !=null){
+        if(runtimeProcess!=null){
             runtimeProcess.destroy();
         }
-        runtimeProcess =null;
+        runtimeProcess=null;
     }
     public static boolean openFrp(int i, String val){
-        Frpc.stopFrpc();
+        stopFrpc();
         new Thread(()->{
             String finalval=val;
             Gson gson=new Gson();
@@ -274,7 +296,7 @@ public class Frpc {
                 }
                 if(runningproxy==null) throw new Exception("Can not find the proxy???");
                 //启动Frpc
-                Frpc.runFrpc((int) runningproxy.id);
+                runFrpc((int) runningproxy.id);
                 //check
                 Thread.sleep(5000);
                 response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
@@ -288,7 +310,7 @@ public class Frpc {
                 }
                 if(runningproxy==null) throw new Exception("Can not find the proxy???");
                 if(!runningproxy.online){
-                    Frpc.stopFrpc();
+                    stopFrpc();
                     throw new Exception("Can not start frpc???");
                 }
                 JsonUserProxy finalRunningproxy = runningproxy;

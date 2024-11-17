@@ -27,8 +27,10 @@ public final class OpenLink {
         LOGGER.info("Initializing OpenLink!");
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
+        File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);
         configdir.mkdirs();
         exedir.mkdirs();
+        logdir.mkdirs();
         //跳过ssl功能
         try{
             Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}",true);
