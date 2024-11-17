@@ -41,7 +41,7 @@ public final class OpenLink {
         LanConfig.readConfig();
 
         //直接用mixin打开更新屏幕就行
-        LOGGER.info("\n   ____                       _       _         _    \n" +
+       LOGGER.info("\n   ____                       _       _         _    \n" +
                 "  / __ \\                     | |     (_)       | |   \n" +
                 " | |  | | _ __    ___  _ __  | |      _  _ __  | | __\n" +
                 " | |  | || '_ \\  / _ \\| '_ \\ | |     | || '_ \\ | |/ /\n" +
@@ -49,7 +49,6 @@ public final class OpenLink {
                 "  \\____/ | .__/  \\___||_| |_||______||_||_| |_||_|\\_\\\n" +
                 "         | |                                         \n" +
                 "         |_|                                         ");
-
 
     }
 }

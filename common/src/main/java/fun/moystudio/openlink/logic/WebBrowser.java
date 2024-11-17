@@ -13,13 +13,14 @@ public class WebBrowser {
     public WebBrowser(String u){
         url=u;
     }
+
     public void openBrowser(){
         if(!browserOpened) {
-            try{
+            try {
                 switch (Frpc.osName) {
                     case "windows" ->
-                        browserProcess=Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
-                    case "darwin" -> {//百度搜的macos，没用过（
+                        browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
+                    case "darwin" -> {
                         Class fileMgr = Class.forName("com.apple.eio.FileManager");
                         Method openURL = fileMgr.getDeclaredMethod("openURL", String.class);
                         openURL.invoke(null, url);
@@ -28,27 +29,31 @@ public class WebBrowser {
                         String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"};//Linux常用浏览器
 
                         String browser = null;
-                        for (int i = 0; i < browsers.length && browser == null; i++) {
-                            if (Runtime.getRuntime().exec(new String[]{"which", browsers[i]}).waitFor() == 0) {
-                                browser = browsers[i];
+                        for (String b : browsers) {
+                            if (Runtime.getRuntime().exec(new String[]{"which", b}).waitFor() == 0) {
+                                browser = b;
+                                break;
                             }
                         }
                         if (browser == null) {
-                            OpenLink.LOGGER.error("What the hell are you using?");
-                            throw new RuntimeException("[OpenLink] What the hell are you using?");
+                            String errorMessage = "No available browser found. Please ensure that Firefox, Opera, Konqueror, Epiphany, Mozilla, or Netscape is installed.";
+                            OpenLink.LOGGER.error(errorMessage);
+                            throw new RuntimeException("[OpenLink] " + errorMessage);
                         }
-                        browserProcess=Runtime.getRuntime().exec(browser + " " + url);
+                        browserProcess = Runtime.getRuntime().exec(browser + " " + url);
                     }
                     default -> {
-                        OpenLink.LOGGER.error("What the hell are you using?");
-                        throw new RuntimeException("[OpenLink] What the hell are you using?");
+                        String errorMessage = "Unsupported operating system: " + Frpc.osName + ". Please use Windows, macOS, or Linux.";
+                        OpenLink.LOGGER.error(errorMessage);
+                        throw new RuntimeException("[OpenLink] " + errorMessage);
                     }
                 }
-            }catch (Exception e) {
-                throw new RuntimeException(e);
+            } catch (Exception e) {
+                String errorMessage = "An error occurred while trying to open the browser: " + e.getMessage();
+                OpenLink.LOGGER.error(errorMessage, e);
+                throw new RuntimeException(errorMessage, e);
             }
-            browserOpened=true;
+            browserOpened = true;
         }
     }
-
 }
