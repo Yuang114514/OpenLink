@@ -15,7 +15,7 @@
   "text.openlink.setting_user": "OpenFrp 用户信息",
   "text.openlink.usingfrp": "使用 OpenFrp 内穿",
   "text.openlink.port": "远程端口(选填)",
-  "text.openlink.userproxieslimited": "§c§l您的OpenFrp账户已创建的隧道数达到允许的最大数目。请删除一个隧道后再次尝试！",
+  "text.openlink.userproxieslimited": "§c§l您的OpenFrp账户已创建的隧道数达到允许的最大数目。\n请删除一个隧道后再次尝试！",
   "text.openlink.remoteportnotfound": "§c§l在 5 次尝试后找不到任何可用的远程端口§o§k§i（也许你今天太不幸运了 :> ）",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] 隧道启动成功！\n点击复制连接IP：§l[%s§b§o§l]",
   "text.openlink.nofrpcfile": "§3无法在游戏目录中找到任何可用的 frpc 核心，\n§o§l§c请下载frpc核心。",
@@ -24,5 +24,6 @@
   "cycle.openlink.onlinemode": "在线模式",
   "cycle.openlink.offlinemode": "离线模式",
   "cycle.openlink.fixuuid": "离线模式+UUID修复",
-  "text.openlink.onlinemodebutton": "验证模式"
+  "text.openlink.onlinemodebutton": "验证模式",
+  "text.openlink.lanlogintips": "请先在 Openlink 设置中登录您的 Natayark 帐户\n(如果您想要使用联机代理服务：>)"
 }
