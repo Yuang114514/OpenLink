@@ -19,14 +19,14 @@ public class WebBrowser {
             try {
                 switch (Frpc.osName) {
                     case "windows" ->
-                        browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
+                        browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
                     case "darwin" -> {
                         Class fileMgr = Class.forName("com.apple.eio.FileManager");
                         Method openURL = fileMgr.getDeclaredMethod("openURL", String.class);
                         openURL.invoke(null, url);
                     }
                     case "linux", "freebsd" -> {
-                        String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"};
+                        String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"};//Linux常用浏览器
 
                         String browser = null;
                         for (String b : browsers) {
