@@ -23,7 +23,7 @@
   "text.openlink.clicktorestart": "§o§l§c点击来重启远程代理服务",
   "cycle.openlink.onlinemode": "在线模式",
   "cycle.openlink.offlinemode": "离线模式",
-  "cycle.openlink.fixuuid": "离线模式+UUID修复",
+  "cycle.openlink.fixuuid": "离线+ UUID 修复",
   "text.openlink.onlinemodebutton": "验证模式",
   "text.openlink.lanlogintips": "§o§l§c请先在 Openlink 设置中登录您的 Natayark 帐户\n(如果您想要使用联机代理服务：>)"
 }
