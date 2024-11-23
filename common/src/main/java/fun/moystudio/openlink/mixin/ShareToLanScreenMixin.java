@@ -80,12 +80,13 @@ public abstract class ShareToLanScreenMixin extends Screen{
 
     @Override
     public void tick(){
+        editBox.setVisible(LanConfig.cfg.use_frp);
         couldShare=true;
         String val = editBox.getValue();
         if(Request.sessionID==null||Request.Authorization==null){
             LanConfig.cfg.use_frp=false;
-            this.usingfrp.setValue(false);
-            this.usingfrp.active=false;
+            usingfrp.setValue(false);
+            usingfrp.active=false;
             return;
         }
         else{

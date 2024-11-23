@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
+import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.JsonResponseWithCode;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.logic.WebBrowser;
@@ -19,11 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 public class LoginScreen extends Screen {
-    public LoginScreen(Screen last) {
+    public LoginScreen(Screen last,Screen llast) {
         super(new TranslatableComponent("gui.openlink.loginscreentitle"));
         lastscreen=last;
+        llastscreen=llast;
     }
     Screen lastscreen=null;
+    Screen llastscreen=null;
     MultiLineLabel loginTips;
     EditBox username;
     EditBox password;
@@ -36,6 +39,8 @@ public class LoginScreen extends Screen {
 
         username = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 68, 200, 20, new TranslatableComponent("text.openlink.username"));
         password = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 108, 200, 20, new TranslatableComponent("text.openlink.password"));
+        username.setValue(OpenLink.PREFERENCES.get("last_username",""));
+        password.setValue(OpenLink.PREFERENCES.get("last_password",""));
         this.addRenderableWidget(username);
         this.addRenderableWidget(password);
 
@@ -75,10 +80,12 @@ public class LoginScreen extends Screen {
             Request.sessionID = sessionID.data;
             Request.Authorization = response.getSecond().get("Authorization").get(0);
             Request.writeSession(); // 写入sessioncode.json
+            OpenLink.PREFERENCES.put("last_username",this.username.getValue());
+            OpenLink.PREFERENCES.put("last_password",this.password.getValue());
             this.onClose();
         }));
 
-        // 原版语言按钮
+        //原版语言按钮
         this.addRenderableWidget(new ImageButton(this.width / 2 - 130, this.height / 6 + 168, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
             this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
         }, new TranslatableComponent("narrator.button.language")));
@@ -100,12 +107,7 @@ public class LoginScreen extends Screen {
     }
 
     @Override
-    public boolean shouldCloseOnEsc() {
-        return false;
-    }
-
-    @Override
     public void onClose(){
-        this.minecraft.setScreen(lastscreen);
+        this.minecraft.setScreen((Request.sessionID==null||Request.Authorization==null)?llastscreen:lastscreen);
     }
 }

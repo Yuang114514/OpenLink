@@ -30,7 +30,7 @@ public class LanConfig {
     }
     public static void writeConfig() throws Exception {
         Gson gson=new GsonBuilder().setPrettyPrinting().create();
-            cfgfile.createNewFile();
+        cfgfile.createNewFile();
         FileOutputStream fo = new FileOutputStream(cfgfile);
         fo.write(gson.toJson(cfg,new TypeToken<JsonLanConfig>(){}.getType()).getBytes("utf-8"));
     }

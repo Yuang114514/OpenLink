@@ -326,7 +326,7 @@ public class Frpc {
                         .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/proxyrestart"))));
                 Minecraft.getInstance().gui.getChat().addMessage(tmp);
             }
-        },"Proxy start thread").start();
+        },"Proxy startup thread").start();
 
         return true;
     }
