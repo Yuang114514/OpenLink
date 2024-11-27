@@ -5,7 +5,7 @@
   "gui.openlink.settingscreentitle": "OpenLink Settings",
   "gui.openlink.loginscreentitle": "Natayark account Login",
   "text.openlink.logintips": "Please login your Natayark account",
-  "text.openlink.username": "Username or E-mail",
+  "text.openlink.username": "Username or e-mail",
   "text.openlink.password": "Password",
   "text.openlink.no_account": "§o§cDon't have an account?",
   "text.openlink.notcompleted": "Username or password does not completed.",
@@ -26,5 +26,6 @@
   "cycle.openlink.offlinemode": "Offline Mode",
   "cycle.openlink.fixuuid": "Offline + UUID Fix",
   "text.openlink.onlinemodebutton": "Auth Mode",
-  "text.openlink.lanlogintips": "§o§l§cPlease login your Natayark account\nin OpenLink Settings first(if you want to use proxies)"
+  "text.openlink.lanlogintips": "§o§l§cPlease login your Natayark account\nin OpenLink Settings first(if you want to use proxies)",
+  "text.openlink.rememberuserandpassword": "Remember username and password"
 }

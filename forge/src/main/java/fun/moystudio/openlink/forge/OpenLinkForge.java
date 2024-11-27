@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import fun.moystudio.openlink.OpenLink;
 
+@Mod.EventBusSubscriber
 @Mod(OpenLink.MOD_ID)
 public final class OpenLinkForge {
     public OpenLinkForge() throws Exception {
