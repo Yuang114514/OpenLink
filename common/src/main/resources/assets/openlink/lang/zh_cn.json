@@ -19,11 +19,12 @@
   "text.openlink.remoteportnotfound": "§c§l在 5 次尝试后找不到任何可用的远程端口§o§k§i（也许你今天太不幸运了 :> ）",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] 隧道启动成功！\n点击复制连接IP：§l[%s§b§o§l]",
   "text.openlink.nofrpcfile": "§3无法在游戏目录中找到任何可用的 frpc 核心，\n§o§l§c请下载frpc核心。",
+  "text.openlink.sslignored": "由于您的网络，SSL已被忽略。您的网络请求将不安全。您是否仍要使用 OpenLink？",
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 忽略 SSL 可能会使您的内穿账号和密码不安全. \n§c§o§l请不要将 IP 发送给任何您不信任的人！",
   "text.openlink.clicktorestart": "§o§l§c点击来重启远程代理服务",
   "cycle.openlink.onlinemode": "在线模式",
   "cycle.openlink.offlinemode": "离线模式",
-  "cycle.openlink.fixuuid": "离线+ UUID 修复",
+  "cycle.openlink.fixuuid": "离线 + UUID 修复",
   "text.openlink.onlinemodebutton": "验证模式",
-  "text.openlink.lanlogintips": "§o§l§c请先在 Openlink 设置中登录您的 Natayark 帐户\n(如果您想要使用联机代理服务：>)"
+  "text.openlink.lanlogintips": "§o§l§c请先在 OpenLink 设置中登录您的 Natayark 帐户\n(如果您想要使用联机代理服务：>)"
 }

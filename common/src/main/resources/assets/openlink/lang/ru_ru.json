@@ -19,11 +19,12 @@
   "text.openlink.remoteportnotfound": "§c§lНе можем найти уделённый порта после 5 попыток§o§k§i\n(Наверное, сегодня просто не ваш день:>)",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] Успешно запущен прокси!\nНажмите, чтобы скопировать IP: §l[%s§b§o§l]",
   "text.openlink.nofrpcfile": "§3Невозможно найти исполняемый файл frpc в папке игры,\n§o§l§cПожалуйста, скачайте его.",
+  "text.openlink.sslignored": "Из-за вашей сети, SSL игнорируется. Все ваши сетевые запросы будут НЕБЕЗОПАСНЫ! Вы до сих пор хотите использовать OpenLink?",
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 SSL игнорирование может сделать ваш логин и пароль НЕБЕЗОПАСНЫМ. \n§c§o§lПожалуйста, не отправляйте IP подозрительным лицам!",
   "text.openlink.clicktorestart": "§o§l§cНажмите, чтобы перезапустить удаленный прокси",
   "cycle.openlink.onlinemode": "Онлайн-режим",
   "cycle.openlink.offlinemode": "Автономный Режим",
   "cycle.openlink.fixuuid": "Офлайн + UUID Исправление",
   "text.openlink.onlinemodebutton": "Режим авторизации",
-  "text.openlink.lanlogintips": "§o§l§cПожалуйста, войдите в свою учетную запись Natayark\nв настройках Openlink (если вы хотите использовать прокси)"
+  "text.openlink.lanlogintips": "§o§l§cПожалуйста, войдите в свою учетную запись Natayark в настройках OpenLink (если вы хотите использовать прокси)"
 }
