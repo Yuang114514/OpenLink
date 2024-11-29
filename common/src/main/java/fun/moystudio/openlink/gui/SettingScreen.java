@@ -67,7 +67,6 @@ public class SettingScreen extends Screen {
         blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);
         fill(poseStack,5,60,this.buttonMod.x+this.buttonMod.getWidth(),60+this.height-75,0x8F000000);
         title.renderCentered(poseStack,this.width/2,15);
-        drawCenteredString(poseStack,this.font,new TranslatableComponent("temp.openlink.tobedone"),this.width/2,this.height/2,0xffffff);
         super.render(poseStack,i,j,f);
     }
 

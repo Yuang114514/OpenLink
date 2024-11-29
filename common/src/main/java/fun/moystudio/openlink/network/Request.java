@@ -78,7 +78,7 @@ public class Request {
         }
     }
 
-    public static String GET(String url, Map<String,List<String>> header) throws Exception{//他甚至不需要用（zirran先别删awa）
+    public static String GET(String url, Map<String,List<String>> header) throws Exception{
         URL postUrl=new URL(url);
         HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
         connection.setRequestMethod("GET");
