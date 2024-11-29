@@ -236,7 +236,8 @@ public class Frpc {
                 if(canUseNodes.isEmpty()){
                     throw new Exception("Unable to use any node???");
                 }
-                JsonIP jsonIP=gson.fromJson(Request.GET(Uris.ipstackUri.toString(),Request.DEFAULT_HEADER),JsonIP.class);
+                String json=Request.GET(Uris.ipstackUri.toString(),Request.DEFAULT_HEADER);
+                JsonIP jsonIP=gson.fromJson(json,JsonIP.class);
                 int preferClasify;
                 if(jsonIP.country_code.equals("CN")){
                     preferClasify=1;
