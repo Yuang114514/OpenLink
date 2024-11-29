@@ -14,6 +14,16 @@ public class Uris {
         }
     }
 
+    public static final URI frpcDownloadUri1;
+
+    static {
+        try {
+            frpcDownloadUri1 = new URI("https://r.zyghit.cn/client/");
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static final URI openidLoginUri;
 
     static {

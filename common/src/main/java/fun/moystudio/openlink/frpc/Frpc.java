@@ -13,16 +13,13 @@ import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.*;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
-import java.net.SocketException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Frpc {
     public static final String DEFAULT_FOLDER_NAME = "OpenFRP_0.61.0_f4d251cc_20241126/";
@@ -83,7 +80,14 @@ public class Frpc {
     }
 
     public static void update() throws Exception {
-        downloadFrpcByUrl(Uris.frpcDownloadUri.toString()+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+        boolean oofcd=downloadFrpcByUrl(Uris.frpcDownloadUri.toString()+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+        if(!oofcd){
+            boolean zyghit=downloadFrpcByUrl(Uris.frpcDownloadUri1.toString()+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+            if(!zyghit){
+                OpenLink.LOGGER.error("Can not download frpc! Stopping...");
+                throw new RuntimeException("[OpenLink] Can not download frpc!");
+            }
+        }
         OpenLink.LOGGER.info("Extracting frpc archive file...");
         Extract.ExtractBySuffix(frpcArchiveFile.getAbsoluteFile(),zsuffix);
         OpenLink.LOGGER.info("Extracted frpc archive file sucessfully!");
@@ -98,49 +102,10 @@ public class Frpc {
 
     public static int getLatestVersionDate() throws Exception{//这玩意是手写的POST(暂时不用后面写的logic包里的POST，因为这个是检测用的)
         Gson gson=new Gson();
-        AtomicInteger res= new AtomicInteger(Math.max(20241126,frpcVersionDate));
-        URL url= Uris.frpcDownloadUri.toURL();
-        try{
-            HttpsURLConnection connection=(HttpsURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type","application/json");
-            connection.setDoOutput(true);
-            String jsonInput="{\"action\":\"get\",\"items\":{\"href\":\"/client/\",\"what\":1}}";
-            try(OutputStream os=connection.getOutputStream()){
-                byte[] in=jsonInput.getBytes("utf-8");
-                os.write(in,0,in.length);
-            }
-            try(BufferedReader bufferedReader=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
-                StringBuilder re=new StringBuilder();
-                String reline=null;
-                while((reline=bufferedReader.readLine())!=null){
-                    re.append(reline.trim());
-                }
-                JsonItems jsonItems=gson.fromJson(re.toString(),new TypeToken<JsonItems>(){}.getType());
-                jsonItems.items.forEach((jsonDownloadFile)->{
-                    if(jsonDownloadFile.href.contains("/client/OpenFRP")){
-                        res.set(Math.max(res.get(),Integer.parseInt(jsonDownloadFile.href.substring(jsonDownloadFile.href.length() - 9, jsonDownloadFile.href.length() - 1))));
-                        folderName=jsonDownloadFile.href.substring(jsonDownloadFile.href.length()-33);
-                    }
-                });
-
-            }
-        } catch (SSLHandshakeException e){
-            e.printStackTrace();
-            OpenLink.LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
-            SSLUtils.ignoreSsl();
-        } catch (SocketException e){
-            e.printStackTrace();
-            OpenLink.disabled=true;
-            OpenLink.LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
-        } catch (IOException e) {
-            e.printStackTrace();
-            OpenLink.disabled=true;
-            OpenLink.LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
-        }  catch (Exception e){
-            throw new RuntimeException(e);
-        }
-        return res.get();
+        JsonResponseWithData<JsonDownloadFile> versiondateres = gson.fromJson(Request.GET(Uris.openFrpAPIUri+"commonQuery/get?key=software",Request.DEFAULT_HEADER),new TypeToken<JsonResponseWithData<JsonDownloadFile>>(){}.getType());
+        String version=versiondateres.data.latest_full.substring(24);
+        folderName=versiondateres.data.latest_full+"/";
+        return Integer.parseInt(version);
     }
 
     public static boolean checkUpdate() throws Exception {
@@ -159,7 +124,8 @@ public class Frpc {
         return false;
     }
 
-    private static void downloadFrpcByUrl(String str) throws InterruptedException {
+    private static boolean downloadFrpcByUrl(String str) throws InterruptedException {
+        AtomicBoolean success= new AtomicBoolean(true);
         Thread thread=new Thread(()->{
             OpenLink.LOGGER.info("Downloading/Updating frpc from "+str+"...");
             try {
@@ -176,11 +142,13 @@ public class Frpc {
                 outputStream.close();
                 OpenLink.LOGGER.info("Download/Update frpc sucessfully!");
             } catch (Exception e){
-                throw new RuntimeException(e);
+                success.set(false);
+                e.printStackTrace();
             }
         },"Frpc download thread");
         thread.start();
         thread.join();
+        return success.get();
     }
 
     public static void runFrpc(int proxyid) throws Exception {
