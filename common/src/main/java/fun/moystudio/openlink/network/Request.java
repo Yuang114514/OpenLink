@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.prefs.Preferences;
 
 public class Request {
-    public static String sessionID=null;
     public static String Authorization=null;
     public final static Map<String,List<String>> DEFAULT_HEADER=new HashMap<>(){{
         put("Content-Type", Collections.singletonList("application/json"));
@@ -129,21 +128,18 @@ public class Request {
     }
 
     public static void writeSession() {
-        OpenLink.PREFERENCES.put("sessionid",sessionID);
         OpenLink.PREFERENCES.put("authorization",Authorization);
     }
 
     public static void readSession() {
-        sessionID=OpenLink.PREFERENCES.get("sessionid",null);
         Authorization=OpenLink.PREFERENCES.get("authorization",null);
-        if(sessionID==null||Authorization==null){
+        if(Authorization==null){
             OpenLink.LOGGER.warn("The session does not exists in user preferences!");
             return;
         }
         try{
             JsonResponseWithData<JsonUserInfo> responseWithData = getUserInfo();
             if(!responseWithData.flag){
-                sessionID=null;
                 Authorization=null;
                 OpenLink.LOGGER.warn("The session has been expired!");
             }
