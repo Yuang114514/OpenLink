@@ -24,7 +24,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Frpc {
-    private static final String DEFAULT_FOLDER_NAME = "OpenFRP_0.60.1_c6b0deb1_20240914/";
+    public static final String DEFAULT_FOLDER_NAME = "OpenFRP_0.61.0_f4d251cc_20241126/";
     public static final int MAX_BUFFER_SIZE = 10485760;
     private static String suffix = "";
     private static String zsuffix = ".tar.gz";
@@ -97,7 +97,7 @@ public class Frpc {
 
     public static int getLatestVersionDate() throws Exception{//这玩意是手写的POST(暂时不用后面写的logic包里的POST，因为这个是检测用的)
         Gson gson=new Gson();
-        AtomicInteger res= new AtomicInteger(Math.max(20240914,frpcVersionDate));
+        AtomicInteger res= new AtomicInteger(Math.max(20241126,frpcVersionDate));
         URL url= Uris.frpcDownloadUri.toURL();
         try{
             HttpsURLConnection connection=(HttpsURLConnection) url.openConnection();
