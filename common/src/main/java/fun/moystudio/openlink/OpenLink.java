@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
+import java.io.IOException;
+import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +24,7 @@ public final class OpenLink {
     public static final String CONFIG_DIR = "config" + File.separator + MOD_ID + File.separator;
     public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
     public static final String EXECUTABLE_FILE_STORAGE_PATH = Path.of(getLocalStoragePos()).resolve(".openlink").toString()+File.separator;
+    public static boolean disabled=false;
 
     public static void init() throws Exception {
         LOGGER.info("Initializing OpenLink!");
@@ -34,11 +37,19 @@ public final class OpenLink {
         //跳过ssl功能
         try{
             Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}",true);
-        }catch (SSLHandshakeException e){
+        } catch (SSLHandshakeException e) {
             e.printStackTrace();
             LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
             SSLUtils.ignoreSsl();
-        }catch (Exception e){
+        } catch (SocketException e){
+            e.printStackTrace();
+            disabled=true;
+            LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
+        } catch (IOException e){
+            e.printStackTrace();
+            disabled=true;
+            LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
+        } catch (Exception e){
             throw new RuntimeException(e);
         }
         if(!SSLUtils.sslIgnored){

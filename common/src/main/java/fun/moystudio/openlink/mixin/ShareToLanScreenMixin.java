@@ -1,5 +1,6 @@
 package fun.moystudio.openlink.mixin;
 
+import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.gui.SettingButton;
 import fun.moystudio.openlink.gui.SettingScreen;
@@ -83,7 +84,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
         editBox.setVisible(LanConfig.cfg.use_frp);
         couldShare=true;
         String val = editBox.getValue();
-        if(Request.Authorization==null){
+        if(Request.Authorization==null||OpenLink.disabled){
             LanConfig.cfg.use_frp=false;
             usingfrp.setValue(false);
             usingfrp.active=false;
