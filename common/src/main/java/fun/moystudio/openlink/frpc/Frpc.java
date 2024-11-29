@@ -213,17 +213,19 @@ public class Frpc {
                 JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
                 List<JsonNode> canUseNodes=new ArrayList<>();
                 for(JsonNode now:nodelist.data.list){
-                    int groupnumber1,usergroupnumber;
-                    if(now.group.equals("svip")){
+                    int groupnumber1=5,usergroupnumber;
+                    if(now.group.contains("svip")){
                         groupnumber1=3;
-                    }else if(now.group.equals("vip")){
+                    }
+                    if(now.group.contains("vip")){
                         groupnumber1=2;
-                    }else{
+                    }
+                    if(now.group.contains("normal")){
                         groupnumber1=1;
                     }
-                    if(userinfo.data.group.equals("svip")){
+                    if(userinfo.data.group.contains("svip")){
                         usergroupnumber=3;
-                    }else if(now.group.equals("vip")){
+                    }else if(userinfo.data.group.contains("vip")){
                         usergroupnumber=2;
                     }else{
                         usergroupnumber=1;
@@ -239,34 +241,38 @@ public class Frpc {
                 String json=Request.GET(Uris.ipstackUri.toString(),Request.DEFAULT_HEADER);
                 JsonIP jsonIP=gson.fromJson(json,JsonIP.class);
                 int preferClasify;
-                if(jsonIP.country_code.equals("CN")){
+                if(jsonIP.iso_code.equals("CN")){
                     preferClasify=1;
-                }else if(jsonIP.country_code.equals("HK")||jsonIP.country_code.equals("TW")){
+                }else if(jsonIP.iso_code.equals("HK")||jsonIP.iso_code.equals("TW")){
                     preferClasify=2;
                 }else{
                     preferClasify=3;
                 }
                 canUseNodes.sort(((o1, o2) -> {
+                    if(o1.classify!=o2.classify&&(o1.classify==preferClasify)!=(o2.classify==preferClasify))
+                        return o1.classify==preferClasify?-1:1;
                     if(!o1.group.equals(o2.group)){
-                        int first,second;
-                        if(o1.group.equals("svip")){
+                        int first=5,second=5;
+                        if(o1.group.contains("svip")){
                             first=3;
-                        }else if(o1.group.equals("vip")){
+                        }
+                        if(o1.group.contains("vip")){
                             first=2;
-                        }else{
+                        }
+                        if(o1.group.contains("normal")){
                             first=1;
                         }
-                        if(o2.group.equals("svip")){
+                        if(o2.group.contains("svip")){
                             second=3;
-                        }else if(o2.group.equals("vip")){
+                        }
+                        if(o2.group.contains("vip")) {
                             second=2;
-                        }else{
+                        }
+                        if(o2.group.contains("normal")){
                             second=1;
                         }
                         return first>second?-1:1;
                     }
-                    if(o1.classify!=o2.classify&&(o1.classify==preferClasify)!=(o2.classify==preferClasify))
-                        return o1.classify==preferClasify?-1:1;
                     if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)<1e-5)
                         return o2.bandwidth*o2.bandwidthMagnification>o1.bandwidth*o1.bandwidthMagnification?1:-1;
                     if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)

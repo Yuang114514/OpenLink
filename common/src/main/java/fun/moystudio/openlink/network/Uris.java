@@ -48,7 +48,7 @@ public class Uris {
 
     static {
         try{
-            ipstackUri = new URI("https://iplark.com/ipstack");
+            ipstackUri = new URI("https://realip.cc");
         } catch (URISyntaxException e){
             throw new RuntimeException(e);
         }
