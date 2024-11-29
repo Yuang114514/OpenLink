@@ -5,12 +5,12 @@
   "name": "OpenLink",
   "description": "OpenLink",
   "authors": [
-    "MoYStudio",
+    "StarCarefree",
     "Terry_MC"
   ],
   "contact": {
-    "homepage": "https://moystudio.fun/",
-    "sources": "https://github.com/Terry-mcgit/OpenLink"
+    "homepage": "https://www.starkettle.com/",
+    "sources": "https://github.com/StarCarefree/OpenLink"
   },
   "license": "All Rights Reserved",
   "icon": "assets/openlink/icon.png",

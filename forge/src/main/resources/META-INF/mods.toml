@@ -7,7 +7,7 @@ license = "All Rights Reserved"
 modId = "openlink"
 version = "${version}"
 displayName = "OpenLink"
-authors = "MoYStudio, Terry_MC"
+authors = "StarCarefree, Terry_MC"
 description = '''
 OpenLink
 '''
