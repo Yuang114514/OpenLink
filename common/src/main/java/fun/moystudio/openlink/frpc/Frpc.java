@@ -198,10 +198,10 @@ public class Frpc {
         OpenLink.LOGGER.info("Frpc Log File Path:"+logFile);
         logFile.createNewFile();
         new FileOutputStream(logFile).write((Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+"\n"+
-                        localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\n"+
-                        localTime.getHour()+":"+localTime.getMinute()+":"+localTime.getSecond()+"\n"+
-                        proxyid+"\n"+
-                        "OpenFrp"+"\n"
+                localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\n"+
+                localTime.getHour()+":"+localTime.getMinute()+":"+localTime.getSecond()+"\n"+
+                proxyid+"\n"+
+                "OpenFrp"+"\n"
         ).getBytes("utf-8"));
         Request.getUserInfo();
         runtimeProcess=new ProcessBuilder(new String[]{frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)}).redirectOutput(ProcessBuilder.Redirect.appendTo(logFile)).start();
