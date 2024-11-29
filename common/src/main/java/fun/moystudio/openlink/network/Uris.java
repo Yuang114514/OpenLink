@@ -34,4 +34,14 @@ public class Uris {
         }
     }
 
+    public static final URI ipstackUri;
+
+    static {
+        try{
+            ipstackUri = new URI("https://iplark.com/ipstack/");
+        } catch (URISyntaxException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 }

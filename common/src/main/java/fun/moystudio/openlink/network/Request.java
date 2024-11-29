@@ -78,36 +78,36 @@ public class Request {
         }
     }
 
-//    public static String GET(String url, Map<String,List<String>> header) throws Exception{//他甚至不需要用（zirran先别删awa）
-//        URL postUrl=new URL(url);
-//        HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
-//        connection.setRequestMethod("GET");
-//        header.forEach(((s, strings) -> {
-//            strings.forEach(s1 -> {
-//                connection.addRequestProperty(s,s1);
-//            });
-//        }));
-//        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
-//            StringBuilder re=new StringBuilder();
-//            String line;
-//            while((line=br.readLine())!=null){
-//                re.append(line.trim());
-//            }
-//            return re.toString();
-//        }catch (Exception e){
-//            if(connection.getResponseCode()>=400){
-//                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(),"utf-8"));
-//                StringBuilder re=new StringBuilder();
-//                String line;
-//                while((line=br.readLine())!=null){
-//                    re.append(line.trim());
-//                }
-//                return re.toString();
-//            }
-//            throw new RuntimeException(e);
-//        }
-//
-//    }
+    public static String GET(String url, Map<String,List<String>> header) throws Exception{
+        URL postUrl=new URL(url);
+        HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
+        connection.setRequestMethod("GET");
+        header.forEach(((s, strings) -> {
+            strings.forEach(s1 -> {
+                connection.addRequestProperty(s,s1);
+            });
+        }));
+        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
+            StringBuilder re=new StringBuilder();
+            String line;
+            while((line=br.readLine())!=null){
+                re.append(line.trim());
+            }
+            return re.toString();
+        }catch (Exception e){
+            if(connection.getResponseCode()>=400){
+                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(),"utf-8"));
+                StringBuilder re=new StringBuilder();
+                String line;
+                while((line=br.readLine())!=null){
+                    re.append(line.trim());
+                }
+                return re.toString();
+            }
+            throw new RuntimeException(e);
+        }
+
+    }
 
     public static Map<String,List<String>> getHeaderWithCookieByResponse(Pair<String,Map<String, List<String>>> response,Map<String,List<String>> header){
         if(!response.getSecond().containsKey("Set-Cookie")){
