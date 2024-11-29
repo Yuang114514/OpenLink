@@ -83,7 +83,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
         editBox.setVisible(LanConfig.cfg.use_frp);
         couldShare=true;
         String val = editBox.getValue();
-        if(Request.sessionID==null||Request.Authorization==null){
+        if(Request.Authorization==null){
             LanConfig.cfg.use_frp=false;
             usingfrp.setValue(false);
             usingfrp.active=false;
@@ -155,7 +155,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
                         throw new RuntimeException(e);
                     }
                 },((button1, poseStack, i, j) -> {
-                    if(Request.sessionID==null||Request.Authorization==null){
+                    if(Request.Authorization==null){
                         List<Component> list=new ArrayList<>();
                         String[] list1=new TranslatableComponent("text.openlink.lanlogintips").getString().split("\n");
                         for(String s:list1){

@@ -82,7 +82,6 @@ public class LoginScreen extends Screen {
                 return;
             }
             JsonResponseWithData<String> sessionID = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<String>>(){}.getType());
-            Request.sessionID = sessionID.data;
             Request.Authorization = response.getSecond().get("Authorization").get(0);
             Request.writeSession(); //将session写入注册表
             if(remember.selected()){
@@ -119,6 +118,6 @@ public class LoginScreen extends Screen {
 
     @Override
     public void onClose(){
-        this.minecraft.setScreen((Request.sessionID==null||Request.Authorization==null)?llastscreen:lastscreen);
+        this.minecraft.setScreen(Request.Authorization==null?llastscreen:lastscreen);
     }
 }

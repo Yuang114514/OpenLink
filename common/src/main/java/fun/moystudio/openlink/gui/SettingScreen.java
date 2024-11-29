@@ -74,7 +74,7 @@ public class SettingScreen extends Screen {
 
     @Override
     public void tick(){
-        if (Request.sessionID == null || Request.Authorization == null) {
+        if (Request.Authorization == null) {
             this.minecraft.setScreen(new LoginScreen(this,lastscreen));
         }
         switch (tab){
