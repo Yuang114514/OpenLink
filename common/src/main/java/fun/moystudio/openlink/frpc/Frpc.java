@@ -119,7 +119,7 @@ public class Frpc {
                 JsonItems jsonItems=gson.fromJson(re.toString(),new TypeToken<JsonItems>(){}.getType());
                 jsonItems.items.forEach((jsonDownloadFile)->{
                     if(jsonDownloadFile.href.contains("/client/OpenFRP")){
-                        res.set(Math.max(res.get(),Integer.valueOf(jsonDownloadFile.href.substring(jsonDownloadFile.href.length() - 9, jsonDownloadFile.href.length() - 1))));
+                        res.set(Math.max(res.get(),Integer.parseInt(jsonDownloadFile.href.substring(jsonDownloadFile.href.length() - 9, jsonDownloadFile.href.length() - 1))));
                         folderName=jsonDownloadFile.href.substring(jsonDownloadFile.href.length()-33);
                     }
                 });
@@ -198,10 +198,10 @@ public class Frpc {
         OpenLink.LOGGER.info("Frpc Log File Path:"+logFile);
         logFile.createNewFile();
         new FileOutputStream(logFile).write((Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+"\n"+
-                        localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\n"+
-                        localTime.getHour()+":"+localTime.getMinute()+":"+localTime.getSecond()+"\n"+
-                        proxyid+"\n"+
-                        "OpenFrp"+"\n"
+                localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\n"+
+                localTime.getHour()+":"+localTime.getMinute()+":"+localTime.getSecond()+"\n"+
+                proxyid+"\n"+
+                "OpenFrp"+"\n"
         ).getBytes("utf-8"));
         Request.getUserInfo();
         runtimeProcess=new ProcessBuilder(new String[]{frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)}).redirectOutput(ProcessBuilder.Redirect.appendTo(logFile)).start();
@@ -245,7 +245,22 @@ public class Frpc {
                 JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
                 List<JsonNode> canUseNodes=new ArrayList<>();
                 for(JsonNode now:nodelist.data.list){
-                    if(!now.group.contains(userinfo.data.group)||!now.protocolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
+                    int groupnumber1,usergroupnumber;
+                    if(now.group.equals("svip")){
+                        groupnumber1=3;
+                    }else if(now.group.equals("vip")){
+                        groupnumber1=2;
+                    }else{
+                        groupnumber1=1;
+                    }
+                    if(userinfo.data.group.equals("svip")){
+                        usergroupnumber=3;
+                    }else if(now.group.equals("vip")){
+                        usergroupnumber=2;
+                    }else{
+                        usergroupnumber=1;
+                    }
+                    if(groupnumber1>usergroupnumber||!now.protocolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
                         continue;
                     }
                     canUseNodes.add(now);
@@ -253,11 +268,38 @@ public class Frpc {
                 if(canUseNodes.isEmpty()){
                     throw new Exception("Unable to use any node???");
                 }
+                JsonIP jsonIP=gson.fromJson(Request.GET(Uris.ipstackUri.toString(),Request.DEFAULT_HEADER),JsonIP.class);
+                int preferClasify;
+                if(jsonIP.country_code.equals("CN")){
+                    preferClasify=1;
+                }else if(jsonIP.country_code.equals("HK")||jsonIP.country_code.equals("TW")){
+                    preferClasify=2;
+                }else{
+                    preferClasify=3;
+                }
                 canUseNodes.sort(((o1, o2) -> {
+                    if(!o1.group.equals(o2.group)){
+                        int first,second;
+                        if(o1.group.equals("svip")){
+                            first=3;
+                        }else if(o1.group.equals("vip")){
+                            first=2;
+                        }else{
+                            first=1;
+                        }
+                        if(o2.group.equals("svip")){
+                            second=3;
+                        }else if(o2.group.equals("vip")){
+                            second=2;
+                        }else{
+                            second=1;
+                        }
+                        return first>second?-1:1;
+                    }
+                    if(o1.classify!=o2.classify&&(o1.classify==preferClasify)!=(o2.classify==preferClasify))
+                        return o1.classify==preferClasify?-1:1;
                     if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)<1e-5)
                         return o2.bandwidth*o2.bandwidthMagnification>o1.bandwidth*o1.bandwidthMagnification?1:-1;
-                    if(o1.classify!=o2.classify)
-                        return (int)(o1.classify-o2.classify);
                     if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)
                         return o1.needRealname?-1:1;
                     return 0;
