@@ -74,6 +74,9 @@ public class SettingScreen extends Screen {
 
     @Override
     public void tick(){
+        if (OpenLink.disabled) {
+            this.onClose();
+        }
         if (Request.Authorization == null) {
             this.minecraft.setScreen(new LoginScreen(this,lastscreen));
         }

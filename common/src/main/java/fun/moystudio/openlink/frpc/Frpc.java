@@ -16,6 +16,7 @@ import net.minecraft.network.chat.*;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
+import java.net.SocketException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -124,11 +125,19 @@ public class Frpc {
                 });
 
             }
-        }catch (SSLHandshakeException e){
+        } catch (SSLHandshakeException e){
             e.printStackTrace();
             OpenLink.LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
             SSLUtils.ignoreSsl();
-        }catch (Exception e){
+        } catch (SocketException e){
+            e.printStackTrace();
+            OpenLink.disabled=true;
+            OpenLink.LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            OpenLink.disabled=true;
+            OpenLink.LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
+        }  catch (Exception e){
             throw new RuntimeException(e);
         }
         return res.get();
