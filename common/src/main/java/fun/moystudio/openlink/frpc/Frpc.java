@@ -335,10 +335,6 @@ public class Frpc {
                     }
                 }
                 if(runningproxy==null) throw new Exception("Can not find the proxy???");
-                if(!runningproxy.online){
-                    stopFrpc();
-                    throw new Exception("Can not start frpc???");
-                }
                 JsonUserProxy finalRunningproxy = runningproxy;
                 Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+finalRunningproxy.connectAddress))
                         .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
