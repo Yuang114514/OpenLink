@@ -37,7 +37,10 @@ public class Request {
         thread.join();
         Pair<String, Map<String, List<String>>> returnval=res.get();
         if(returnval.getSecond().containsKey("Authorization")){
-            Request.Authorization=returnval.getSecond().get("Authorization").get(0);
+            if(Authorization==null||!Authorization.equals(returnval.getSecond().get("Authorization").get(0))){
+                Authorization=returnval.getSecond().get("Authorization").get(0);
+                writeSession();
+            }
         }
         return returnval;
     }
