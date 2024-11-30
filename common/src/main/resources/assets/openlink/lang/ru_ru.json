@@ -5,7 +5,7 @@
   "gui.openlink.settingscreentitle": "Настройки OpenLink",
   "gui.openlink.loginscreentitle": "Вход в аккаунт Natayark",
   "text.openlink.logintips": "Пожалуйста, войдите в свою учетную запись Natayark",
-  "text.openlink.username": "Имя пользователя или Email",
+  "text.openlink.username": "Имя пользователь или E-mail",
   "text.openlink.password": "Пароль",
   "text.openlink.no_account": "§o§cУ вас нет аккаунта?",
   "text.openlink.notcompleted": "Логин или пароль не завершены.",
@@ -26,5 +26,7 @@
   "cycle.openlink.offlinemode": "Автономный Режим",
   "cycle.openlink.fixuuid": "Офлайн + UUID Исправление",
   "text.openlink.onlinemodebutton": "Режим авторизации",
-  "text.openlink.lanlogintips": "§o§l§cПожалуйста, войдите в свою учетную запись Natayark в настройках OpenLink (если вы хотите использовать прокси)"
+  "text.openlink.lanlogintips": "§o§l§cПожалуйста, войдите в свою учетную запись Natayark в настройках OpenLink (если вы хотите использовать прокси)",
+  "text.openlink.rememberuserandpassword": "Запомнить имя пользователя и пароль",
+  "temp.openlink.tobedone": "Надо сделать..."
 }
