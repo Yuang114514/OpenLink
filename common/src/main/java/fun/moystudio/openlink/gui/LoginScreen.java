@@ -75,14 +75,13 @@ public class LoginScreen extends Screen {
             JsonResponseWithData<Map<String, String>> loginCode = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<Map<String, String>>>(){}.getType()); // 返回的code（用于下一步传参）
             String code = loginCode.data.get("code");
             try {
-                response = Request.POST(Uris.openFrpAPIUri.toString() + "oauth2/callback?code=" + code, headerWithCookie, "{}");
+                Request.POST(Uris.openFrpAPIUri.toString() + "oauth2/callback?code=" + code, headerWithCookie, "{}");
             } catch (Exception e) {
                 wrongmsg = e.getMessage();
                 e.printStackTrace();
                 return;
             }
-            JsonResponseWithData<String> sessionID = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<String>>(){}.getType());
-            Request.Authorization = response.getSecond().get("Authorization").get(0);
+            //Authorization会在post里写储存的
             Request.writeSession(); //将session写入注册表
             if(remember.selected()){
                 OpenLink.PREFERENCES.put("last_username",this.username.getValue());

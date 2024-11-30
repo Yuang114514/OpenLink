@@ -35,7 +35,11 @@ public class Request {
         },"Request thread");
         thread.start();
         thread.join();
-        return res.get();
+        Pair<String, Map<String, List<String>>> returnval=res.get();
+        if(returnval.getSecond().containsKey("Authorization")){
+            Request.Authorization=returnval.getSecond().get("Authorization").get(0);
+        }
+        return returnval;
     }
 
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body, boolean _skip) throws Exception {
