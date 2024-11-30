@@ -81,8 +81,7 @@ public class LoginScreen extends Screen {
                 e.printStackTrace();
                 return;
             }
-            //Authorization会在post里写储存的
-            Request.writeSession(); //将session写入注册表
+            //Authorization会在POST里写储存和放置到注册表的
             if(remember.selected()){
                 OpenLink.PREFERENCES.put("last_username",this.username.getValue());
                 OpenLink.PREFERENCES.put("last_password",this.password.getValue());
