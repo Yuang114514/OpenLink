@@ -1,0 +1,30 @@
+name: Check Issue and Apply Label
+
+on:
+  issues:
+    types: [opened, edited]
+
+jobs:
+  check-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check for YAML option
+        id: check_yaml
+        run: |
+          ISSUE_BODY="${{ github.event.issue.body }}"
+          
+          if echo "$ISSUE_BODY" | grep -q 'yml-1: second_option'; then
+            echo "YAML option is selected."
+            echo "update_needed=true" >> $GITHUB_ENV
+          else
+            echo "YAML option is not selected."
+            echo "update_needed=false" >> $GITHUB_ENV
+          fi
+
+      - name: Add label and close issue
+        if: env.update_needed == 'true'
+        uses: peter-evans/close-issue@v2
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          comment: 'The issue is being closed because the specified YAML option was selected.'
+          labels: 'AI'
