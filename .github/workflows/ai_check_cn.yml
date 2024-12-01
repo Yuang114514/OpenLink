@@ -1,4 +1,4 @@
-name: Check Issue and Apply Label
+name: Check Issue and Apply Label CN
 
 on:
   issues:
@@ -8,28 +8,29 @@ jobs:
   check-issue:
     runs-on: ubuntu-latest
     steps:
-      - name: Check if the issue is from specific templates
-        id: check_template
+      - name: Log issue labels for debugging
         run: |
-          ISSUE_BODY="${{ github.event.issue.body }}"
+          echo "Issue Labels: ${{ toJson(github.event.issue.labels) }}"
 
-          if echo "$ISSUE_BODY" | grep -q 'bug'; then
-            echo "Valid template selected: bug"
-            echo "valid_template=true" >> $GITHUB_ENV
-          elif echo "$ISSUE_BODY" | grep -q 'new'; then
-            echo "Valid template selected: new"
-            echo "valid_template=true" >> $GITHUB_ENV
+      - name: Check if '检查项' label exists
+        id: check_label
+        run: |
+          LABELS="${{ toJson(github.event.issue.labels) }}"
+          
+          if echo "$LABELS" | grep -q '"name": "检查项"'; then
+            echo "Label '检查项' exists."
+            echo "check_items_label=true" >> $GITHUB_ENV
           else
-            echo "Invalid template. Workflow will not run."
-            echo "valid_template=false" >> $GITHUB_ENV
+            echo "Label '检查项' does not exist."
+            echo "check_items_label=false" >> $GITHUB_ENV
           fi
 
       - name: Check for AI confirmation
-        if: env.valid_template == 'true'
+        if: env.valid_template == 'true' && env.check_items_label == 'true'
         id: check_ai
         run: |
           ISSUE_BODY="${{ github.event.issue.body }}"
-          
+
           if echo "$ISSUE_BODY" | grep -q '\- \[X\] 我确认我是AI'; then
             echo "AI confirmation is selected."
             echo "update_needed=true" >> $GITHUB_ENV
@@ -39,7 +40,7 @@ jobs:
           fi
 
       - name: Add label and close issue
-        if: env.update_needed == 'true' && env.valid_template == 'true'
+        if: env.update_needed == 'true' && env.valid_template == 'true' && env.check_items_label == 'true'
         uses: peter-evans/close-issue@v2
         with:
           issue-number: ${{ github.event.issue.number }}
