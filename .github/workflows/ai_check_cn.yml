@@ -12,10 +12,12 @@ jobs:
         id: check_template
         run: |
           ISSUE_BODY="${{ github.event.issue.body }}"
-          TEMPLATE_NAME="${{ github.event.issue.labels[0].name }}"
 
-          if [[ "$TEMPLATE_NAME" == "bug" || "$TEMPLATE_NAME" == "new" ]]; then
-            echo "Valid template selected."
+          if echo "$ISSUE_BODY" | grep -q 'bug'; then
+            echo "Valid template selected: bug"
+            echo "valid_template=true" >> $GITHUB_ENV
+          elif echo "$ISSUE_BODY" | grep -q 'new'; then
+            echo "Valid template selected: new"
             echo "valid_template=true" >> $GITHUB_ENV
           else
             echo "Invalid template. Workflow will not run."
@@ -41,5 +43,5 @@ jobs:
         uses: peter-evans/close-issue@v2
         with:
           issue-number: ${{ github.event.issue.number }}
-          comment: '系统自检为AI，若有误判请重新提交，谢谢╮（╯＿╰）╭'
+          comment: '系统自检为AI，已关闭该版块，如有误判，请重新提交，谢谢。'
           labels: 'AI'

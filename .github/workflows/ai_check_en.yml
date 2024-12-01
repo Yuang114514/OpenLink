@@ -12,10 +12,12 @@ jobs:
         id: check_template
         run: |
           ISSUE_BODY="${{ github.event.issue.body }}"
-          TEMPLATE_NAME="${{ github.event.issue.labels[0].name }}"
 
-          if [[ "$TEMPLATE_NAME" == "bug_english" || "$TEMPLATE_NAME" == "new_english" ]]; then
-            echo "Valid template selected."
+          if echo "$ISSUE_BODY" | grep -q 'bug_english'; then
+            echo "Valid template selected: bug_english"
+            echo "valid_template=true" >> $GITHUB_ENV
+          elif echo "$ISSUE_BODY" | grep -q 'new_english'; then
+            echo "Valid template selected: new_english"
             echo "valid_template=true" >> $GITHUB_ENV
           else
             echo "Invalid template. Workflow will not run."
