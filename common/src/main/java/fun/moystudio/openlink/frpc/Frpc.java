@@ -167,7 +167,7 @@ public class Frpc {
         logFile.createNewFile();
         new FileOutputStream(logFile).write((Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+"\n"+
                 localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\n"+
-                localTime.getHour()+":"+localTime.getMinute()+":"+localTime.getSecond()+"\n"+
+                localTime.format(DateTimeFormatter.ofPattern("hh:mm:ss"))+"\n"+
                 proxyid+"\n"+
                 "OpenFrp"+"\n"
         ).getBytes("utf-8"));
