@@ -28,7 +28,7 @@ jobs:
         run: |
           ISSUE_BODY="${{ github.event.issue.body }}"
           
-          if echo "$ISSUE_BODY" | grep -q '\- \[X\] I confirm I am an AI'; then
+          if echo "$ISSUE_BODY" | grep -q '\- \[X\] 我确认我是AI'; then
             echo "AI confirmation is selected."
             echo "update_needed=true" >> $GITHUB_ENV
           else
