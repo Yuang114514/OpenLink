@@ -4,6 +4,12 @@ plugins {
 
 loom {
     forge {
+        runs {
+            client {
+                property 'mixin.env.remapRefMap', 'true'
+                property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            }
+        }
         mixinConfig "openlink.mixins.json"
     }
 }
