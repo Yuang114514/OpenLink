@@ -1,4 +1,4 @@
-name: ban ai
+name: AI Issue Check
 
 on:
   issues:
@@ -8,6 +8,11 @@ jobs:
   check-ai-confirmation:
     runs-on: ubuntu-latest
     steps:
+      - name: Print issue body
+        run: |
+          issue_body=$(jq -r '.body' "$GITHUB_EVENT_PATH")
+          echo "Issue body: $issue_body"
+
       - name: Check if AI confirmation is selected
         id: check_ai
         run: |
