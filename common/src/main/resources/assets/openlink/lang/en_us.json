@@ -12,7 +12,7 @@
   "text.openlink.usingfrp": "Using OpenFrp proxy",
   "text.openlink.port": "Proxy remote port(Optional)",
   "text.openlink.userproxieslimited": "§c§lYou've reached the maximum number of proxies.\nPlease delete some proxies!",
-  "text.openlink.remoteportnotfound": "§c§lCan not find any available remote port after 5 tries§§i\n(Maybe you are not lucky today :>)",
+  "text.openlink.remoteportnotfound": "§c§lCan not find any available remote port after 5 tries§o§i\n(Maybe you are not lucky today :>)",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] Started proxy successfully!\nClick to copy IP: §l[%s§b§o§l]",
   "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in game directory,\n§o§l§cplease download it.",
   "text.openlink.sslignored": "Because of your network, SSL is ignored. All of your network requests will be INSECURE! Do you still want to use OpenLink?",
