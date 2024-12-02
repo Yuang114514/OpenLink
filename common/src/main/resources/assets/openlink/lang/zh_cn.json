@@ -12,7 +12,7 @@
   "text.openlink.usingfrp": "使用 OpenFrp 内穿",
   "text.openlink.port": "远程端口(选填)",
   "text.openlink.userproxieslimited": "§c§l您的OpenFrp账户已创建的隧道数达到允许的最大数目。\n请删除一个隧道后再次尝试！",
-  "text.openlink.remoteportnotfound": "§c§l在 5 次尝试后找不到任何可用的远程端口§o§k§i（也许你今天太不幸运了 :> ）",
+  "text.openlink.remoteportnotfound": "§c§l在 5 次尝试后找不到任何可用的远程端口§o§i（也许你今天太不幸运了 :> ）",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] 隧道启动成功！\n点击复制连接IP：§l[%s§b§o§l]",
   "text.openlink.nofrpcfile": "§3无法在游戏目录中找到任何可用的 frpc 核心，\n§o§l§c请下载frpc核心。",
   "text.openlink.sslignored": "由于您的网络，SSL已被忽略。您的网络请求将不安全。您是否仍要使用 OpenLink？",

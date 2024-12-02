@@ -16,7 +16,7 @@
   "text.openlink.usingfrp": "使用 OpenFrp 代理",
   "text.openlink.port": "遠端埠(選填)",
   "text.openlink.userproxieslimited": "§c§l您的OpenFrp帳戶已達到最大代理隧道數量。\n請刪除一些代理隧道！",
-  "text.openlink.remoteportnotfound": "§c§l嘗試 5 次後找不到任何可用的遠端連接埠§o§k§i\n（也許你今天運氣不佳 :]）",
+  "text.openlink.remoteportnotfound": "§c§l嘗試 5 次後找不到任何可用的遠端連接埠§o§i\n（也許你今天運氣不佳 :]）",
   "text.openlink.frpcstartsucessfully": "\"§b§o[OpenLink] 代理成功啟動！\n點擊以複製 IP: §l[%s§b§o§l]\"",
   "text.openlink.nofrpcfile": "§3在遊戲目錄中找不到任何可用的 frpc 核心，\n§o§l§c請下載frpc核心。",
   "text.openlink.sslignored": "由於您的網路，SSL 被忽略。您所有的網路請求將是不安全的！您仍然想使用 OpenLink 嗎？",

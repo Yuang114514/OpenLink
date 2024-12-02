@@ -16,7 +16,7 @@
   "text.openlink.usingfrp": "Использование OpenFrp прокси",
   "text.openlink.port": "Удаленный порт прокси (необязательно)",
   "text.openlink.userproxieslimited": "§c§lДостигнуто максимальное количество прокси.\nПожалуйста, удалите некоторые прокси!",
-  "text.openlink.remoteportnotfound": "§c§lНе можем найти уделённый порта после 5 попыток§o§k§i\n(Наверное, сегодня просто не ваш день:>)",
+  "text.openlink.remoteportnotfound": "§c§lНе можем найти уделённый порта после 5 попыток§o§i\n(Наверное, сегодня просто не ваш день:>)",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] Успешно запущен прокси!\nНажмите, чтобы скопировать IP: §l[%s§b§o§l]",
   "text.openlink.nofrpcfile": "§3Невозможно найти исполняемый файл frpc в папке игры,\n§o§l§cПожалуйста, скачайте его.",
   "text.openlink.sslignored": "Из-за вашей сети, SSL игнорируется. Все ваши сетевые запросы будут НЕБЕЗОПАСНЫ! Вы до сих пор хотите использовать OpenLink?",

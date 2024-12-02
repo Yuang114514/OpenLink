@@ -16,7 +16,7 @@
   "text.openlink.usingfrp": "使用 OpenFrp 轉發端號",
   "text.openlink.port": "遠程端口 (選填)",
   "text.openlink.userproxieslimited": "§c§l你嘅OpenFrp帳號，已經超過咗隧道創建上限\n請刪除一個隧道後再嘗試！",
-  "text.openlink.remoteportnotfound": "§c§l嘗試 5 次後依然都係搵唔到任何可用嘅遠程端口\n§o§k§i(可能你今日運氣麻麻地:/)",
+  "text.openlink.remoteportnotfound": "§c§l嘗試 5 次後依然都係搵唔到任何可用嘅遠程端口\n§o§i(可能你今日運氣麻麻地:/)",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] 成功啟動隧道\n點擊複製IP: §l[%s§b§o§l]",
   "text.openlink.nofrpcfile": "§3仆街，無法在遊戲目錄搵到Frpc 文件,\n§o§l§c請下載frpc核心。",
   "text.openlink.sslignored": "由於你嘅網絡原因，SSL啟動失敗。你而家嘅所有網絡請求都係唔安全，你仲想唔想用OpenLink？",
