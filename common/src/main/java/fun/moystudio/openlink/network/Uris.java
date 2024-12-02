@@ -38,7 +38,7 @@ public class Uris {
 
     static {
         try {
-            openFrpAPIUri = new URI("https://of-dev-api.bfsea.xyz/");
+            openFrpAPIUri = new URI("https://api.openfrp.net/");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

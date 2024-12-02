@@ -9,10 +9,6 @@
   "text.openlink.password": "Password",
   "text.openlink.no_account": "§o§cDon't have an account?",
   "text.openlink.notcompleted": "Username or password does not completed.",
-  "text.openlink.setting_log": "Tunnel Log",
-  "text.openlink.setting_traffic": "Traffic Flow",
-  "text.openlink.setting_mod": "OpenLink Mod Settings",
-  "text.openlink.setting_user": "OpenFrp User Info",
   "text.openlink.usingfrp": "Using OpenFrp proxy",
   "text.openlink.port": "Proxy remote port(Optional)",
   "text.openlink.userproxieslimited": "§c§lYou've reached the maximum number of proxies.\nPlease delete some proxies!",
@@ -28,5 +24,9 @@
   "text.openlink.onlinemodebutton": "Auth Mode",
   "text.openlink.lanlogintips": "§o§l§cPlease login your Natayark account\nin OpenLink Settings first(if you want to use proxies)",
   "text.openlink.rememberuserandpassword": "Remember username and password",
-  "temp.openlink.tobedone": "To be done..."
+  "temp.openlink.tobedone": "To be done...",
+  "tab.openlink.setting_log": "Proxy Log",
+  "tab.openlink.setting_user": "User Info",
+  "tab.openlink.setting_info": "Mod Info",
+  "tab.openlink.setting_acklist": "Acknowledgments"
 }

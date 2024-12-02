@@ -8,9 +8,15 @@ import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
 import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.spongepowered.asm.mixin.Unique;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
@@ -18,10 +24,12 @@ public class SettingScreen extends Screen {
         lastscreen=last;
     }
     MultiLineLabel title;
-    Screen lastscreen=null;
-    SettingTabs tab=SettingTabs.LOG;
-    SettingScreenButton buttonLog,buttonTraffic,buttonUser,buttonMod;
+    Screen lastscreen;
+    SettingTabs tab=SettingTabs.USER;
+    SettingTabs lasttab=null;
+    SettingScreenButton buttonLog, buttonInfo,buttonUser, buttonAck;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
+    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabAck=new ArrayList<>();
 
     public static final ResourceLocation BACKGROUND_SETTING=new ResourceLocation("openlink","textures/gui/background_setting.png");
 
@@ -34,29 +42,15 @@ public class SettingScreen extends Screen {
     protected void init(){
         title=MultiLineLabel.create(this.font,new TranslatableComponent("gui.openlink.settingscreentitle"));
         int i=(this.width-10)/4;
-        buttonLog=new SettingScreenButton(5,40,i,20,new TranslatableComponent("text.openlink.setting_log"),(button -> {
-            tab=SettingTabs.LOG;
-        }));
-        buttonTraffic=new SettingScreenButton(5+i,40,i,20,new TranslatableComponent("text.openlink.setting_traffic"),(button -> {
-            tab=SettingTabs.TRAFFIC;
-        }));
-        buttonUser=new SettingScreenButton(5+i*2,40,i,20,new TranslatableComponent("text.openlink.setting_user"),(button -> {
-            tab=SettingTabs.USER;
-            try {
-                userInfo = Request.getUserInfo();
-                if(!userInfo.flag)
-                    this.minecraft.setScreen(new LoginScreen(this,lastscreen));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }));
-        buttonMod=new SettingScreenButton(5+i*3,40,i,20,new TranslatableComponent("text.openlink.setting_mod"),(button -> {
-            tab=SettingTabs.MOD;
-        }));
+        buttonUser=new SettingScreenButton(5,40,i,20,SettingTabs.USER.component,(button -> tab=SettingTabs.USER));
+        buttonLog=new SettingScreenButton(5+i,40,i,20,SettingTabs.LOG.component,(button -> tab=SettingTabs.LOG));
+        buttonInfo=new SettingScreenButton(5+i*2,40,i,20,SettingTabs.INFO.component,(button -> tab=SettingTabs.INFO));
+        buttonAck=new SettingScreenButton(5+i*3,40,i,20,SettingTabs.ACKLIST.component,(button -> tab=SettingTabs.ACKLIST));
         addRenderableWidget(buttonLog);
-        addRenderableWidget(buttonTraffic);
+        addRenderableWidget(buttonInfo);
         addRenderableWidget(buttonUser);
-        addRenderableWidget(buttonMod);
+        addRenderableWidget(buttonAck);
+        //tabUser.add(new Image(10,65,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/avatar.png")));
     }
 
     @Override
@@ -65,11 +59,50 @@ public class SettingScreen extends Screen {
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         RenderSystem.setShaderTexture(0,BACKGROUND_SETTING);
         blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);
-        fill(poseStack,5,60,this.buttonMod.x+this.buttonMod.getWidth(),60+this.height-75,0x8F000000);
+        fill(poseStack,5,60,this.buttonAck.x+this.buttonAck.getWidth(),60+this.height-75,0x8F000000);
         title.renderCentered(poseStack,this.width/2,15);
+        if(renderableTabWidgets!=null) renderableTabWidgets.forEach(widget -> widget.render(poseStack,i,j,f));
         super.render(poseStack,i,j,f);
     }
 
+    @Unique
+    private void onTab() throws Exception {
+        boolean first=lasttab!=tab;
+        switch(tab){
+            case LOG -> {
+                buttonLog.active=false;
+                buttonInfo.active=true;
+                buttonUser.active=true;
+                buttonAck.active=true;
+                renderableTabWidgets=tabLog;
+            }
+            case ACKLIST -> {
+                buttonLog.active=true;
+                buttonInfo.active=true;
+                buttonUser.active=true;
+                buttonAck.active=false;
+                renderableTabWidgets=tabAck;
+            }
+            case USER -> {
+                buttonLog.active=true;
+                buttonInfo.active=true;
+                buttonUser.active=false;
+                buttonAck.active=true;
+                renderableTabWidgets=tabUser;
+                if(first)
+                    userInfo=Request.getUserInfo();
+                if(userInfo==null||!userInfo.flag)
+                    this.minecraft.setScreen(new LoginScreen(this,lastscreen));
+            }
+            case INFO -> {
+                buttonLog.active=true;
+                buttonInfo.active=false;
+                buttonUser.active=true;
+                buttonAck.active=true;
+                renderableTabWidgets=tabInfo;
+            }
+        }
+    }
 
     @Override
     public void tick(){
@@ -79,32 +112,13 @@ public class SettingScreen extends Screen {
         if (Request.Authorization == null) {
             this.minecraft.setScreen(new LoginScreen(this,lastscreen));
         }
-        switch (tab){
-            case LOG -> {
-                buttonLog.active=false;
-                buttonTraffic.active=true;
-                buttonUser.active=true;
-                buttonMod.active=true;
-            }
-            case MOD -> {
-                buttonLog.active=true;
-                buttonTraffic.active=true;
-                buttonUser.active=true;
-                buttonMod.active=false;
-            }
-            case USER -> {
-                buttonLog.active=true;
-                buttonTraffic.active=true;
-                buttonUser.active=false;
-                buttonMod.active=true;
-            }
-            case TRAFFIC -> {
-                buttonLog.active=true;
-                buttonTraffic.active=false;
-                buttonUser.active=true;
-                buttonMod.active=true;
-            }
+        try {
+            onTab();
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.onClose();
         }
+        lasttab=tab;
     }
 
 }
