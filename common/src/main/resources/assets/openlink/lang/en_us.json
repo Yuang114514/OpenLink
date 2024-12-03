@@ -29,5 +29,6 @@
   "tab.openlink.setting_log": "Proxy Log",
   "tab.openlink.setting_user": "User Info",
   "tab.openlink.setting_info": "Mod Info",
-  "tab.openlink.setting_acklist": "Acknowledgments"
+  "tab.openlink.setting_acklist": "Acknowledgments",
+  "text.openlink.loading": "Loading..."
 }

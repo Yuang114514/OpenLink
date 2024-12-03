@@ -10,7 +10,7 @@ import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -51,8 +51,19 @@ public class SettingScreen extends Screen {
         addRenderableWidget(buttonInfo);
         addRenderableWidget(buttonUser);
         addRenderableWidget(buttonAck);
-        tabUser.add(new ImageWidget(10,65,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/avatar.png")));
-        tabUser.add(new ComponentWidget(this.font,(10+10+64)/2,65+64+5,0xffffff,TextComponent.EMPTY,true));
+        Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).component:TextComponent.EMPTY;
+        Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).component:TextComponent.EMPTY;
+        Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).component:TextComponent.EMPTY;
+        int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
+        tabUser.clear();
+        tabLog.clear();
+        tabAck.clear();
+        tabInfo.clear();
+        int j=Math.min((this.width-20)/4,(this.height-75)/5*3);
+        tabUser.add(new ImageWidget(10,65,0,0,j,j,j,j,new ResourceLocation("openlink","textures/gui/avatar.png")));
+        tabUser.add(new ComponentWidget(this.font,10,65+j+5,0xffffff,lastcomponent1,false));
+        tabUser.add(new ComponentWidget(this.font,lastx2,65+j+5,0xacacac,lastcomponent2,false));
+        tabUser.add(new ComponentWidget(this.font,10,65+j+5+10,0xacacac,lastcomponent3,false));
     }
 
     @Override
@@ -68,7 +79,7 @@ public class SettingScreen extends Screen {
     }
 
     @Unique
-    private void onTab() throws Exception {
+    private void onTab() {
         boolean first=lasttab!=tab;
         switch(tab){
             case LOG -> {
@@ -91,13 +102,32 @@ public class SettingScreen extends Screen {
                 buttonUser.active=false;
                 buttonAck.active=true;
                 renderableTabWidgets=tabUser;
-                if(first)
-                    userInfo=Request.getUserInfo();
-                if(userInfo==null||!userInfo.flag)
-                    this.minecraft.setScreen(new LoginScreen(this,lastscreen));
-                ComponentWidget now=(ComponentWidget)tabUser.get(1);
-                now.component=new TextComponent(userInfo.data.username);
-                tabUser.set(1,now);
+                if(first) {
+                    ComponentWidget now=(ComponentWidget)tabUser.get(1);
+                    ComponentWidget nowid=(ComponentWidget)tabUser.get(2);
+                    ComponentWidget nowemail=(ComponentWidget)tabUser.get(3);
+                    now.component=new TranslatableComponent("text.openlink.loading");
+                    nowid.component=TextComponent.EMPTY;
+                    nowemail.component=TextComponent.EMPTY;
+                    tabUser.set(1,now);
+                    new Thread(() -> {
+                        try {
+                            userInfo = Request.getUserInfo();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            this.minecraft.setScreen(new LoginScreen(this, lastscreen));
+                        }
+                        now.component=new TextComponent(userInfo.data.username);
+                        nowid.component=new TextComponent("#"+userInfo.data.id);
+                        nowid.x=10+now.font.width(now.component)+1;
+                        nowemail.component=new TextComponent(userInfo.data.email);
+                        tabUser.set(1,now);
+                        tabUser.set(2,nowid);
+                        tabUser.set(3,nowemail);
+                        if (!userInfo.flag)
+                            this.minecraft.setScreen(new LoginScreen(this, lastscreen));
+                    }, "Request thread").start();
+                }
             }
             case INFO -> {
                 buttonLog.active=true;

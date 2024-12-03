@@ -25,17 +25,7 @@ public class Request {
     public static String token=null;
 
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body) throws Exception {
-        AtomicReference<Pair<String, Map<String, List<String>>>> res = new AtomicReference<>();
-        Thread thread = new Thread(()->{
-            try {
-                res.set(POST(url, header, body, false));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        },"Request thread");
-        thread.start();
-        thread.join();
-        Pair<String, Map<String, List<String>>> returnval=res.get();
+        Pair<String, Map<String, List<String>>> returnval=POST(url, header, body, false);
         if(returnval.getSecond().containsKey("Authorization")){
             if(Authorization==null||!Authorization.equals(returnval.getSecond().get("Authorization").get(0))){
                 Authorization=returnval.getSecond().get("Authorization").get(0);

@@ -10,7 +10,9 @@ public class ComponentWidget implements Widget {
     public Component component;
     public final boolean centered;
     public final Font font;
-    public final int x,y,color;
+    public int x;
+    public int y;
+    public final int color;
     public ComponentWidget(Font font1, int x1, int y1, int color1, Component component1, boolean centered1){
         component=component1;
         centered=centered1;
