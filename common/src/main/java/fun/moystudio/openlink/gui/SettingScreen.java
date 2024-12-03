@@ -10,7 +10,6 @@ import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Unique;
@@ -50,7 +49,7 @@ public class SettingScreen extends Screen {
         addRenderableWidget(buttonInfo);
         addRenderableWidget(buttonUser);
         addRenderableWidget(buttonAck);
-        //tabUser.add(new Image(10,65,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/avatar.png")));
+        tabUser.add(new ImageWidget(10,65,0,0,80,80,80,80,new ResourceLocation("openlink","textures/gui/avatar.png")));
     }
 
     @Override

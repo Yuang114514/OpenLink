@@ -190,6 +190,7 @@ public class Frpc {
                     //SSL警告
                     Minecraft.getInstance().gui.getChat().addMessage(new TranslatableComponent("text.openlink.sslwarning"));
                 }
+                Minecraft.getInstance().gui.getChat().addMessage(new TranslatableComponent("text.openlink.creatingproxy"));
                 Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                 JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 //OpenLink隧道命名规则：openlink_mc_[本地端口号]

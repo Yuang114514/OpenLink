@@ -17,6 +17,7 @@
   "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in game directory,\n§o§l§cplease download it.",
   "text.openlink.sslignored": "Because of your network, SSL is ignored. All of your network requests will be INSECURE! Do you still want to use OpenLink?",
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 SSL ignoring may make your user and password INSECURE. \n§c§o§lPlease don't send IP to anyone YOU DON'T TRUST!",
+  "text.openlink.creatingproxy": "§b§o[OpenLink] Creating proxy...",
   "text.openlink.clicktorestart": "§o§l§cClick to restart the remote proxy",
   "cycle.openlink.onlinemode": "Online Mode",
   "cycle.openlink.offlinemode": "Offline Mode",
