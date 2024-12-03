@@ -10,6 +10,8 @@ import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Unique;
@@ -49,7 +51,8 @@ public class SettingScreen extends Screen {
         addRenderableWidget(buttonInfo);
         addRenderableWidget(buttonUser);
         addRenderableWidget(buttonAck);
-        tabUser.add(new ImageWidget(10,65,0,0,80,80,80,80,new ResourceLocation("openlink","textures/gui/avatar.png")));
+        tabUser.add(new ImageWidget(10,65,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/avatar.png")));
+        tabUser.add(new ComponentWidget(this.font,(10+10+64)/2,65+64+5,0xffffff,TextComponent.EMPTY,true));
     }
 
     @Override
@@ -92,6 +95,9 @@ public class SettingScreen extends Screen {
                     userInfo=Request.getUserInfo();
                 if(userInfo==null||!userInfo.flag)
                     this.minecraft.setScreen(new LoginScreen(this,lastscreen));
+                ComponentWidget now=(ComponentWidget)tabUser.get(1);
+                now.component=new TextComponent(userInfo.data.username);
+                tabUser.set(1,now);
             }
             case INFO -> {
                 buttonLog.active=true;
