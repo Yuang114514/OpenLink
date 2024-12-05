@@ -2,11 +2,13 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
 import fun.moystudio.openlink.network.Request;
+import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
@@ -16,8 +18,12 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
@@ -51,6 +57,7 @@ public class SettingScreen extends Screen {
         addRenderableWidget(buttonInfo);
         addRenderableWidget(buttonUser);
         addRenderableWidget(buttonAck);
+        ResourceLocation lastlocationimage=tabUser.size()>=1?((ImageWidget)tabUser.get(0)).texture:new ResourceLocation("openlink","textures/gui/default_avatar.png");
         Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).component:TextComponent.EMPTY;
         Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).component:TextComponent.EMPTY;
         Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).component:TextComponent.EMPTY;
@@ -60,7 +67,7 @@ public class SettingScreen extends Screen {
         tabAck.clear();
         tabInfo.clear();
         int j=Math.min((this.width-20)/4,(this.height-75)/5*3);
-        tabUser.add(new ImageWidget(10,65,0,0,j,j,j,j,new ResourceLocation("openlink","textures/gui/avatar.png")));
+        tabUser.add(new ImageWidget(10,65,0,0,j,j,j,j,lastlocationimage));
         tabUser.add(new ComponentWidget(this.font,10,65+j+5,0xffffff,lastcomponent1,false));
         tabUser.add(new ComponentWidget(this.font,lastx2,65+j+5,0xacacac,lastcomponent2,false));
         tabUser.add(new ComponentWidget(this.font,10,65+j+5+10,0xacacac,lastcomponent3,false));
@@ -103,25 +110,36 @@ public class SettingScreen extends Screen {
                 buttonAck.active=true;
                 renderableTabWidgets=tabUser;
                 if(first) {
-                    ComponentWidget now=(ComponentWidget)tabUser.get(1);
+                    ImageWidget nowavatar=(ImageWidget)tabUser.get(0);
+                    ComponentWidget nowuser=(ComponentWidget)tabUser.get(1);
                     ComponentWidget nowid=(ComponentWidget)tabUser.get(2);
                     ComponentWidget nowemail=(ComponentWidget)tabUser.get(3);
-                    now.component=new TranslatableComponent("text.openlink.loading");
+                    nowuser.component=new TranslatableComponent("text.openlink.loading");
                     nowid.component=TextComponent.EMPTY;
                     nowemail.component=TextComponent.EMPTY;
-                    tabUser.set(1,now);
+                    tabUser.set(1,nowuser);
                     new Thread(() -> {
                         try {
                             userInfo = Request.getUserInfo();
                         } catch (Exception e) {
                             e.printStackTrace();
                             this.minecraft.setScreen(new LoginScreen(this, lastscreen));
-                        }
-                        now.component=new TextComponent(userInfo.data.username);
+                            return;
+                        };
+                        MessageDigest messageDigest=null;
+                        try {
+                            messageDigest=MessageDigest.getInstance("SHA-256");
+                        } catch (NoSuchAlgorithmException ignored) {}
+                        StringBuilder sha256=new StringBuilder();
+                        for (byte b:messageDigest.digest(userInfo.data.email.toLowerCase().getBytes(StandardCharsets.UTF_8)))
+                            sha256.append(String.format("%02x",b));
+                        nowavatar.texture=new WebTextureResourceLocation(Uris.weavatarUri.toString()+sha256.toString()+".png?s=400").location;
+                        nowuser.component=new TextComponent(userInfo.data.username);
                         nowid.component=new TextComponent("#"+userInfo.data.id);
-                        nowid.x=10+now.font.width(now.component)+1;
+                        nowid.x=10+nowuser.font.width(nowuser.component)+1;
                         nowemail.component=new TextComponent(userInfo.data.email);
-                        tabUser.set(1,now);
+                        tabUser.set(0,nowavatar);
+                        tabUser.set(1,nowuser);
                         tabUser.set(2,nowid);
                         tabUser.set(3,nowemail);
                         if (!userInfo.flag)

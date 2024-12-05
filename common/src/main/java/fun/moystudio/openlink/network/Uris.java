@@ -54,4 +54,14 @@ public class Uris {
         }
     }
 
+    public static final URI weavatarUri;
+
+    static {
+        try{
+            weavatarUri = new URI("https://weavatar.com/avatar/");
+        } catch (URISyntaxException e){
+            throw new RuntimeException(e);
+        }
+    }
+
 }

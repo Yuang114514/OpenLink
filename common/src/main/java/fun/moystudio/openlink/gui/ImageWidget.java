@@ -7,7 +7,7 @@ import net.minecraft.client.gui.components.Widget;
 import net.minecraft.resources.ResourceLocation;
 
 public class ImageWidget implements Widget{
-    private final ResourceLocation texture;
+    public ResourceLocation texture;
     private int x,y,width,height,textureWidth,textureHeight;
     private float uOffset,vOffset;
     public ImageWidget(int x1, int y1, float uOffset1, float vOffset1, int width1, int height1, int textureWidth1, int textureHeight1, ResourceLocation rl){
