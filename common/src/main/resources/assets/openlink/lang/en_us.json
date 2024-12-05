@@ -30,5 +30,6 @@
   "tab.openlink.setting_user": "User Info",
   "tab.openlink.setting_info": "Mod Info",
   "tab.openlink.setting_acklist": "Acknowledgments",
-  "text.openlink.loading": "Loading..."
+  "text.openlink.loading": "Loading...",
+  "text.openlink.proxycount": "Proxies: %s/%s"
 }

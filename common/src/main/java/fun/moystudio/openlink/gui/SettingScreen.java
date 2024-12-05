@@ -2,7 +2,6 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
@@ -23,7 +22,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
@@ -57,10 +55,12 @@ public class SettingScreen extends Screen {
         addRenderableWidget(buttonInfo);
         addRenderableWidget(buttonUser);
         addRenderableWidget(buttonAck);
-        ResourceLocation lastlocationimage=tabUser.size()>=1?((ImageWidget)tabUser.get(0)).texture:new ResourceLocation("openlink","textures/gui/default_avatar.png");
+        ResourceLocation lastlocationimage=!tabUser.isEmpty()?((ImageWidget)tabUser.get(0)).texture:new ResourceLocation("openlink","textures/gui/default_avatar.png");
         Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).component:TextComponent.EMPTY;
         Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).component:TextComponent.EMPTY;
         Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).component:TextComponent.EMPTY;
+        Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).component:TextComponent.EMPTY;
+        Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).component:TextComponent.EMPTY;
         int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
         tabUser.clear();
         tabLog.clear();
@@ -71,6 +71,15 @@ public class SettingScreen extends Screen {
         tabUser.add(new ComponentWidget(this.font,10,65+j+5,0xffffff,lastcomponent1,false));
         tabUser.add(new ComponentWidget(this.font,lastx2,65+j+5,0xacacac,lastcomponent2,false));
         tabUser.add(new ComponentWidget(this.font,10,65+j+5+10,0xacacac,lastcomponent3,false));
+        tabUser.add(new ComponentWidget(this.font,10,65+j+5+20,0xacacac,lastcomponent4,false));
+        tabUser.add(new ComponentWidget(this.font,10,65+j+5+30,0xacacac,lastcomponent5,false));
+        List<Integer> list=new ArrayList<>();
+        list.add(1);
+        list.add(3);
+        list.add(6);
+        list.add(4);
+        list.add(2);
+        tabUser.add(new LineChartWidget(this.font,10+j+20,65+5,this.width-20,60+this.height-75-15,new TextComponent("X轴Test"),new TextComponent("Y轴Test"),list));
     }
 
     @Override
@@ -114,9 +123,12 @@ public class SettingScreen extends Screen {
                     ComponentWidget nowuser=(ComponentWidget)tabUser.get(1);
                     ComponentWidget nowid=(ComponentWidget)tabUser.get(2);
                     ComponentWidget nowemail=(ComponentWidget)tabUser.get(3);
+                    ComponentWidget nowgroup=(ComponentWidget)tabUser.get(4);
+                    ComponentWidget nowproxy=(ComponentWidget)tabUser.get(5);
                     nowuser.component=new TranslatableComponent("text.openlink.loading");
                     nowid.component=TextComponent.EMPTY;
                     nowemail.component=TextComponent.EMPTY;
+                    nowgroup.component=TextComponent.EMPTY;
                     tabUser.set(1,nowuser);
                     new Thread(() -> {
                         try {
@@ -125,7 +137,7 @@ public class SettingScreen extends Screen {
                             e.printStackTrace();
                             this.minecraft.setScreen(new LoginScreen(this, lastscreen));
                             return;
-                        };
+                        }
                         MessageDigest messageDigest=null;
                         try {
                             messageDigest=MessageDigest.getInstance("SHA-256");
@@ -138,10 +150,14 @@ public class SettingScreen extends Screen {
                         nowid.component=new TextComponent("#"+userInfo.data.id);
                         nowid.x=10+nowuser.font.width(nowuser.component)+1;
                         nowemail.component=new TextComponent(userInfo.data.email);
+                        nowgroup.component=new TextComponent(userInfo.data.friendlyGroup);
+                        nowproxy.component=new TranslatableComponent("text.openlink.proxycount",userInfo.data.used,userInfo.data.proxies);
                         tabUser.set(0,nowavatar);
                         tabUser.set(1,nowuser);
                         tabUser.set(2,nowid);
                         tabUser.set(3,nowemail);
+                        tabUser.set(4,nowgroup);
+                        tabUser.set(5,nowproxy);
                         if (!userInfo.flag)
                             this.minecraft.setScreen(new LoginScreen(this, lastscreen));
                     }, "Request thread").start();
