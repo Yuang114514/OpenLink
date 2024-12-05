@@ -17,6 +17,7 @@
   "text.openlink.nofrpcfile": "§3无法在游戏目录中找到任何可用的 frpc 核心，\n§o§l§c请下载frpc核心。",
   "text.openlink.sslignored": "由于您的网络，SSL已被忽略。您的网络请求将不安全。您是否仍要使用 OpenLink？",
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 忽略 SSL 可能会使您的内穿账号和密码不安全. \n§c§o§l请不要将 IP 发送给任何您不信任的人！",
+  "text.openlink.creatingproxy": "§b§o[OpenLink] 正在创建联机代理隧道...",
   "text.openlink.clicktorestart": "§o§l§c点击来重启远程代理服务",
   "cycle.openlink.onlinemode": "在线模式",
   "cycle.openlink.offlinemode": "离线模式",
@@ -28,5 +29,7 @@
   "tab.openlink.setting_log": "联机代理日志",
   "tab.openlink.setting_user": "用户信息",
   "tab.openlink.setting_info": "模组信息",
-  "tab.openlink.setting_acklist": "致谢"
+  "tab.openlink.setting_acklist": "致谢",
+  "text.openlink.loading": "加载中...",
+  "text.openlink.proxycount": "隧道数: %s/%s"
 }
