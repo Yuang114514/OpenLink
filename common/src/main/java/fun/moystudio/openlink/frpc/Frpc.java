@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Frpc {
     public static final String DEFAULT_FOLDER_NAME = "OpenFRP_0.61.0_f4d251cc_20241126/";
     public static final int MAX_BUFFER_SIZE = 10485760;
+    public static final int MAX_TRAFFIC_STORAGE = 9;
     private static String suffix = "";
     private static String zsuffix = ".tar.gz";
     public static String osName;
@@ -197,6 +198,7 @@ public class Frpc {
                 for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
                     if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
                         try {
+                            Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
                             Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
                             OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
                         } catch (Exception e) {
@@ -341,6 +343,12 @@ public class Frpc {
                         .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
                                 .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))));
                 Minecraft.getInstance().gui.getChat().addMessage(tmp);
+                List<String> list=new ArrayList<>(List.of(OpenLink.PREFERENCES.get("traffic_storage", "").split(";")));
+                while(list.size()>=MAX_TRAFFIC_STORAGE){
+                    list.remove(0);
+                }
+                list.add(String.format(Locale.getDefault(),"%tD %tT",new Date(),new Date())+","+userinfo.data.traffic);
+                OpenLink.PREFERENCES.put("traffic_storage", String.join(";", list));
             } catch (Exception e) {
                 Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
                 e.printStackTrace();

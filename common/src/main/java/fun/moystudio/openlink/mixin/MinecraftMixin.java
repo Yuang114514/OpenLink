@@ -54,6 +54,7 @@ public abstract class MinecraftMixin {
             for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
                 if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
                     try {
+                        Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
                         Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
                         OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
                     } catch (Exception e) {

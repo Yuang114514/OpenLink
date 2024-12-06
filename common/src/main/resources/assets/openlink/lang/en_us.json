@@ -31,5 +31,8 @@
   "tab.openlink.setting_info": "Mod Info",
   "tab.openlink.setting_acklist": "Acknowledgments",
   "text.openlink.loading": "Loading...",
-  "text.openlink.proxycount": "Proxies: %s/%s"
+  "text.openlink.proxycount": "Proxies: %s/%s",
+  "text.openlink.x_axis_label": "Time",
+  "text.openlink.y_axis_label": "Traffic(MiB)",
+  "text.openlink.now": "Now"
 }

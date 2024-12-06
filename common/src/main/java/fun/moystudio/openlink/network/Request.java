@@ -136,7 +136,7 @@ public class Request {
         }
         try{
             JsonResponseWithData<JsonUserInfo> responseWithData = getUserInfo();
-            if(!responseWithData.flag){
+            if(responseWithData==null||!responseWithData.flag){
                 Authorization=null;
                 OpenLink.LOGGER.warn("The session has been expired!");
             }

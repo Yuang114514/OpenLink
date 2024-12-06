@@ -1,25 +1,27 @@
 package fun.moystudio.openlink.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import fun.moystudio.openlink.OpenLink;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 //是哪个大聪明想出来让我写折线统计图的？？？给我滚出来（zirran不要删注释后面调试用，这玩意真的难写）
 public class LineChartWidget extends GuiComponent implements Widget{
-    public List<Integer> dataPoints;
+    public List<Pair<String,Long>> dataPoints;
     //左上——右下
     public int x1,y1,x2,y2,width,height;
     public Font font;
     public Component labelX,labelY;
+    public OnTooltip onTooltip;
 
-    public LineChartWidget(Font font, int x1, int y1, int x2, int y2, Component labelX,Component labelY, List<Integer> dataPoints){
+
+    public LineChartWidget(Font font, int x1, int y1, int x2, int y2, Component labelX,Component labelY, List<Pair<String,Long>> dataPoints, OnTooltip onTooltip){
         this.font=font;
         this.dataPoints=dataPoints;
         this.labelX=labelX;
@@ -30,52 +32,94 @@ public class LineChartWidget extends GuiComponent implements Widget{
         this.y2=y2;
         this.width=x2-x1+1;
         this.height=y2-y1+1;
+        this.onTooltip=onTooltip;
     }
 
-    private void drawLine(PoseStack poseStack, int x1, int y1, int x2, int y2, long color) {
-        BufferBuilder bufferBuilder=Tesselator.getInstance().getBuilder();
-        RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        float g = (float)(color >> 16 & 255) / 255.0F;
-        float h = (float)(color >> 8 & 255) / 255.0F;
-        float o = (float)(color & 255) / 255.0F;
-        float f = (float)(color >> 24 & 255) / 255.0F;
-        bufferBuilder.begin(VertexFormat.Mode.LINES,DefaultVertexFormat.POSITION_COLOR);
-        bufferBuilder.vertex(poseStack.last().pose(),(float)x1,(float)y1,0.0F).color(g,h,o,f).endVertex();
-        bufferBuilder.vertex(poseStack.last().pose(),(float)x2,(float)y2,0.0F).color(g,h,o,f).endVertex();
-        bufferBuilder.end();
-        BufferUploader.end(bufferBuilder);
-        RenderSystem.enableTexture();
-        RenderSystem.disableBlend();
+    private void drawLine(PoseStack poseStack,int x1, int y1, int x2, int y2, int color) {
+        //I love u Bresenham!!!
+        //最喜欢Bresenham的一集（感谢他发明了直线算法，不然我还要去调RenderSystem的那一堆逆天方法）
+        int dx=Math.abs(x2-x1);
+        int dy=Math.abs(y2-y1);
+        int sx=(x1<x2)?1:-1;
+        int sy=(y1<y2)?1:-1;
+        int err=dx-dy;
+        while(true){
+            fill(poseStack,x1,y1,x1+1,y1+1,color);
+            if(x1==x2&&y1==y2){
+                break;
+            }
+            int e2=err*2;
+            if(e2>-dy){
+                err-=dy;
+                x1+=sx;
+            }
+            if(e2<dx) {
+                err+=dx;
+                y1+=sy;
+            }
+        }
     }
 
 
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
-        RenderSystem.enableBlend();
         //左下——右上
-        int beginX=x1,beginY=y2,endX=x2,endY=y1;
-        hLine(poseStack,beginX,endX,beginY,0xffffffff);//x轴
-        vLine(poseStack,beginX,beginY,endY,0xffffffff);//y轴
-        drawCenteredString(poseStack,font,labelX,x2-10,y2+5,0xffffff);//x轴标签
-        drawCenteredString(poseStack,font,labelY,x1,y1-5,0xffffff);//y轴标签
-        int maxDataVal=dataPoints.stream().max(Integer::compareTo).orElse(1);//最大值
-        float xScale=(float)(width-5)/(dataPoints.size() - 1);//x轴数据放大倍数（留了5的空间）
-        float yScale=(float)(height-5)/maxDataVal;//y轴数据放大倍数（留了5的空间）
-        for(int k=0;k<dataPoints.size()-1;k++){//size-1条线（打OI打的：越界会RE的）
-            int x1=(int)(beginX+5+k*xScale);
-            int y1=(int)(beginY-dataPoints.get(k)*yScale);
-            int x2=(int)(beginX+5+(k+1)*xScale);
-            int y2=(int)(beginY-dataPoints.get(k+1)*yScale);
-            drawLine(poseStack,x1,y1,x2,y2, 0xFFFFFFFFL);//颜色后面再改，先用着白色
+        int beginX = x1, beginY = y2, endX = x2, endY = y1;
+        int x1=this.x1;
+        Pair<String, Long> maxDataVal = dataPoints.stream().max(Comparator.comparingLong(Pair::getSecond)).orElse(new Pair<>("nope", 1L));//最大值
+        if(font.width(String.format("%.1f",(double)maxDataVal.getSecond()))>font.width("114")){
+            x1+=font.width(String.format("%.1f",(double)maxDataVal.getSecond()))-font.width("114");
+            beginX=x1;
+            width=x2-x1+1;
         }
-        for (int k=0;k<dataPoints.size();k++) {//size个点
-            int pointX=(int)(beginX+5+k*xScale);
-            int pointY=(int)(beginY-dataPoints.get(k)*yScale);
-            fill(poseStack,pointX-2,pointY-2,pointX+2,pointY+2,0xffff0000);//颜色后面再改，先用着红色
+        hLine(poseStack, beginX, endX, beginY, 0xffffffff);//x轴
+        vLine(poseStack, beginX, beginY, endY, 0xffffffff);//y轴
+        if(dataPoints.size()>1){
+            for (int k = 1; k <= 5; k++) {
+                int y = beginY - k * (height - 5) / 5;
+                hLine(poseStack, beginX, endX, y, 0x7fffffff);//y轴刻度横线
+            }
+            float xScale = (float) (width - 10) / (dataPoints.size() - 1);//x轴数据放大倍数（留了10的空间）
+            float yScale = (float) (height - 5) / maxDataVal.getSecond();//y轴数据放大倍数（留了5的空间）
+            int pointScale;
+            for (int k = 0; k < dataPoints.size() - 1; k++) {//size-1条线（打OI打的：越界会RE的）
+                int x11 = (int) (beginX + 5 + k * xScale);
+                int y1 = (int) (beginY - dataPoints.get(k).getSecond() * yScale);
+                int x2 = (int) (beginX + 5 + (k + 1) * xScale);
+                int y2 = (int) (beginY - dataPoints.get(k + 1).getSecond() * yScale);
+                drawLine(poseStack, x11, y1, x2, y2, 0x7f66ccff);
+            }
+            List<Integer> dataX = new ArrayList<>();
+            boolean tooltip=false;
+            int tooltipindex = 0;
+            for (int k = 0; k < dataPoints.size(); k++) {//size个点
+                pointScale = 2;
+                int pointX = (int) (beginX + 5 + k * xScale);
+                int pointY = (int) (beginY - dataPoints.get(k).getSecond() * yScale);
+                dataX.add(pointX);
+                if (i >= pointX - pointScale && i <= pointX + pointScale && j >= pointY - pointScale && j <= pointY + pointScale) {
+                    pointScale = pointScale * 3 / 2;
+                    tooltip=true;
+                    tooltipindex=k;
+                }
+                fill(poseStack, pointX - pointScale, pointY - pointScale, pointX + pointScale, pointY + pointScale, 0xff66ccff);
+            }
+            if(tooltip){
+                onTooltip.onTooltip(new Pair<>(dataPoints.get(tooltipindex).getFirst(), dataPoints.get(tooltipindex).getSecond()), poseStack, i, j);
+            }
+            for (int k = 0; k < dataX.size(); k++) {
+                drawCenteredString(poseStack, font, dataPoints.get(k).getFirst(), dataX.get(k), y2 + 5, 0xffffff);//x轴刻度标签
+            }
+            for (int k = 1; k <= 5; k++) {
+                int y = beginY - k * (height - 5) / 5;
+                drawString(poseStack, font, String.format("%.1f", k * maxDataVal.getSecond() / 5.0), x1 - font.width(String.format("%.1f", k * maxDataVal.getSecond() / 5.0)), y - 3, 0xffffff);//y轴刻度标签
+            }
         }
-        //x轴和y轴数据先搁着
+        drawCenteredString(poseStack,font,labelX,x2-10,y2-10,0xffffff);//x轴标签
+        drawString(poseStack,font,labelY,x1,y1-5,0xffffff);//y轴标签
+    }
+
+    public interface OnTooltip {
+        void onTooltip(Pair<String,Long> dataXY, PoseStack poseStack, int i, int j);
     }
 }

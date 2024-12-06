@@ -2,6 +2,7 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
@@ -21,6 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SettingScreen extends Screen {
@@ -62,6 +64,7 @@ public class SettingScreen extends Screen {
         Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).component:TextComponent.EMPTY;
         Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).component:TextComponent.EMPTY;
         int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
+        List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTraffic();
         tabUser.clear();
         tabLog.clear();
         tabAck.clear();
@@ -73,14 +76,15 @@ public class SettingScreen extends Screen {
         tabUser.add(new ComponentWidget(this.font,10,65+j+5+10,0xacacac,lastcomponent3,false));
         tabUser.add(new ComponentWidget(this.font,10,65+j+5+20,0xacacac,lastcomponent4,false));
         tabUser.add(new ComponentWidget(this.font,10,65+j+5+30,0xacacac,lastcomponent5,false));
-        List<Integer> list=new ArrayList<>();
-        list.add(1);
-        list.add(3);
-        list.add(6);
-        list.add(4);
-        list.add(2);
-        tabUser.add(new LineChartWidget(this.font,10+j+20,65+5,this.width-20,60+this.height-75-15,new TextComponent("X轴Test"),new TextComponent("Y轴Test"),list));
-    }
+        tabUser.add(new LineChartWidget(
+                    this.font,
+                    10+j+20, 65+5,
+                    this.width-20, 60+this.height-75-15,
+                    new TranslatableComponent("text.openlink.x_axis_label"), new TranslatableComponent("text.openlink.y_axis_label"), lastdatapoints,
+                    (dataXY, poseStack, i1, j1)-> renderComponentTooltip(poseStack,
+                            Arrays.stream(new Component[]{new TextComponent(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
+                            i1,j1)));
+}
 
     @Override
     public void render(PoseStack poseStack,int i,int j,float f){
@@ -125,10 +129,12 @@ public class SettingScreen extends Screen {
                     ComponentWidget nowemail=(ComponentWidget)tabUser.get(3);
                     ComponentWidget nowgroup=(ComponentWidget)tabUser.get(4);
                     ComponentWidget nowproxy=(ComponentWidget)tabUser.get(5);
+                    LineChartWidget nowtraffic=(LineChartWidget)tabUser.get(6);
                     nowuser.component=new TranslatableComponent("text.openlink.loading");
                     nowid.component=TextComponent.EMPTY;
                     nowemail.component=TextComponent.EMPTY;
                     nowgroup.component=TextComponent.EMPTY;
+                    nowproxy.component=TextComponent.EMPTY;
                     tabUser.set(1,nowuser);
                     new Thread(() -> {
                         try {
@@ -152,6 +158,9 @@ public class SettingScreen extends Screen {
                         nowemail.component=new TextComponent(userInfo.data.email);
                         nowgroup.component=new TextComponent(userInfo.data.friendlyGroup);
                         nowproxy.component=new TranslatableComponent("text.openlink.proxycount",userInfo.data.used,userInfo.data.proxies);
+                        List<Pair<String,Long>> dataPoints=readTraffic();
+                        dataPoints.add(new Pair<>(new TranslatableComponent("text.openlink.now").getString(),userInfo.data.traffic));
+                        nowtraffic.dataPoints=dataPoints;
                         tabUser.set(0,nowavatar);
                         tabUser.set(1,nowuser);
                         tabUser.set(2,nowid);
@@ -188,6 +197,19 @@ public class SettingScreen extends Screen {
             this.onClose();
         }
         lasttab=tab;
+    }
+
+    public List<Pair<String,Long>> readTraffic(){
+        String origin=OpenLink.PREFERENCES.get("traffic_storage","");
+        String[] spilt=origin.split(";");
+        List<Pair<String,Long>> res=new ArrayList<>();
+        for(String s:spilt) {
+            if(!s.isEmpty()) {
+                String[] split = s.split(",");
+                res.add(new Pair<>(split[0], Long.parseLong(split[1])));
+            }
+        }
+        return res;
     }
 
 }
