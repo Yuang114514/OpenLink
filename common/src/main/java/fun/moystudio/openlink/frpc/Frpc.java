@@ -24,7 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Frpc {
     public static final String DEFAULT_FOLDER_NAME = "OpenFRP_0.61.0_f4d251cc_20241126/";
     public static final int MAX_BUFFER_SIZE = 10485760;
-    public static final int MAX_TRAFFIC_STORAGE = 9;
+    public static final int MAX_TRAFFIC_STORAGE = 4;
     private static String suffix = "";
     private static String zsuffix = ".tar.gz";
     public static String osName;

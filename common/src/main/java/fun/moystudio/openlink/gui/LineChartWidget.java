@@ -108,7 +108,15 @@ public class LineChartWidget extends GuiComponent implements Widget{
                 onTooltip.onTooltip(new Pair<>(dataPoints.get(tooltipindex).getFirst(), dataPoints.get(tooltipindex).getSecond()), poseStack, i, j);
             }
             for (int k = 0; k < dataX.size(); k++) {
-                drawCenteredString(poseStack, font, dataPoints.get(k).getFirst(), dataX.get(k), y2 + 5, 0xffffff);//x轴刻度标签
+                String toRender=dataPoints.get(k).getFirst();//x轴刻度标签
+                if(toRender.contains(" ")){
+                    String[] arrayToRender=toRender.split(" ");
+                    drawCenteredString(poseStack, font, arrayToRender[0], dataX.get(k), y2 + 5, 0xffffff);
+                    drawCenteredString(poseStack, font, arrayToRender[1], dataX.get(k), y2 + 5 + font.lineHeight, 0xffffff);
+                }
+                else {
+                    drawCenteredString(poseStack, font, toRender, dataX.get(k), y2 + 5, 0xffffff);
+                }
             }
             for (int k = 1; k <= 5; k++) {
                 int y = beginY - k * (height - 5) / 5;

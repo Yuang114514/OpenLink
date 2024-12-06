@@ -92,7 +92,7 @@ public class SettingScreen extends Screen {
         RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
         RenderSystem.setShaderTexture(0,BACKGROUND_SETTING);
         blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);
-        fill(poseStack,5,60,this.buttonAck.x+this.buttonAck.getWidth(),60+this.height-75,0x8F000000);
+        fill(poseStack,5,60,this.buttonAck.x+this.buttonAck.getWidth(),this.height-5,0x8F000000);
         title.renderCentered(poseStack,this.width/2,15);
         if(renderableTabWidgets!=null) renderableTabWidgets.forEach(widget -> widget.render(poseStack,i,j,f));
         super.render(poseStack,i,j,f);
