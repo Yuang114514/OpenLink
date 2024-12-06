@@ -1,7 +1,7 @@
 modLoader = "javafml"
 loaderVersion = "[40,)"
-#issueTrackerURL = ""
-license = "All Rights Reserved"
+issueTrackerURL = "https://github.com/StarCarefree/OpenLink/issues"
+license = "MIT"
 
 [[mods]]
 modId = "openlink"
