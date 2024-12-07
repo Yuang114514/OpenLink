@@ -2,7 +2,7 @@
   "gui.openlink.updatefrpctitle": "§l§g发现一个新的Frpc核心！",
   "text.openlink.updatingfrpc": "§o§s正在更新Frpc核心...§8(这可能会耗费少许时间)",
   "text.openlink.updatefrpc": "§l§g发现一个新的Frpc核心！§r§g最新核心版本更新时间：§l§u%s§r§g，当前核心版本更新时间：§l§u%s§r§g §6你是否需要更新？",
-  "gui.openlink.settingscreentitle": "OpenLink 模组设置",
+  "gui.openlink.settingscreentitle": "OpenLink 面板",
   "gui.openlink.loginscreentitle": "Natayark账户登录",
   "text.openlink.logintips": "请登录您的Natayark账户",
   "text.openlink.username": "用户名或邮箱",
