@@ -29,7 +29,12 @@
   "tab.openlink.setting_log": "联机代理日志",
   "tab.openlink.setting_user": "用户信息",
   "tab.openlink.setting_info": "模组信息",
-  "tab.openlink.setting_acklist": "致谢",
+  "tab.openlink.setting_setting": "设置",
   "text.openlink.loading": "加载中...",
-  "text.openlink.proxycount": "隧道数: %s/%s"
+  "text.openlink.proxycount": "隧道数: %s/%s",
+  "text.openlink.x_axis_label": "时间",
+  "text.openlink.y_axis_label": "流量(MiB)",
+  "text.openlink.now": "现在",
+  "text.openlink.login": "登录",
+  "text.openlink.nodata": "没有数据(你以前没有使用代理服务)"
 }
