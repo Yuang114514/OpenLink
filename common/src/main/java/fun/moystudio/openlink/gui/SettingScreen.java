@@ -95,10 +95,21 @@ public class SettingScreen extends Screen {
                             i1,j1)));
         //UserInfo的Login分屏
         tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/openfrp_icon.png")));
-        tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20,new TranslatableComponent("text.openlink.login"),(button -> {
-            this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen)));
-        })));
+        tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20,new TranslatableComponent("text.openlink.login"),(button -> this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen))))));
         //
+    }
+
+    //MouseEventsOverrideBegin
+    public List<? extends GuiEventListener> getChildrenWithTabRenderables(){
+        List<GuiEventListener> list=(((IScreenMixin)this).getChildren());
+        if(renderableTabWidgets!=null){
+            renderableTabWidgets.forEach(widget -> {
+                if (widget instanceof GuiEventListener guiEventListener) {
+                    list.add(guiEventListener);
+                }
+            });
+        }
+        return list;
     }
 
     @Override
@@ -118,18 +129,6 @@ public class SettingScreen extends Screen {
             }
         }
         return super.mouseClicked(d, e, i);
-    }
-
-    public List<? extends GuiEventListener> getChildrenWithTabRenderables(){
-        List<GuiEventListener> list=(((IScreenMixin)this).getChildren());
-        if(renderableTabWidgets!=null){
-            renderableTabWidgets.forEach(widget -> {
-                if (widget instanceof GuiEventListener guiEventListener) {
-                    list.add(guiEventListener);
-                }
-            });
-        }
-        return list;
     }
 
     @Override
@@ -211,6 +210,7 @@ public class SettingScreen extends Screen {
         }
         return toReturn;
     }
+    //End
 
     @Override
     public void render(PoseStack poseStack,int i,int j,float f){

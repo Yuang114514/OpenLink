@@ -2,7 +2,7 @@
   "gui.openlink.updatefrpctitle": "§l§gA new Frpc version was found!",
   "text.openlink.updatingfrpc": "§o§sUpdating Frpc...§8(It may takes a while)",
   "text.openlink.updatefrpc": "§l§gA new Frpc version was found! §r§g Latest version date:§l§u %s §r§g, §gnow version date:§l§u %s §r§g. §6Would you like to update?",
-  "gui.openlink.settingscreentitle": "OpenLink Settings",
+  "gui.openlink.settingscreentitle": "OpenLink Panel",
   "gui.openlink.loginscreentitle": "Natayark account Login",
   "text.openlink.logintips": "Please login your Natayark account",
   "text.openlink.username": "Username or e-mail",
