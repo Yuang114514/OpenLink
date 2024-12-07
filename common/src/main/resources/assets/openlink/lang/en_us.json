@@ -29,7 +29,7 @@
   "tab.openlink.setting_log": "Proxy Log",
   "tab.openlink.setting_user": "User Info",
   "tab.openlink.setting_info": "Mod Info",
-  "tab.openlink.setting_acklist": "Acknowledgments",
+  "tab.openlink.setting_setting": "Settings",
   "text.openlink.loading": "Loading...",
   "text.openlink.proxycount": "Proxies: %s/%s",
   "text.openlink.x_axis_label": "Time",
