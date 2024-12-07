@@ -11,7 +11,7 @@
   "text.openlink.notcompleted": "Username or password does not completed.",
   "text.openlink.usingfrp": "Using OpenFrp proxy",
   "text.openlink.port": "Proxy remote port(Optional)",
-  "text.openlink.userproxieslimited": "§c§lYou've reached the maximum number of proxies.\nPlease delete some proxies!",
+  "text.openlink.userproxieslimited": "§c§lYou have reached the maximum number of proxies.\nPlease delete some proxies!",
   "text.openlink.remoteportnotfound": "§c§lCan not find any available remote port after 5 tries§o§i\n(Maybe you are not lucky today :>)",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] Started proxy successfully!\nClick to copy IP: §l[%s§b§o§l]",
   "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in game directory,\n§o§l§cplease download it.",
@@ -35,5 +35,6 @@
   "text.openlink.x_axis_label": "Time",
   "text.openlink.y_axis_label": "Traffic(MiB)",
   "text.openlink.now": "Now",
-  "text.openlink.login": "Login"
+  "text.openlink.login": "Login",
+  "text.openlink.nodata": "No data(you didn't use the proxy service before)"
 }

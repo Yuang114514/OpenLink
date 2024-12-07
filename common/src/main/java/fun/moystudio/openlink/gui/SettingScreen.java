@@ -7,24 +7,27 @@ import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
+import fun.moystudio.openlink.mixin.IScreenMixin;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Unique;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
@@ -33,7 +36,6 @@ public class SettingScreen extends Screen {
     }
     MultiLineLabel title;
     Screen lastscreen;
-    Button loginButton;
     SettingTabs tab=SettingTabs.USER;
     SettingTabs lasttab=null;
     SettingScreenButton buttonLog, buttonInfo,buttonUser, buttonAck;
@@ -68,11 +70,13 @@ public class SettingScreen extends Screen {
         Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).component:TextComponent.EMPTY;
         int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
         List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTraffic();
+        //Clear tabs
         tabUser.clear();
         tabLogin_User.clear();
         tabLog.clear();
         tabAck.clear();
         tabInfo.clear();
+        //UserInfo排版用
         int j=Math.min((this.width-20)/4,(this.height-75)/5*3);
         //UserInfo
         tabUser.add(new ImageWidget(10,65,0,0,j,j,j,j,lastlocationimage));
@@ -91,11 +95,121 @@ public class SettingScreen extends Screen {
                             i1,j1)));
         //UserInfo的Login分屏
         tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/openfrp_icon.png")));
-        loginButton=new Button(this.width/2+20,(this.height-75)/2+60-10,40,20,new TranslatableComponent("text.openlink.login"),(button -> {
+        tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20,new TranslatableComponent("text.openlink.login"),(button -> {
             this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen)));
-        }));
-        loginButton.visible=false;
-        addRenderableWidget(loginButton);
+        })));
+        //
+    }
+
+    @Override
+    public boolean mouseClicked(double d, double e, int i) {
+        if(renderableTabWidgets!=null){
+            for(Widget widget:renderableTabWidgets){
+                if (widget instanceof GuiEventListener guiEventListener) {
+                    if (guiEventListener.mouseClicked(d, e, i)) {
+                        this.setFocused(guiEventListener);
+                        if (i == 0) {
+                            this.setDragging(true);
+                        }
+
+                        return true;
+                    }
+                }
+            }
+        }
+        return super.mouseClicked(d, e, i);
+    }
+
+    public List<? extends GuiEventListener> getChildrenWithTabRenderables(){
+        List<GuiEventListener> list=(((IScreenMixin)this).getChildren());
+        if(renderableTabWidgets!=null){
+            renderableTabWidgets.forEach(widget -> {
+                if (widget instanceof GuiEventListener guiEventListener) {
+                    list.add(guiEventListener);
+                }
+            });
+        }
+        return list;
+    }
+
+    @Override
+    public boolean changeFocus(boolean bl) {
+        GuiEventListener guiEventListener = this.getFocused();
+        boolean bl2 = guiEventListener != null;
+        if (bl2 && guiEventListener.changeFocus(bl)) {
+            return true;
+        } else {
+            List<? extends GuiEventListener> list = this.getChildrenWithTabRenderables();
+            int i = list.indexOf(guiEventListener);
+            int j;
+            if (bl2 && i >= 0) {
+                j = i + (bl ? 1 : 0);
+            } else if (bl) {
+                j = 0;
+            } else {
+                j = list.size();
+            }
+
+            ListIterator<? extends GuiEventListener> listIterator = list.listIterator(j);
+            BooleanSupplier var10000;
+            if (bl) {
+                Objects.requireNonNull(listIterator);
+                var10000 = listIterator::hasNext;
+            } else {
+                Objects.requireNonNull(listIterator);
+                var10000 = listIterator::hasPrevious;
+            }
+
+            BooleanSupplier booleanSupplier = var10000;
+            Supplier var11;
+            if (bl) {
+                Objects.requireNonNull(listIterator);
+                var11 = listIterator::next;
+            } else {
+                Objects.requireNonNull(listIterator);
+                var11 = listIterator::previous;
+            }
+
+            Supplier<? extends GuiEventListener> supplier = var11;
+
+            while(booleanSupplier.getAsBoolean()) {
+                GuiEventListener guiEventListener2 = (GuiEventListener)supplier.get();
+                if (guiEventListener2.changeFocus(bl)) {
+                    this.setFocused(guiEventListener2);
+                    return true;
+                }
+            }
+
+            this.setFocused((GuiEventListener)null);
+            return false;
+        }
+    }
+
+    @Override
+    public void mouseMoved(double d, double e) {
+        if(renderableTabWidgets!=null){
+            renderableTabWidgets.forEach(widget -> {
+                if(widget instanceof GuiEventListener guiEventListener){
+                    guiEventListener.mouseMoved(d,e);
+                }
+            });
+        }
+    }
+
+
+    @Override
+    public @NotNull Optional<GuiEventListener> getChildAt(double d, double e) {
+        Optional<GuiEventListener> toReturn=super.getChildAt(d,e);
+        if(toReturn.isEmpty()&&renderableTabWidgets!=null){
+            for(Widget widget:renderableTabWidgets){
+                if (widget instanceof GuiEventListener guiEventListener) {
+                    if (guiEventListener.isMouseOver(d, e)) {
+                        return Optional.of(guiEventListener);
+                    }
+                }
+            }
+        }
+        return toReturn;
     }
 
     @Override
@@ -119,6 +233,7 @@ public class SettingScreen extends Screen {
                 buttonInfo.active=true;
                 buttonUser.active=true;
                 buttonAck.active=true;
+
                 renderableTabWidgets=tabLog;
             }
             case ACKLIST -> {
@@ -134,12 +249,10 @@ public class SettingScreen extends Screen {
                 buttonUser.active=false;
                 buttonAck.active=true;
                 if(Request.Authorization==null){
-                    loginButton.visible=true;
                     renderableTabWidgets=tabLogin_User;
                     return;
                 }
                 if(first) {
-                    loginButton.visible=false;
                     ImageWidget nowavatar=(ImageWidget)tabUser.get(0);
                     ComponentWidget nowuser=(ComponentWidget)tabUser.get(1);
                     ComponentWidget nowid=(ComponentWidget)tabUser.get(2);

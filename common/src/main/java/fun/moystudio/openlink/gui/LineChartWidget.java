@@ -6,6 +6,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -67,7 +68,7 @@ public class LineChartWidget extends GuiComponent implements Widget{
         int beginX = x1, beginY = y2, endX = x2, endY = y1;
         int x1=this.x1;
         Pair<String, Long> maxDataVal = dataPoints.stream().max(Comparator.comparingLong(Pair::getSecond)).orElse(new Pair<>("nope", 1L));//最大值
-        if(font.width(String.format("%.1f",(double)maxDataVal.getSecond()))>font.width("114")){
+        if(dataPoints.size()>1&&font.width(String.format("%.1f",(double)maxDataVal.getSecond()))>font.width("114")){
             x1+=font.width(String.format("%.1f",(double)maxDataVal.getSecond()))-font.width("114");
             beginX=x1;
             width=x2-x1+1;
@@ -122,6 +123,8 @@ public class LineChartWidget extends GuiComponent implements Widget{
                 int y = beginY - k * (height - 5) / 5;
                 drawString(poseStack, font, String.format("%.1f", k * maxDataVal.getSecond() / 5.0), x1 - font.width(String.format("%.1f", k * maxDataVal.getSecond() / 5.0)), y - 3, 0xffffff);//y轴刻度标签
             }
+        } else {
+            drawCenteredString(poseStack,font,new TranslatableComponent("text.openlink.nodata"),x1+(x2-x1)/2,y1+(y2-y1)/2,0x7f66ccff);
         }
         drawCenteredString(poseStack,font,labelX,x2-10,y2-10,0xffffff);//x轴标签
         drawString(poseStack,font,labelY,x1,y1-5,0xffffff);//y轴标签
