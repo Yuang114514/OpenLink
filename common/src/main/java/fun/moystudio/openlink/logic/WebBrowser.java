@@ -18,7 +18,7 @@ public class WebBrowser {
                     case "windows" ->
                             browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
                     case "darwin" -> {//百科搜的macOS没用过
-                        Class fileMgr = Class.forName("com.apple.eio.FileManager");
+                        Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
                         Method openURL = fileMgr.getDeclaredMethod("openURL", String.class);
                         openURL.invoke(null, url);
                     }
