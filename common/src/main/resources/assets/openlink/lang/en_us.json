@@ -34,5 +34,6 @@
   "text.openlink.proxycount": "Proxies: %s/%s",
   "text.openlink.x_axis_label": "Time",
   "text.openlink.y_axis_label": "Traffic(MiB)",
-  "text.openlink.now": "Now"
+  "text.openlink.now": "Now",
+  "text.openlink.login": "Login"
 }

@@ -17,13 +17,11 @@ import java.util.List;
 import java.util.Map;
 
 public class LoginScreen extends Screen {
-    public LoginScreen(Screen last,Screen llast) {
+    public LoginScreen(Screen last) {
         super(new TranslatableComponent("gui.openlink.loginscreentitle"));
         lastscreen=last;
-        llastscreen=llast;
     }
     Screen lastscreen=null;
-    Screen llastscreen=null;
     MultiLineLabel loginTips;
     EditBox username;
     EditBox password;
@@ -39,7 +37,7 @@ public class LoginScreen extends Screen {
         password = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 98, 200, 20, new TranslatableComponent("text.openlink.password"));
         username.setValue(OpenLink.PREFERENCES.get("last_username",""));
         password.setValue(OpenLink.PREFERENCES.get("last_password",""));
-        remember=new Checkbox(this.width / 2 - 100,this.height/6+133,150,20,new TranslatableComponent("text.openlink.rememberuserandpassword"),false);
+        remember=new Checkbox(this.width / 2 - 100,this.height/6+133,150,20,new TranslatableComponent("text.openlink.rememberuserandpassword"),OpenLink.PREFERENCES.get("last_username",null)!=null&&OpenLink.PREFERENCES.get("last_password",null)!=null);
         this.addRenderableWidget(username);
         this.addRenderableWidget(password);
         this.addRenderableWidget(remember);
@@ -116,6 +114,6 @@ public class LoginScreen extends Screen {
 
     @Override
     public void onClose(){
-        this.minecraft.setScreen(Request.Authorization==null?llastscreen:lastscreen);
+        this.minecraft.setScreen(lastscreen);
     }
 }

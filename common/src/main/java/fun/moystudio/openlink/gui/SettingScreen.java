@@ -9,6 +9,7 @@ import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
@@ -32,11 +33,12 @@ public class SettingScreen extends Screen {
     }
     MultiLineLabel title;
     Screen lastscreen;
+    Button loginButton;
     SettingTabs tab=SettingTabs.USER;
     SettingTabs lasttab=null;
     SettingScreenButton buttonLog, buttonInfo,buttonUser, buttonAck;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
-    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabAck=new ArrayList<>();
+    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(),tabAck=new ArrayList<>();
 
     public static final ResourceLocation BACKGROUND_SETTING=new ResourceLocation("openlink","textures/gui/background_setting.png");
 
@@ -57,6 +59,7 @@ public class SettingScreen extends Screen {
         addRenderableWidget(buttonInfo);
         addRenderableWidget(buttonUser);
         addRenderableWidget(buttonAck);
+        //Temp variables
         ResourceLocation lastlocationimage=!tabUser.isEmpty()?((ImageWidget)tabUser.get(0)).texture:new ResourceLocation("openlink","textures/gui/default_avatar.png");
         Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).component:TextComponent.EMPTY;
         Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).component:TextComponent.EMPTY;
@@ -66,10 +69,12 @@ public class SettingScreen extends Screen {
         int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
         List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTraffic();
         tabUser.clear();
+        tabLogin_User.clear();
         tabLog.clear();
         tabAck.clear();
         tabInfo.clear();
         int j=Math.min((this.width-20)/4,(this.height-75)/5*3);
+        //UserInfo
         tabUser.add(new ImageWidget(10,65,0,0,j,j,j,j,lastlocationimage));
         tabUser.add(new ComponentWidget(this.font,10,65+j+5,0xffffff,lastcomponent1,false));
         tabUser.add(new ComponentWidget(this.font,lastx2,65+j+5,0xacacac,lastcomponent2,false));
@@ -84,7 +89,14 @@ public class SettingScreen extends Screen {
                     (dataXY, poseStack, i1, j1)-> renderComponentTooltip(poseStack,
                             Arrays.stream(new Component[]{new TextComponent(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
                             i1,j1)));
-}
+        //UserInfo的Login分屏
+        tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/openfrp_icon.png")));
+        loginButton=new Button(this.width/2+20,(this.height-75)/2+60-10,40,20,new TranslatableComponent("text.openlink.login"),(button -> {
+            this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen)));
+        }));
+        loginButton.visible=false;
+        addRenderableWidget(loginButton);
+    }
 
     @Override
     public void render(PoseStack poseStack,int i,int j,float f){
@@ -121,8 +133,13 @@ public class SettingScreen extends Screen {
                 buttonInfo.active=true;
                 buttonUser.active=false;
                 buttonAck.active=true;
-                renderableTabWidgets=tabUser;
+                if(Request.Authorization==null){
+                    loginButton.visible=true;
+                    renderableTabWidgets=tabLogin_User;
+                    return;
+                }
                 if(first) {
+                    loginButton.visible=false;
                     ImageWidget nowavatar=(ImageWidget)tabUser.get(0);
                     ComponentWidget nowuser=(ComponentWidget)tabUser.get(1);
                     ComponentWidget nowid=(ComponentWidget)tabUser.get(2);
@@ -139,9 +156,13 @@ public class SettingScreen extends Screen {
                     new Thread(() -> {
                         try {
                             userInfo = Request.getUserInfo();
+                            if(userInfo==null||!userInfo.flag){
+                                Request.Authorization=null;
+                                throw new Exception("[OpenLink] Session expired!");
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
-                            this.minecraft.setScreen(new LoginScreen(this, lastscreen));
+                            renderableTabWidgets=tabLogin_User;
                             return;
                         }
                         MessageDigest messageDigest=null;
@@ -167,10 +188,9 @@ public class SettingScreen extends Screen {
                         tabUser.set(3,nowemail);
                         tabUser.set(4,nowgroup);
                         tabUser.set(5,nowproxy);
-                        if (!userInfo.flag)
-                            this.minecraft.setScreen(new LoginScreen(this, lastscreen));
                     }, "Request thread").start();
                 }
+                renderableTabWidgets=tabUser;
             }
             case INFO -> {
                 buttonLog.active=true;
@@ -186,9 +206,6 @@ public class SettingScreen extends Screen {
     public void tick(){
         if (OpenLink.disabled) {
             this.onClose();
-        }
-        if (Request.Authorization == null) {
-            this.minecraft.setScreen(new LoginScreen(this,lastscreen));
         }
         try {
             onTab();
