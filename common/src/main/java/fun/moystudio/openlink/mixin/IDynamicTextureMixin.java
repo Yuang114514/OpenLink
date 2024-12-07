@@ -7,5 +7,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(DynamicTexture.class)
 public interface IDynamicTextureMixin {
-    @Accessor("pixels") public void setPixelsAccess(NativeImage pixels);
+    @Accessor("pixels")
+    void setPixelsAccess(NativeImage pixels);
 }
