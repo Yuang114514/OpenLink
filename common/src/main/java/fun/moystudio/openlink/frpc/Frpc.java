@@ -173,16 +173,37 @@ public class Frpc {
                 "OpenFrp"+"\n"
         ).getBytes("utf-8"));
         Request.getUserInfo();
-        runtimeProcess=new ProcessBuilder(new String[]{frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)}).redirectOutput(ProcessBuilder.Redirect.appendTo(logFile)).start();
+        runtimeProcess=new ProcessBuilder(new String[]{frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)}).redirectErrorStream(true).start();
+        new Thread(()-> {
+            try {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(runtimeProcess.getInputStream()))) {
+                    String line;
+                    FileOutputStream fo=new FileOutputStream(logFile,true);
+                    while ((line = reader.readLine()) != null) {
+                        fo.write("\n".getBytes("utf-8"));
+                        String[] parts = line.split("\u001B\\[");
+                        for(String part:parts) {
+                            if(part.isEmpty()) {
+                                continue;
+                            }
+                            String text = part.substring(part.indexOf("m") + 1);
+                            fo.write(text.getBytes("utf-8"));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        },"Frpc logger").start();
     }
+
     public static void stopFrpc(){
         if(runtimeProcess!=null){
             runtimeProcess.destroy();
+            runtimeProcess=null;
         }
-        runtimeProcess=null;
     }
     public static boolean openFrp(int i, String val){
-        stopFrpc();
         new Thread(()->{
             String finalval=val;
             Gson gson=new Gson();
@@ -283,6 +304,7 @@ public class Frpc {
                     return 0;
                 }));
                 JsonNode node=canUseNodes.get(0);//选取最优节点
+                OpenLink.LOGGER.info("Selected node: id:"+node.id+" allow_port:"+node.allowPort+" group:"+node.group);
                 JsonNewProxy newProxy=new JsonNewProxy();
                 newProxy.name="openlink_mc_"+String.valueOf(i);
                 newProxy.local_port= String.valueOf(i);
@@ -294,26 +316,24 @@ public class Frpc {
                     end=60000;
                 }
                 else{
-                    start=Integer.parseInt(node.allowPort.substring(1,5));
-                    end=Integer.parseInt(node.allowPort.substring(7,11));
+                    start=Integer.parseInt(node.allowPort.substring(1,6));
+                    end=Integer.parseInt(node.allowPort.substring(7,12));
                 }
                 boolean found=false;
-                if((finalval==null||finalval.isBlank())&&LanConfig.cfg.last_port_value!=null&&!LanConfig.cfg.last_port_value.isBlank()){
-                    finalval=LanConfig.cfg.last_port_value;
-                }
                 for (int j = 1; j <= 5; j++) {
                     newProxy.remote_port = random.nextInt(end - start + 1) + start;
                     if(finalval!=null&&!finalval.isBlank()&&j==1){
                         newProxy.remote_port=Integer.parseInt(finalval);
                     }
                     response=Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
+                    OpenLink.LOGGER.info("Try "+j+": remote_port:"+newProxy.remote_port+" flag:"+gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag+" msg:"+gson.fromJson(response.getFirst(), JsonResponseWithData.class).msg);
                     if(gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag){
                         found=true;
                         break;
                     }
                 }//创建隧道
                 if(!found) throw new Exception(new TranslatableComponent("text.openlink.remoteportnotfound").getString());
-                LanConfig.cfg.last_port_value=String.valueOf(newProxy.remote_port);
+                LanConfig.cfg.last_port_value=String.valueOf(newProxy.remote_port).equals(val)?val:"";
                 response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 JsonUserProxy runningproxy=null;
