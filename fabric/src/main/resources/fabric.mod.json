@@ -3,13 +3,14 @@
   "id": "openlink",
   "version": "${version}",
   "name": "OpenLink",
-  "description": "OpenLink",
+  "description": "Bring you a unique Minecraft Multiplayer playing experience OvO",
   "authors": [
     "StarCarefree",
-    "Terry_MC"
+    "Terry_MC",
+    "zirranYa"
   ],
   "contact": {
-    "homepage": "https://www.starkettle.com/",
+    "homepage": "https://www.starkettle.com/index.php/p39/",
     "sources": "https://github.com/StarCarefree/OpenLink"
   },
   "license": "MIT",
