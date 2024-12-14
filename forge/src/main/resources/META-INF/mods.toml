@@ -7,9 +7,9 @@ license = "MIT"
 modId = "openlink"
 version = "${version}"
 displayName = "OpenLink"
-authors = "StarCarefree, Terry_MC"
+authors = "StarCarefree, Terry_MC, zirranYa"
 description = '''
-OpenLink
+Bring you a unique Minecraft Multiplayer playing experience OvO
 '''
 logoFile = "assets/openlink/icon.png"
 

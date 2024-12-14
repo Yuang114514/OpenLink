@@ -6,10 +6,11 @@
     "version": "${version}",
     "metadata": {
       "name": "OpenLink",
-      "description": "OpenLink",
+      "description": "Bring you a unique Minecraft Multiplayer playing experience OvO",
       "contributors": {
         "StarCarefree": "Team",
-        "Terry_MC": "Author"
+        "Terry_MC": "Author",
+        "zirranYa": "Mastermind"
       },
       "icon": "assets/openlink/icon.png"
     },
