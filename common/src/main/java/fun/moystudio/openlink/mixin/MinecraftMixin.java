@@ -47,6 +47,7 @@ public abstract class MinecraftMixin {
 
     @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V",at = @At("TAIL"))
     public void clearLevel(Screen screen, CallbackInfo ci) {
+        if(OpenLink.disabled) return;
         try{
             Pair<String, Map<String, List<String>>> response= Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
             Gson gson=new Gson();

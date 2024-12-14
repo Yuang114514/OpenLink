@@ -11,6 +11,7 @@ import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -37,6 +38,8 @@ public final class OpenLink {
         //跳过ssl功能
         try{
             Request.POST("https://example.com/",Request.DEFAULT_HEADER,"{}",true);
+            Frpc.init();//安装/检查更新frpc版本
+            Request.readSession();//读取以前的SessionID
         } catch (SSLHandshakeException e) {
             e.printStackTrace();
             LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
@@ -45,18 +48,16 @@ public final class OpenLink {
             e.printStackTrace();
             disabled=true;
             LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
-        } catch (IOException e){
+            return;
+        } catch (IOException e) {
             e.printStackTrace();
-            disabled=true;
+            disabled = true;
             LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
+            return;
         } catch (Exception e){
             throw new RuntimeException(e);
         }
-        if(!SSLUtils.sslIgnored){
-            Frpc.init();//安装/检查更新frpc版本
-            Request.readSession();//读取以前的SessionID
-        }
-        else{
+        if(SSLUtils.sslIgnored){
             LOGGER.warn("SSL is ignored. The confirm screen will show after the main game screen loaded.");
         }
         LanConfig.readConfig();

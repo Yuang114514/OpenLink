@@ -50,7 +50,7 @@ public class Frpc {
             OpenLink.LOGGER.info("Created frpc.json(frpc version file)!");
         }
         try(FileInputStream frpcVersionFileInput = new FileInputStream(frpcVersionFile)){
-            frpcVersionDate=gson.fromJson(new String(frpcVersionFileInput.readAllBytes()), JsonFrpcVersion.class).versiondate;
+            frpcVersionDate=gson.fromJson(new String(frpcVersionFileInput.readAllBytes(),"utf-8"), JsonFrpcVersion.class).versiondate;
         }
         String os_name=System.getProperty("os.name");
         osArch=System.getProperty("os.arch").toLowerCase();
@@ -152,8 +152,8 @@ public class Frpc {
         return success.get();
     }
 
-    public static void runFrpc(int proxyid) throws Exception {
-        // 名称
+    public static void runFrpc(long proxyid) throws Exception {
+        // 世界名称
         // 日期
         // 启动时间
         // 隧道ID
@@ -345,7 +345,7 @@ public class Frpc {
                 }
                 if(runningproxy==null) throw new Exception("Can not find the proxy???");
                 //启动Frpc
-                runFrpc((int) runningproxy.id);
+                runFrpc(runningproxy.id);
                 //check
                 Thread.sleep(5000);
                 response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");

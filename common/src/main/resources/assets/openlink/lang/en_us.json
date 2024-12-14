@@ -36,5 +36,6 @@
   "text.openlink.y_axis_label": "Traffic(MiB)",
   "text.openlink.now": "Now",
   "text.openlink.login": "Login",
-  "text.openlink.nodata": "No data(you didn't use the proxy service before)"
+  "text.openlink.nodata": "No data(you didn't use the proxy service before)",
+  "text.openlink.doubleclick": "Double click to open: %s"
 }

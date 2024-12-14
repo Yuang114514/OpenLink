@@ -57,6 +57,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
 
     @Inject(method = "init",at = @At("TAIL"))
     public void init(CallbackInfo ci) {
+        if(OpenLink.disabled) return;
         editBox=new EditBox(this.font,this.width / 2 + 5, 160, 150, 20,new TranslatableComponent("text.openlink.port"));
         editBox.setSuggestion(new TranslatableComponent("text.openlink.port").getString());
         editBox.setValue(LanConfig.cfg.last_port_value);
@@ -81,6 +82,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
 
     @Override
     public void tick(){
+        if(OpenLink.disabled) return;
         editBox.setVisible(LanConfig.cfg.use_frp);
         couldShare=true;
         String val = editBox.getValue();
@@ -123,6 +125,7 @@ public abstract class ShareToLanScreenMixin extends Screen{
 
     @ModifyArg(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/ShareToLanScreen;addRenderableWidget(Lnet/minecraft/client/gui/components/events/GuiEventListener;)Lnet/minecraft/client/gui/components/events/GuiEventListener;"))
     public GuiEventListener buttonCreateMixin(GuiEventListener par1){
+        if(OpenLink.disabled) return par1;
         if(par1 instanceof Button){
             Button button=(Button)(par1);
             if(button.getMessage().equals(new TranslatableComponent("lanServer.start"))){

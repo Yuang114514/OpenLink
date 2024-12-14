@@ -1,17 +1,22 @@
 package fun.moystudio.openlink.gui;
 
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
 import fun.moystudio.openlink.mixin.IScreenMixin;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
@@ -20,12 +25,17 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
-import org.spongepowered.asm.mixin.Unique;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -70,6 +80,8 @@ public class SettingScreen extends Screen {
         Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).component:TextComponent.EMPTY;
         int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
         List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTraffic();
+        LogObjectSelectionList lastselectionlist=!tabLog.isEmpty()?((LogObjectSelectionList)tabLog.get(0)):new LogObjectSelectionList(minecraft,this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,40);
+        lastselectionlist.changePos(this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5);
         //Clear tabs
         tabUser.clear();
         tabLogin_User.clear();
@@ -96,7 +108,8 @@ public class SettingScreen extends Screen {
         //UserInfo的Login分屏
         tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/openfrp_icon.png")));
         tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20,new TranslatableComponent("text.openlink.login"),(button -> this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen))))));
-        //
+        //Log
+        tabLog.add(lastselectionlist);
     }
 
     //MouseEventsOverrideBegin
@@ -224,7 +237,6 @@ public class SettingScreen extends Screen {
         super.render(poseStack,i,j,f);
     }
 
-    @Unique
     private void onTab() {
         boolean first=lasttab!=tab;
         switch(tab){
@@ -233,7 +245,36 @@ public class SettingScreen extends Screen {
                 buttonInfo.active=true;
                 buttonUser.active=true;
                 buttonSetting.active=true;
+                if(first) {
+                    LogObjectSelectionList selectionList=(LogObjectSelectionList) tabLog.get(0);
+                    new Thread(() -> {
+                        List<LogObjectSelectionList.Entry> entries=new ArrayList<>();
+                        Path logsPath=Path.of(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"logs"+File.separator);
+                        try {
+                            Files.walkFileTree(logsPath, new SimpleFileVisitor<>() {
+                                @Override
+                                public @NotNull FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                    File logFile = file.toFile();
+                                    if (logFile.isFile() && logFile.getName().endsWith(".log")) {
+                                        FileInputStream fis = new FileInputStream(logFile);
+                                        String logContent = new String(fis.readAllBytes(), "utf-8");
+                                        String[] lines = logContent.split("\n");
+                                        entries.add(selectionList.ofEntry(logFile.getPath(), lines[0], lines[1], lines[2], lines[3], lines[4]));
+                                    }
+                                    return FileVisitResult.CONTINUE;
+                                }
+                            });
+                        } catch (IOException ignored) {
+                        }
+                        entries.sort((o1, o2) -> {
+                            if(o2.date.compareTo(o1.date)==0)
+                                return o2.startTime.compareTo(o1.startTime);
+                            return o2.date.compareTo(o1.date);
+                        });
+                        selectionList.replaceEntriesByList(entries);
+                    },"Log read thread").start();
 
+                }
                 renderableTabWidgets=tabLog;
             }
             case SETTING -> {
@@ -241,6 +282,7 @@ public class SettingScreen extends Screen {
                 buttonInfo.active=true;
                 buttonUser.active=true;
                 buttonSetting.active=false;
+
                 renderableTabWidgets=tabAck;
             }
             case USER -> {
@@ -310,6 +352,7 @@ public class SettingScreen extends Screen {
                 buttonInfo.active=false;
                 buttonUser.active=true;
                 buttonSetting.active=true;
+
                 renderableTabWidgets=tabInfo;
             }
         }
@@ -340,6 +383,140 @@ public class SettingScreen extends Screen {
             }
         }
         return res;
+    }
+
+    class LogObjectSelectionList extends ObjectSelectionList<LogObjectSelectionList.Entry>{
+        public LogObjectSelectionList(Minecraft minecraft, int width, int height, int x0, int y0, int x1, int y1, int itemHeight) {
+            super(minecraft, width, height, y0, y1, itemHeight);
+            this.setRenderBackground(false);
+            this.setRenderHeader(false,0);
+            this.setRenderTopAndBottom(false);
+            this.y0 = y0;
+            this.y1 = y1;
+            this.x0 = x0;
+            this.x1 = x1;
+            if (this.getSelected() != null) {
+                this.centerScrollOn(this.getSelected());
+            }
+        }
+
+        @Override
+        public void render(PoseStack poseStack, int i, int j, float f) {
+            enableScissor();
+            super.render(poseStack, i, j, f);
+            RenderSystem.disableScissor();
+        }
+
+        private void enableScissor() {
+            Window window = Minecraft.getInstance().getWindow();
+            int screenHeight = window.getScreenHeight();
+            int scissorX = (int) (x0 * window.getGuiScale());
+            int scissorY = (int) (screenHeight - (y1 * window.getGuiScale()));
+            int scissorWidth = (int) ((x1 - x0) * window.getGuiScale());
+            int scissorHeight = (int) ((y1 - y0) * window.getGuiScale());
+            RenderSystem.enableScissor(scissorX, scissorY, scissorWidth, scissorHeight);
+        }
+
+        public void changePos(int width, int height, int x0, int y0, int x1, int y1){
+            this.y0 = y0;
+            this.y1 = y1;
+            this.x0 = x0;
+            this.x1 = x1;
+            this.width=width;
+            this.height=height;
+        }
+
+        @Override
+        public int getRowWidth() {
+            return this.width-20;
+        }
+
+        @Override
+        public int getScrollbarPosition() {
+            return this.x0+this.width-7;
+        }
+
+        public Entry ofEntry(String filePath, String levelName, String date, String startTime, String proxyid, String provider) {
+            return new Entry(filePath,levelName,date,startTime,proxyid,provider);
+        }
+
+        public void replaceEntriesByList(List<Entry> entries) {
+            this.clearEntries();
+            entries.forEach(this::addEntry);
+        }
+
+        @Override
+        protected boolean isFocused() {
+            return SettingScreen.this.getFocused() == this;
+        }
+
+        public class Entry extends ObjectSelectionList.Entry<Entry> {
+            public final String filePath;
+            // 世界名称
+            public final String levelName;
+            // 日期
+            public final String date;
+            // 启动时间
+            public final String startTime;
+            // 隧道ID
+            public final String proxyid;
+            // Frp服务提供商名称
+            public final String provider;
+
+            public Entry(String filePath,String levelName,String date,String startTime,String proxyid,String provider) {
+                this.filePath=filePath;
+                this.levelName=levelName;
+                this.date=date;
+                this.startTime=startTime;
+                this.proxyid=proxyid;
+                this.provider=provider;
+            }
+
+            @Override
+            public boolean mouseClicked(double d, double e, int i) {
+                if (i==0) {
+                    if(SettingScreen.LogObjectSelectionList.this.getSelected()==this){
+                        try {
+                            if (Frpc.osName.equals("windows")) {
+                                Runtime.getRuntime().exec(new String[]{"cmd", "/c", "start", this.filePath});
+                            } else if (Frpc.osName.equals("darwin")) {
+                                Runtime.getRuntime().exec(new String[]{"open", this.filePath});
+                            } else {
+                                Runtime.getRuntime().exec(this.filePath);
+                            }
+                        } catch (Exception ex){
+                            ex.printStackTrace();
+                        }
+                        return true;
+                    }
+                    this.select();
+                    return true;
+                }
+                return false;
+            }
+
+
+            @Override
+            public @NotNull Component getNarration() {
+                return new TranslatableComponent("narrator.select", this.provider+" "+this.startTime+" "+this.levelName);
+            }
+
+            private void select() {
+                SettingScreen.LogObjectSelectionList.this.setSelected(this);
+            }
+
+            @Override
+            public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
+                GuiComponent.fill(poseStack, x, y, x + entryWidth, y + entryHeight, 0x8f2b2b2b);
+                GuiComponent.drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.date+" "+this.startTime, x + 4, y + 4, 0x8fffffff);
+                GuiComponent.drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.levelName, x + 4, y + 4 + (entryHeight-4) / 2, 0x8fffffff);
+                GuiComponent.drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.proxyid, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.proxyid), y + 4, 0x8fffffff);
+                GuiComponent.drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.provider, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.provider), y + 4 + (entryHeight-4) / 2, 0x8fffffff);
+                if(isHovered){
+                    renderTooltip(poseStack, new TranslatableComponent("text.openlink.doubleclick",new File(filePath).getName()), mouseX, mouseY);
+                }
+            }
+        }
     }
 
 }

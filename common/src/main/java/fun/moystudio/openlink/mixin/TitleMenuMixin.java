@@ -28,6 +28,7 @@ public abstract class TitleMenuMixin extends Screen {
 
     @Inject(method = "tick",at=@At("TAIL"))
     public void tick(CallbackInfo ci){
+        if(OpenLink.disabled) return;
         if (SSLUtils.sslIgnored){
             this.minecraft.setScreen(new ConfirmScreenWithLanguageButton(confirmed->{
                 if(confirmed){
@@ -54,6 +55,7 @@ public abstract class TitleMenuMixin extends Screen {
 
     @Inject(method = "init", at = @At("TAIL"))
     public void init(CallbackInfo ci) {
+        if(OpenLink.disabled) return;
         this.addRenderableWidget(new SettingButton(this.width / 2 + 129, this.height / 4 + 48 + 72 + 12, 
             20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
                 this.minecraft.setScreen(new SettingScreen(null));

@@ -67,7 +67,7 @@ public class Request {
                     }
                     return new Pair<>(re.toString(), connection.getHeaderFields());
                 }
-                throw new RuntimeException(e);
+                throw e;
             }
         }
         else {
@@ -101,7 +101,7 @@ public class Request {
                 }
                 return re.toString();
             }
-            throw new RuntimeException(e);
+            throw e;
         }
 
     }
