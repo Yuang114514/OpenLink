@@ -17,6 +17,7 @@ public class UpdatingScreen extends Screen {
         super(new TranslatableComponent("text.openlink.updatefrpc"));
     }
     public MultiLineLabel text;
+    boolean updated=false;
     @Override
     protected void init() {
         text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatingfrpc"),this.width-50);
@@ -24,13 +25,18 @@ public class UpdatingScreen extends Screen {
     @Override
     public void tick(){
         tickCount++;
-        if(tickCount>5&&Frpc.hasUpdate){
-            try {
-                Frpc.update();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+        if(updated){
             this.onClose();
+        }
+        if(tickCount==5){
+            new Thread(()->{
+                try {
+                    Frpc.update();
+                    updated=true;
+                } catch (Exception e){
+                    throw new RuntimeException(e);
+                }
+            }, "Frpc download thread").start();
         }
     }
 
