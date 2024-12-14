@@ -36,5 +36,6 @@
   "text.openlink.y_axis_label": "流量(MiB)",
   "text.openlink.now": "现在",
   "text.openlink.login": "登录",
-  "text.openlink.nodata": "没有数据(你以前没有使用代理服务)"
+  "text.openlink.nodata": "没有数据(你以前没有使用代理服务)",
+  "text.openlink.doubleclick": "双击打开： %s"
 }
