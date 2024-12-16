@@ -28,7 +28,7 @@
   "temp.openlink.tobedone": "待完成...",
   "tab.openlink.setting_log": "隧道日志",
   "tab.openlink.setting_user": "用户信息",
-  "tab.openlink.setting_info": "模组信息",
+  "tab.openlink.setting_info": "相关",
   "tab.openlink.setting_setting": "设置",
   "text.openlink.loading": "加载中...",
   "text.openlink.proxycount": "隧道数: %s/%s",
