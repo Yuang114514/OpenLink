@@ -1,0 +1,45 @@
+package fun.moystudio.openlink.gui;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.resources.ResourceLocation;
+
+public class ImageButtonWithHoveredState extends ImageButton {
+    private ResourceLocation resourceLocation;
+    private int yTexStart;
+    private int xTexStart;
+    private int yDiffTex;
+    private int textureWidth;
+    private int textureHeight;
+    private ResourceLocation resourceLocationHovered;
+
+    public ImageButtonWithHoveredState(int i, int j, int k, int l, int m, int n, int o, ResourceLocation resourceLocation, ResourceLocation rl2, int p, int q, OnPress onPress) {
+        super(i, j, k, l, m, n, o, resourceLocation, p, q, onPress);
+        this.textureWidth = p;
+        this.textureHeight = q;
+        this.xTexStart = m;
+        this.yTexStart = n;
+        this.yDiffTex = o;
+        this.resourceLocation = resourceLocation;
+        this.resourceLocationHovered = rl2;
+    }
+
+    @Override
+    public void renderButton(PoseStack poseStack, int i, int j, float f) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderTexture(0, this.resourceLocation);
+        int k = this.yTexStart;
+        if (this.isHoveredOrFocused()) {
+            k += this.yDiffTex;
+            RenderSystem.setShaderTexture(0, this.resourceLocationHovered);
+        }
+
+        RenderSystem.enableDepthTest();
+        blit(poseStack, this.x, this.y, (float)this.xTexStart, (float)k, this.width, this.height, this.textureWidth, this.textureHeight);
+        if (this.isHovered) {
+            this.renderToolTip(poseStack, i, j);
+        }
+    }
+}
