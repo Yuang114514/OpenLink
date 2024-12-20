@@ -37,5 +37,6 @@
   "text.openlink.now": "Now",
   "text.openlink.login": "Login",
   "text.openlink.nodata": "No data(you didn't use the proxy service before)",
-  "text.openlink.doubleclick": "Double click to open: %s"
+  "text.openlink.doubleclick": "Double click to open: %s",
+  "text.openlink.info": "#DO NOT TRANSLATE COMMENTS!\n#This is a special translation, all the lines start with '#' will be ignored\n#Format:\n#[1/0(if this line is in a chart)][information(can contain spaces)]\n#Example Lines:\n#1Copyright StarCarefree\n#0\n#1\n#0INFO:\n#The second and the third example is an empty line\n0Frpc Info:\n1Version: %1$s\n0Mod Info:\n1Version: %2$s\n1Loader Version: %3$s\n0Localization:\n1Simplified Chinese & English(US): StarCarefree\n1Traditional Chinese: Rimon12_HK\n1Traditional Chinese(Hong Kong): Rimon12_HK\n1Indonesian: Floo\n1German: Дмитрий Делов\n1Classical Chinese: Yamisafa, Rimon12_HK\n0Author\n1Programmer: Terry_MC\n1Mastermind: zirran_Ya\n1Team: StarCarefree\n0License: SCAUP & MIT"
 }

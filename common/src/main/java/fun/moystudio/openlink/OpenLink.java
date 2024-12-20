@@ -1,9 +1,12 @@
 package fun.moystudio.openlink;
 
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,10 +14,11 @@ import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
@@ -63,7 +67,7 @@ public final class OpenLink {
         LanConfig.readConfig();
 
         //直接用mixin打开更新屏幕就行
-       LOGGER.info("\n   ____                       _       _         _    \n" +
+        LOGGER.info("\n   ____                       _       _         _    \n" +
                 "  / __ \\                     | |     (_)       | |   \n" +
                 " | |  | | _ __    ___  _ __  | |      _  _ __  | | __\n" +
                 " | |  | || '_ \\  / _ \\| '_ \\ | |     | || '_ \\ | |/ /\n" +
@@ -71,7 +75,6 @@ public final class OpenLink {
                 "  \\____/ | .__/  \\___||_| |_||______||_||_| |_||_|\\_\\\n" +
                 "         | |                                         \n" +
                 "         |_|                                         ");
-
     }
 
     private static String getLocalStoragePos() {
