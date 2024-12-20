@@ -24,10 +24,10 @@ public abstract class TitleMenuMixin extends Screen {
     }
 
     @Unique
-    private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting.png");
+    private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting_button.png");
 
     @Unique
-    private static final ResourceLocation OPENLINK_SETTING_HOVERED = new ResourceLocation("openlink", "textures/gui/setting_hovered.png");
+    private static final ResourceLocation OPENLINK_SETTING_HOVERED = new ResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
 
     @Inject(method = "tick",at=@At("TAIL"))
     public void tick(CallbackInfo ci){
