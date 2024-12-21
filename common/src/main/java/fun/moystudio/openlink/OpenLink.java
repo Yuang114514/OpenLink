@@ -30,9 +30,13 @@ public final class OpenLink {
     public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
     public static final String EXECUTABLE_FILE_STORAGE_PATH = Path.of(getLocalStoragePos()).resolve(".openlink").toString()+File.separator;
     public static boolean disabled=false;
+    public static String VERSION,LOADER, LOADER_VERSION;
 
-    public static void init() throws Exception {
-        LOGGER.info("Initializing OpenLink!");
+    public static void init(String version,String loader,String loader_version) throws Exception {
+        VERSION=version;
+        LOADER=loader;
+        LOADER_VERSION=loader_version;
+        LOGGER.info("Initializing OpenLink on "+loader+" "+loader_version);
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);

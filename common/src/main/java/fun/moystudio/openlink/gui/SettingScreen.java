@@ -52,11 +52,11 @@ public class SettingScreen extends Screen {
     SettingScreenButton buttonLog,buttonInfo,buttonUser,buttonSetting;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
     List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(),tabAck=new ArrayList<>();
-    public static final List<InfoObjectSelectionList.Information> informationList=getInformationList();
+    public static final List<InfoObjectSelectionList.Information> informationList=getInformationList(Frpc.FRPC_VERSION,OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
     public static final ResourceLocation BACKGROUND_SETTING=new ResourceLocation("openlink","textures/gui/background_setting.png");
 
-    private static List<InfoObjectSelectionList.Information> getInformationList() {
-        String[] lines=new TranslatableComponent("text.openlink.info").getString().split("\n");
+    private static List<InfoObjectSelectionList.Information> getInformationList(Object... objects) {
+        String[] lines=new TranslatableComponent("text.openlink.info",objects).getString().split("\n");
         List<InfoObjectSelectionList.Information> informations=new ArrayList<>();
         for (String line:lines){
             if(line.startsWith("#")){

@@ -42,7 +42,7 @@ public class UpdateScreen extends Screen {
         if(Frpc.frpcVersionDate==0){
             no.active=false;
         }
-        text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatefrpc", Frpc.latestVersionDate, String.valueOf(Frpc.frpcVersionDate == 0 ? "does not exist" : Frpc.frpcVersionDate)),this.width-50);
+        text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.frpcVersionDate == 0 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
         //以下为原版语言按钮(修改了一下位置)
