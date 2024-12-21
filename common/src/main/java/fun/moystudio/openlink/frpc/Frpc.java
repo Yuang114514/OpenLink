@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.logic.LanConfig;
@@ -36,6 +37,8 @@ public class Frpc {
     public static File frpcExecutableFile;
     public static File frpcArchiveFile;
     public static int latestVersionDate = 0;
+    public static String latestVersion = "0";
+    public static String FRPC_VERSION="0";
     public static Process runtimeProcess = null;
 
 
@@ -45,13 +48,23 @@ public class Frpc {
             OpenLink.LOGGER.warn("frpc.json(frpc version file) does not exist, creating...");
             frpcVersionFile.createNewFile();
             try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
-                frpcVersionFileOutput.write("{\"versiondate\":0}".getBytes());
+                frpcVersionFileOutput.write("{\"versiondate\":0,\"version\":\"0\"}".getBytes());
             }
             OpenLink.LOGGER.info("Created frpc.json(frpc version file)!");
         }
         try(FileInputStream frpcVersionFileInput = new FileInputStream(frpcVersionFile)){
-            frpcVersionDate=gson.fromJson(new String(frpcVersionFileInput.readAllBytes(),"utf-8"), JsonFrpcVersion.class).versiondate;
+            JsonFrpcVersion frpcVersion=gson.fromJson(new String(frpcVersionFileInput.readAllBytes(),"utf-8"), JsonFrpcVersion.class);
+            if(frpcVersion.version==null){
+                try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
+                    frpcVersionFileOutput.write("{\"versiondate\":0,\"version\":\"0\"}".getBytes());
+                }
+                frpcVersion.version="0";
+                frpcVersion.versiondate=0;
+            }
+            frpcVersionDate=frpcVersion.versiondate;
+            FRPC_VERSION=frpcVersion.version;
         }
+
         String os_name=System.getProperty("os.name");
         osArch=System.getProperty("os.arch").toLowerCase();
         if(osArch.contains("i386")){
@@ -95,8 +108,9 @@ public class Frpc {
         frpcArchiveFile.delete();
         OpenLink.LOGGER.info("Deleted frpc archive file!");
         frpcVersionDate=latestVersionDate;
+        FRPC_VERSION=latestVersion;
         try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
-            frpcVersionFileOutput.write(("{\"versiondate\":"+ Integer.toString(latestVersionDate) +"}").getBytes());
+            frpcVersionFileOutput.write(("{\"versiondate\":"+ Integer.toString(latestVersionDate) +",\"version\":\""+FRPC_VERSION+"\"}").getBytes());
         }
         hasUpdate=false;
     }
@@ -106,6 +120,7 @@ public class Frpc {
         JsonResponseWithData<JsonDownloadFile> versiondateres = gson.fromJson(Request.GET(Uris.openFrpAPIUri+"commonQuery/get?key=software",Request.DEFAULT_HEADER),new TypeToken<JsonResponseWithData<JsonDownloadFile>>(){}.getType());
         String version=versiondateres.data.latest_full.substring(24);
         folderName=versiondateres.data.latest_full+"/";
+        latestVersion=versiondateres.data.latest_ver;
         return Integer.parseInt(version);
     }
 
@@ -359,9 +374,9 @@ public class Frpc {
                 }
                 if(runningproxy==null) throw new Exception("Can not find the proxy???");
                 JsonUserProxy finalRunningproxy = runningproxy;
-                Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+finalRunningproxy.connectAddress))
+                Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+(SettingScreen.sensitiveInfoHiding?"§k":"")+finalRunningproxy.connectAddress))
                         .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))));
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent((SettingScreen.sensitiveInfoHiding?"§k":"")+finalRunningproxy.connectAddress)))));
                 Minecraft.getInstance().gui.getChat().addMessage(tmp);
                 List<String> list=new ArrayList<>(List.of(OpenLink.PREFERENCES.get("traffic_storage", "").split(";")));
                 while(list.size()>=MAX_TRAFFIC_STORAGE){

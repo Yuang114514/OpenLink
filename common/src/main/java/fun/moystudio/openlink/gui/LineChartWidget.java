@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -13,7 +14,7 @@ import java.util.Comparator;
 import java.util.List;
 
 //是哪个大聪明想出来让我写折线统计图的？？？给我滚出来（zirran不要删注释后面调试用，这玩意真的难写）
-public class LineChartWidget extends GuiComponent implements Widget{
+public class LineChartWidget extends GuiComponent implements Widget, GuiEventListener {
     public List<Pair<String,Long>> dataPoints;
     //左上——右下
     public int x1,y1,x2,y2,width,height;

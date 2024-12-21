@@ -14,10 +14,7 @@ import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.MultiLineLabel;
-import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -42,6 +39,7 @@ import java.util.function.Supplier;
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
         super(new TranslatableComponent("gui.openlink.settingscreentitle"));
+        informationList=getInformationList(Frpc.FRPC_VERSION,OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
         lastscreen=last;
     }
     MultiLineLabel title;
@@ -50,9 +48,30 @@ public class SettingScreen extends Screen {
     SettingTabs lasttab=null;
     SettingScreenButton buttonLog,buttonInfo,buttonUser,buttonSetting;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
-    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(),tabAck=new ArrayList<>();
-
+    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
+    public static List<InfoObjectSelectionList.Information> informationList;
     public static final ResourceLocation BACKGROUND_SETTING=new ResourceLocation("openlink","textures/gui/background_setting.png");
+    public static boolean sensitiveInfoHiding;
+
+    private static List<InfoObjectSelectionList.Information> getInformationList(Object... objects) {
+        String[] lines=new TranslatableComponent("text.openlink.info",objects).getString().split("\n");
+        List<InfoObjectSelectionList.Information> informations=new ArrayList<>();
+        for (String line:lines){
+            if(line.startsWith("#")){
+                continue;
+            }
+            if(line.charAt(0)=='1'){
+                informations.add(new InfoObjectSelectionList.Information(new TextComponent(line.substring(1)),true));
+            }
+            else if(line.charAt(0)=='0'){
+                informations.add(new InfoObjectSelectionList.Information(new TextComponent(line.substring(1)),false));
+            }
+            else{
+                informations.add(new InfoObjectSelectionList.Information(new TextComponent(line),false));
+            }
+        }
+        return informations;
+    }
 
     @Override
     public void onClose(){
@@ -80,13 +99,15 @@ public class SettingScreen extends Screen {
         Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).component:TextComponent.EMPTY;
         int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
         List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTraffic();
-        LogObjectSelectionList lastselectionlist=!tabLog.isEmpty()?((LogObjectSelectionList)tabLog.get(0)):new LogObjectSelectionList(minecraft,this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,40);
-        lastselectionlist.changePos(this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5);
+        LogObjectSelectionList lastlogselectionlist=!tabLog.isEmpty()?((LogObjectSelectionList)tabLog.get(0)):new LogObjectSelectionList(minecraft,this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,40);
+        lastlogselectionlist.changePos(this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5);
+        InfoObjectSelectionList lastinfoselectionlist=!tabInfo.isEmpty()?((InfoObjectSelectionList)tabInfo.get(0)):new InfoObjectSelectionList(minecraft,this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,informationList.size()*(this.minecraft.font.lineHeight+5)+5);
+        lastinfoselectionlist.changePos(this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5);
         //Clear tabs
         tabUser.clear();
         tabLogin_User.clear();
         tabLog.clear();
-        tabAck.clear();
+        tabSetting.clear();
         tabInfo.clear();
         //UserInfo排版用
         int j=Math.min((this.width-20)/4,(this.height-75)/5*3);
@@ -109,7 +130,17 @@ public class SettingScreen extends Screen {
         tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,new ResourceLocation("openlink","textures/gui/openfrp_icon.png")));
         tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20,new TranslatableComponent("text.openlink.login"),(button -> this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen))))));
         //Log
-        tabLog.add(lastselectionlist);
+        tabLog.add(lastlogselectionlist);
+        //Info
+        tabInfo.add(lastinfoselectionlist);
+        //Setting
+        tabSetting.add(new ChartWidget(10,65,this.buttonSetting.x+this.buttonSetting.getWidth()-10-5,40,new TranslatableComponent("text.openlink.secure"),0x8f2b2b2b));
+        tabSetting.add(new ComponentWidget(this.font,15,87,0xffffff,new TranslatableComponent("setting.openlink.information_show"),false));
+        tabSetting.add(CycleButton.onOffBuilder(sensitiveInfoHiding).displayOnlyValue().create(this.buttonSetting.x+this.buttonSetting.getWidth()-75-5,80,75,20,new TranslatableComponent("setting.information_show"),(cycleButton, object) -> {
+            sensitiveInfoHiding = object;
+            OpenLink.PREFERENCES.putBoolean("setting_sensitive_info_hiding", object);
+        }));
+        tabSetting.add(new ComponentWidget(this.font,this.width/2,this.height/2,0xffffff,new TranslatableComponent("temp.openlink.tobedone"),true));
     }
 
     //MouseEventsOverrideBegin
@@ -283,7 +314,7 @@ public class SettingScreen extends Screen {
                 buttonUser.active=true;
                 buttonSetting.active=false;
 
-                renderableTabWidgets=tabAck;
+                renderableTabWidgets=tabSetting;
             }
             case USER -> {
                 buttonLog.active=true;
@@ -331,7 +362,7 @@ public class SettingScreen extends Screen {
                         nowuser.component=new TextComponent(userInfo.data.username);
                         nowid.component=new TextComponent("#"+userInfo.data.id);
                         nowid.x=10+nowuser.font.width(nowuser.component)+1;
-                        nowemail.component=new TextComponent(userInfo.data.email);
+                        nowemail.component=new TextComponent((SettingScreen.sensitiveInfoHiding?"§k":"")+userInfo.data.email);
                         nowgroup.component=new TextComponent(userInfo.data.friendlyGroup);
                         nowproxy.component=new TranslatableComponent("text.openlink.proxycount",userInfo.data.used,userInfo.data.proxies);
                         List<Pair<String,Long>> dataPoints=readTraffic();
@@ -385,7 +416,7 @@ public class SettingScreen extends Screen {
         return res;
     }
 
-    class LogObjectSelectionList extends ObjectSelectionList<LogObjectSelectionList.Entry>{
+    public class LogObjectSelectionList extends ObjectSelectionList<LogObjectSelectionList.Entry>{
         public LogObjectSelectionList(Minecraft minecraft, int width, int height, int x0, int y0, int x1, int y1, int itemHeight) {
             super(minecraft, width, height, y0, y1, itemHeight);
             this.setRenderBackground(false);
@@ -408,7 +439,7 @@ public class SettingScreen extends Screen {
         }
 
         private void enableScissor() {
-            Window window = Minecraft.getInstance().getWindow();
+            Window window = this.minecraft.getWindow();
             int screenHeight = window.getScreenHeight();
             int scissorX = (int) (x0 * window.getGuiScale());
             int scissorY = (int) (screenHeight - (y1 * window.getGuiScale()));
@@ -515,6 +546,94 @@ public class SettingScreen extends Screen {
                 if(isHovered){
                     renderTooltip(poseStack, new TranslatableComponent("text.openlink.doubleclick",new File(filePath).getName()), mouseX, mouseY);
                 }
+            }
+        }
+    }
+
+    public static class InfoObjectSelectionList extends ObjectSelectionList<InfoObjectSelectionList.Entry>{
+        public InfoObjectSelectionList(Minecraft minecraft, int width, int height, int x0, int y0, int x1, int y1, int itemHeight) {
+            super(minecraft, width, height, y0, y1, itemHeight);
+            this.setRenderBackground(false);
+            this.setRenderHeader(false,0);
+            this.setRenderTopAndBottom(false);
+            this.addEntry(new Entry(informationList));
+            this.y0 = y0;
+            this.y1 = y1;
+            this.x0 = x0;
+            this.x1 = x1;
+        }
+
+        @Override
+        public void render(PoseStack poseStack, int i, int j, float f) {
+            enableScissor();
+            super.render(poseStack, i, j, f);
+            RenderSystem.disableScissor();
+        }
+
+        private void enableScissor() {
+            Window window = Minecraft.getInstance().getWindow();
+            int screenHeight = window.getScreenHeight();
+            int scissorX = (int) (x0 * window.getGuiScale());
+            int scissorY = (int) (screenHeight - (y1 * window.getGuiScale()));
+            int scissorWidth = (int) ((x1 - x0) * window.getGuiScale());
+            int scissorHeight = (int) ((y1 - y0) * window.getGuiScale());
+            RenderSystem.enableScissor(scissorX, scissorY, scissorWidth, scissorHeight);
+        }
+
+        public void changePos(int width, int height, int x0, int y0, int x1, int y1){
+            this.y0 = y0;
+            this.y1 = y1;
+            this.x0 = x0;
+            this.x1 = x1;
+            this.width=width;
+            this.height=height;
+        }
+
+        @Override
+        public int getRowWidth() {
+            return this.width-20;
+        }
+
+        @Override
+        public int getScrollbarPosition() {
+            return this.x0+this.width-7;
+        }
+
+        public static class Information{
+            public boolean inChart;
+            public Component component;
+            public Information(Component component,boolean inChart){
+                this.inChart=inChart;
+                this.component=component;
+            }
+            public void render(PoseStack poseStack, int x, int y, int width){
+                if(inChart){
+                    GuiComponent.fill(poseStack, x, y, x + width, y + Minecraft.getInstance().font.lineHeight+5, 0x8f2b2b2b);
+                }
+                GuiComponent.drawString(poseStack, Minecraft.getInstance().font, this.component, x+(inChart?4:0), y+2, 0xffffffff);
+            }
+        }
+
+        public static class Entry extends ObjectSelectionList.Entry<Entry> {
+            public List<Information> informations;
+
+            public Entry(List<Information> informations) {
+                this.informations=informations;
+            }
+
+            @Override
+            public @NotNull Component getNarration() {
+                TextComponent res=(TextComponent)TextComponent.EMPTY;
+                this.informations.forEach((info -> res.append(info.component)));
+                return res;
+            }
+
+            @Override
+            public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
+                for(int i1=0;i1<this.informations.size();i1++){
+                    this.informations.get(i1).render(poseStack,x,y+i1*(Minecraft.getInstance().font.lineHeight+5),entryWidth);
+                }
+
             }
         }
     }

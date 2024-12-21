@@ -4,9 +4,10 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 
-public class ComponentWidget implements Widget {
+public class ComponentWidget implements Widget, GuiEventListener {
     public Component component;
     public final boolean centered;
     public final Font font;

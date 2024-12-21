@@ -24,7 +24,10 @@ public abstract class TitleMenuMixin extends Screen {
     }
 
     @Unique
-    private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting.png");
+    private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting_button.png");
+
+    @Unique
+    private static final ResourceLocation OPENLINK_SETTING_HOVERED = new ResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
 
     @Inject(method = "tick",at=@At("TAIL"))
     public void tick(CallbackInfo ci){
@@ -56,8 +59,8 @@ public abstract class TitleMenuMixin extends Screen {
     @Inject(method = "init", at = @At("TAIL"))
     public void init(CallbackInfo ci) {
         if(OpenLink.disabled) return;
-        this.addRenderableWidget(new SettingButton(this.width / 2 + 129, this.height / 4 + 48 + 72 + 12, 
-            20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
+        this.addRenderableWidget(new ImageButtonWithHoveredState(this.width / 2 + 129, this.height / 4 + 48 + 72 + 12,
+            20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> {
                 this.minecraft.setScreen(new SettingScreen(null));
             }));
     }

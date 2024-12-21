@@ -1,6 +1,7 @@
 package fun.moystudio.openlink;
 
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
@@ -11,7 +12,6 @@ import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,9 +26,13 @@ public final class OpenLink {
     public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
     public static final String EXECUTABLE_FILE_STORAGE_PATH = Path.of(getLocalStoragePos()).resolve(".openlink").toString()+File.separator;
     public static boolean disabled=false;
+    public static String VERSION,LOADER, LOADER_VERSION;
 
-    public static void init() throws Exception {
-        LOGGER.info("Initializing OpenLink!");
+    public static void init(String version,String loader,String loader_version) throws Exception {
+        VERSION=version;
+        LOADER=loader;
+        LOADER_VERSION=loader_version;
+        LOGGER.info("Initializing OpenLink on "+loader+" "+loader_version);
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);
@@ -62,8 +66,12 @@ public final class OpenLink {
         }
         LanConfig.readConfig();
 
+        //Settings Reading
+        SettingScreen.sensitiveInfoHiding=PREFERENCES.getBoolean("setting_sensitive_info_hiding", false);
+        PREFERENCES.putBoolean("setting_sensitive_info_hiding", SettingScreen.sensitiveInfoHiding);
+
         //直接用mixin打开更新屏幕就行
-       LOGGER.info("\n   ____                       _       _         _    \n" +
+        LOGGER.info("\n   ____                       _       _         _    \n" +
                 "  / __ \\                     | |     (_)       | |   \n" +
                 " | |  | | _ __    ___  _ __  | |      _  _ __  | | __\n" +
                 " | |  | || '_ \\  / _ \\| '_ \\ | |     | || '_ \\ | |/ /\n" +
@@ -71,7 +79,6 @@ public final class OpenLink {
                 "  \\____/ | .__/  \\___||_| |_||______||_||_| |_||_|\\_\\\n" +
                 "         | |                                         \n" +
                 "         |_|                                         ");
-
     }
 
     private static String getLocalStoragePos() {

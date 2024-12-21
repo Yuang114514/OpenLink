@@ -1,5 +1,5 @@
 name: Feature Proposal
-description: If you have a new feature you'd like to suggest, please share it!
+description: No matter how novel, if you have an idea, present it!
 labels: ["新功能提案/NEW"]
 body:
 - type: checkboxes
@@ -8,9 +8,9 @@ body:
     label: "Check Items"
     description: "Please check each item below and confirm."
     options:
-    - label: "I confirm that no one else has suggested a similar feature in the Issues list"
+    - label: "I confirm that no one else has suggested a similar feature in the Issues list."
       required: true
-    - label: "I confirm I am an AI"
+    - label: "I confirm I am an AI."
 - type: textarea
   id: "yml-2"
   attributes:

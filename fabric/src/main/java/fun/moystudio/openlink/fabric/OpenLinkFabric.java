@@ -1,8 +1,13 @@
 package fun.moystudio.openlink.fabric;
 
+import fun.moystudio.openlink.OpenLink;
 import net.fabricmc.api.ModInitializer;
 
 import fun.moystudio.openlink.fabriclike.OpenLinkFabricLike;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.impl.FabricLoaderImpl;
+import net.fabricmc.loader.impl.launch.FabricLauncher;
+import net.fabricmc.loader.impl.launch.FabricLauncherBase;
 
 import java.io.IOException;
 
@@ -15,7 +20,7 @@ public final class OpenLinkFabric implements ModInitializer {
 
         // Run the Fabric-like setup.
         try {
-            OpenLinkFabricLike.init();
+            OpenLinkFabricLike.init(FabricLoader.getInstance().getModContainer(OpenLink.MOD_ID).get().getMetadata().getVersion().getFriendlyString(),"Fabric", FabricLoaderImpl.VERSION);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

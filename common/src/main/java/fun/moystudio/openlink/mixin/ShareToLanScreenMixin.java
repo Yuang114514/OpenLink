@@ -2,7 +2,7 @@ package fun.moystudio.openlink.mixin;
 
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
-import fun.moystudio.openlink.gui.SettingButton;
+import fun.moystudio.openlink.gui.ImageButtonWithHoveredState;
 import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
@@ -16,7 +16,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Mixin;
@@ -34,7 +33,10 @@ import java.util.List;
 @Mixin(ShareToLanScreen.class)
 public abstract class ShareToLanScreenMixin extends Screen{
     @Unique
-    private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting.png");
+    private static final ResourceLocation SETTING = new ResourceLocation("openlink", "textures/gui/setting_button.png");
+
+    @Unique
+    private static final ResourceLocation SETTING_HOVERED = new ResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
 
     @Shadow private GameType gameMode;
 
@@ -74,8 +76,8 @@ public abstract class ShareToLanScreenMixin extends Screen{
         this.addRenderableWidget(usingfrp);
         this.addRenderableWidget(onlinemode);
         this.addRenderableWidget(allowpvp);
-        this.addRenderableWidget(new SettingButton(this.width / 2 + 5+150+10, this.height - 28,
-                20, 20, 0, 0, 20, OPENLINK_SETTING, 20, 20, (button) -> {
+        this.addRenderableWidget(new ImageButtonWithHoveredState(this.width / 2 + 5 + 150 + 10, this.height - 28,
+                20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> {
             this.minecraft.setScreen(new SettingScreen(this));
         }));
     }

@@ -8,10 +8,10 @@ body:
     label: "检查项"
     description: "请逐个检查下列项目，并勾选确认。"
     options:
-    - label: "我确认此问题在模组最新版中仍然存在"
+    - label: "我确认此问题在模组最新版中仍然存在。"
       required: true
-    - label: "我确认我是AI"
-    - label: "我确认在Issues列表中并无其他人已经提出过与此问题相同或相似的问题"
+    - label: "我确认我是AI。"
+    - label: "我确认在Issues列表中并无其他人已经提出过与此问题相同或相似的问题。"
       required: true
 - type: textarea
   id: "yml-2"
