@@ -14,14 +14,10 @@ import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.MultiLineLabel;
-import net.minecraft.client.gui.components.ObjectSelectionList;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -43,6 +39,7 @@ import java.util.function.Supplier;
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
         super(new TranslatableComponent("gui.openlink.settingscreentitle"));
+        informationList=getInformationList(Frpc.FRPC_VERSION,OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
         lastscreen=last;
     }
     MultiLineLabel title;
@@ -51,9 +48,10 @@ public class SettingScreen extends Screen {
     SettingTabs lasttab=null;
     SettingScreenButton buttonLog,buttonInfo,buttonUser,buttonSetting;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
-    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(),tabAck=new ArrayList<>();
-    public static final List<InfoObjectSelectionList.Information> informationList=getInformationList(Frpc.FRPC_VERSION,OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
+    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
+    public static List<InfoObjectSelectionList.Information> informationList;
     public static final ResourceLocation BACKGROUND_SETTING=new ResourceLocation("openlink","textures/gui/background_setting.png");
+    public static boolean sensitiveInfoHiding;
 
     private static List<InfoObjectSelectionList.Information> getInformationList(Object... objects) {
         String[] lines=new TranslatableComponent("text.openlink.info",objects).getString().split("\n");
@@ -109,7 +107,7 @@ public class SettingScreen extends Screen {
         tabUser.clear();
         tabLogin_User.clear();
         tabLog.clear();
-        tabAck.clear();
+        tabSetting.clear();
         tabInfo.clear();
         //UserInfo排版用
         int j=Math.min((this.width-20)/4,(this.height-75)/5*3);
@@ -135,6 +133,14 @@ public class SettingScreen extends Screen {
         tabLog.add(lastlogselectionlist);
         //Info
         tabInfo.add(lastinfoselectionlist);
+        //Setting
+        tabSetting.add(new ChartWidget(10,65,this.buttonSetting.x+this.buttonSetting.getWidth()-10-5,40,new TranslatableComponent("text.openlink.secure"),0x8f2b2b2b));
+        tabSetting.add(new ComponentWidget(this.font,15,87,0xffffff,new TranslatableComponent("setting.openlink.information_show"),false));
+        tabSetting.add(CycleButton.onOffBuilder(sensitiveInfoHiding).displayOnlyValue().create(this.buttonSetting.x+this.buttonSetting.getWidth()-75-5,80,75,20,new TranslatableComponent("setting.information_show"),(cycleButton, object) -> {
+            sensitiveInfoHiding = object;
+            OpenLink.PREFERENCES.putBoolean("setting_sensitive_info_hiding", object);
+        }));
+        tabSetting.add(new ComponentWidget(this.font,this.width/2,this.height/2,0xffffff,new TranslatableComponent("temp.openlink.tobedone"),true));
     }
 
     //MouseEventsOverrideBegin
@@ -308,7 +314,7 @@ public class SettingScreen extends Screen {
                 buttonUser.active=true;
                 buttonSetting.active=false;
 
-                renderableTabWidgets=tabAck;
+                renderableTabWidgets=tabSetting;
             }
             case USER -> {
                 buttonLog.active=true;
@@ -356,7 +362,7 @@ public class SettingScreen extends Screen {
                         nowuser.component=new TextComponent(userInfo.data.username);
                         nowid.component=new TextComponent("#"+userInfo.data.id);
                         nowid.x=10+nowuser.font.width(nowuser.component)+1;
-                        nowemail.component=new TextComponent(userInfo.data.email);
+                        nowemail.component=new TextComponent((SettingScreen.sensitiveInfoHiding?"§k":"")+userInfo.data.email);
                         nowgroup.component=new TextComponent(userInfo.data.friendlyGroup);
                         nowproxy.component=new TranslatableComponent("text.openlink.proxycount",userInfo.data.used,userInfo.data.proxies);
                         List<Pair<String,Long>> dataPoints=readTraffic();
@@ -377,7 +383,6 @@ public class SettingScreen extends Screen {
                 buttonInfo.active=false;
                 buttonUser.active=true;
                 buttonSetting.active=true;
-                InfoObjectSelectionList selectionList=(InfoObjectSelectionList)tabInfo.get(0);
 
                 renderableTabWidgets=tabInfo;
             }

@@ -4,9 +4,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.resources.ResourceLocation;
 
-public class ImageWidget implements Widget{
+public class ImageWidget implements Widget, GuiEventListener {
     public ResourceLocation texture;
     private int x,y,width,height,textureWidth,textureHeight;
     private float uOffset,vOffset;

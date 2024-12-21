@@ -5,8 +5,6 @@ import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,8 +15,6 @@ import java.net.SocketException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
@@ -69,6 +65,10 @@ public final class OpenLink {
             LOGGER.warn("SSL is ignored. The confirm screen will show after the main game screen loaded.");
         }
         LanConfig.readConfig();
+
+        //Settings Reading
+        SettingScreen.sensitiveInfoHiding=PREFERENCES.getBoolean("setting_sensitive_info_hiding", false);
+        PREFERENCES.putBoolean("setting_sensitive_info_hiding", SettingScreen.sensitiveInfoHiding);
 
         //直接用mixin打开更新屏幕就行
         LOGGER.info("\n   ____                       _       _         _    \n" +

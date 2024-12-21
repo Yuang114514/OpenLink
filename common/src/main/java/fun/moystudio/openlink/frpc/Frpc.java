@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.logic.LanConfig;
@@ -373,9 +374,9 @@ public class Frpc {
                 }
                 if(runningproxy==null) throw new Exception("Can not find the proxy???");
                 JsonUserProxy finalRunningproxy = runningproxy;
-                Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+finalRunningproxy.connectAddress))
+                Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+(SettingScreen.sensitiveInfoHiding?"§k":"")+finalRunningproxy.connectAddress))
                         .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent(finalRunningproxy.connectAddress)))));
+                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent((SettingScreen.sensitiveInfoHiding?"§k":"")+finalRunningproxy.connectAddress)))));
                 Minecraft.getInstance().gui.getChat().addMessage(tmp);
                 List<String> list=new ArrayList<>(List.of(OpenLink.PREFERENCES.get("traffic_storage", "").split(";")));
                 while(list.size()>=MAX_TRAFFIC_STORAGE){
