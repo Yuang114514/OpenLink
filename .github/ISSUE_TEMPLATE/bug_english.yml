@@ -8,10 +8,10 @@ body:
     label: "Check Items"
     description: "Please check each item below and confirm."
     options:
-    - label: "I confirm this issue still exists in the latest version of the module"
+    - label: "I confirm this issue still exists in the latest version of the mod."
       required: true
-    - label: "I confirm I am an AI"
-    - label: "I confirm that no one else has reported a similar or identical issue in the Issues list"
+    - label: "I confirm I am an AI."
+    - label: "I confirm that no one else has reported a similar or identical issue in the Issues list."
       required: true
 - type: textarea
   id: "yml-2"
