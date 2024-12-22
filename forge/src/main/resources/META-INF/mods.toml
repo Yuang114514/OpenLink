@@ -23,6 +23,6 @@ side = "CLIENT"
 [[dependencies.openlink]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.18.2,)"
+versionRange = "[1.18,)"
 ordering = "NONE"
 side = "CLIENT"
