@@ -6,10 +6,6 @@ import net.fabricmc.api.ModInitializer;
 import fun.moystudio.openlink.fabriclike.OpenLinkFabricLike;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
-import net.fabricmc.loader.impl.launch.FabricLauncher;
-import net.fabricmc.loader.impl.launch.FabricLauncherBase;
-
-import java.io.IOException;
 
 public final class OpenLinkFabric implements ModInitializer {
     @Override

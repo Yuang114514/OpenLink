@@ -277,19 +277,26 @@ public class Frpc {
                 if(canUseNodes.isEmpty()){
                     throw new Exception("Unable to use any node???");
                 }
-                String json=Request.GET(Uris.ipstackUri.toString(),Request.DEFAULT_HEADER);
-                JsonIP jsonIP=gson.fromJson(json,JsonIP.class);
-                int preferClasify;
-                if(jsonIP.iso_code.equals("CN")){
-                    preferClasify=1;
-                }else if(jsonIP.iso_code.equals("HK")||jsonIP.iso_code.equals("TW")){
-                    preferClasify=2;
-                }else{
-                    preferClasify=3;
+                int preferClasify = -1;
+                try {
+                    String json = Request.POST(Uris.ipstackUri.toString(), Request.DEFAULT_HEADER, "{}").getFirst();
+                    JsonIP jsonIP = gson.fromJson(json, JsonIP.class);
+
+                    if (jsonIP.country.equals("CN")) {
+                        preferClasify = 1;
+                    } else if (jsonIP.country.equals("HK") || jsonIP.country.equals("TW") || jsonIP.country.equals("MO")) {
+                        preferClasify = 2;
+                    } else {
+                        preferClasify = 3;
+                    }
+                    OpenLink.LOGGER.info("User Country Code: " + jsonIP.country + ", Prefer Classify: " + preferClasify);
+                } catch (Exception ignored) {
+                    OpenLink.LOGGER.warn("Can not get user country! Ignoring...");
                 }
+                int finalPreferClasify = preferClasify;
                 canUseNodes.sort(((o1, o2) -> {
-                    if(o1.classify!=o2.classify&&(o1.classify==preferClasify)!=(o2.classify==preferClasify))
-                        return o1.classify==preferClasify?-1:1;
+                    if(finalPreferClasify !=-1&&o1.classify!=o2.classify&&(o1.classify== finalPreferClasify)!=(o2.classify== finalPreferClasify))
+                        return o1.classify== finalPreferClasify ?-1:1;
                     if(!o1.group.equals(o2.group)){
                         int first=5,second=5;
                         if(o1.group.contains("svip")){

@@ -2,10 +2,12 @@ package fun.moystudio.openlink.forge;
 
 import com.mojang.brigadier.CommandDispatcher;
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.logic.EventCallbacks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,6 +22,12 @@ public final class OpenLinkForge {
         // Run our common setup.
         OpenLink.init(ModList.get().getModFileById(OpenLink.MOD_ID).versionString(),"Forge", ForgeVersion.getVersion());
     }
+
+    @SubscribeEvent
+    public static void onClientScreenInit(ScreenEvent.InitScreenEvent event){
+        EventCallbacks.onScreenInit(event.getScreen().getMinecraft(), event.getScreen());
+    }
+
     @SubscribeEvent
     public static void onClientCommandRegistering(RegisterClientCommandsEvent event){
         CommandDispatcher<CommandSourceStack> dispatcher=event.getDispatcher();

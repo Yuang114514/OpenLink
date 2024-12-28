@@ -8,6 +8,7 @@ import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonTotalAndList;
 import fun.moystudio.openlink.json.JsonUserProxy;
+import fun.moystudio.openlink.logic.EventCallbacks;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
 import fun.moystudio.openlink.network.Request;
@@ -32,9 +33,9 @@ public abstract class MinecraftMixin {
 
     @Shadow @Final private static Logger LOGGER;
 
-    @Inject(method = "close",at = @At(value = "INVOKE", target = "Lnet/minecraft/server/packs/resources/ReloadableResourceManager;close()V", shift = At.Shift.AFTER))
-    public void close(CallbackInfo ci){
-        Frpc.stopFrpc();
+    @Inject(method = "stop",at = @At("TAIL"))
+    public void stop(CallbackInfo ci){
+        EventCallbacks.onClientStop();
     }
 
     @Inject(method = "prepareForMultiplayer",at = @At("TAIL"))

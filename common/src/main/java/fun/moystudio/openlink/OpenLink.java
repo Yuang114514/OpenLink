@@ -64,7 +64,10 @@ public final class OpenLink {
         if(SSLUtils.sslIgnored){
             LOGGER.warn("SSL is ignored. The confirm screen will show after the main game screen loaded.");
         }
+
+        //LanConfigs Reading
         LanConfig.readConfig();
+        LanConfig.writeConfig();
 
         //Settings Reading
         SettingScreen.sensitiveInfoHiding=PREFERENCES.getBoolean("setting_sensitive_info_hiding", false);

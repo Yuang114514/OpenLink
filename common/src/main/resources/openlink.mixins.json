@@ -6,8 +6,8 @@
   "client": [
     "IDynamicTextureMixin",
     "IScreenMixin",
+    "IShareToLanLastScreenAccessor",
     "MinecraftMixin",
-    "ShareToLanScreenMixin",
     "TitleMenuMixin"
   ],
   "mixins": [

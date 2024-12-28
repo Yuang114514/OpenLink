@@ -45,7 +45,7 @@ public abstract class TitleMenuMixin extends Screen {
                 }
                 else{
                     OpenLink.LOGGER.error("Minecraft closed because of SSL.");
-                    this.minecraft.close();
+                    this.minecraft.stop();
                 }
                 this.minecraft.setScreen(null);
             },new TextComponent("SSL Handshake Error"),new TranslatableComponent("text.openlink.sslignored")));
