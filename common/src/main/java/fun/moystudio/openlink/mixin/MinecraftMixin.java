@@ -38,32 +38,11 @@ public abstract class MinecraftMixin {
         EventCallbacks.onClientStop();
     }
 
-    @Inject(method = "prepareForMultiplayer",at = @At("TAIL"))
+    @Inject(method = "prepareForMultiplayer", at = @At("HEAD"), cancellable = true)
     public void prepareForMultiplayer(CallbackInfo ci) {
         if(LanConfig.getAuthMode()!=OnlineModeTabs.ONLINE_MODE){
             LOGGER.warn("Server will run in offline mode!");
-            this.playerSocialManager.stopOnlineMode();
+            ci.cancel();
         }
-    }
-
-    @Inject(method = "clearLevel(Lnet/minecraft/client/gui/screens/Screen;)V",at = @At("TAIL"))
-    public void clearLevel(Screen screen, CallbackInfo ci) {
-        if(OpenLink.disabled) return;
-        try{
-            Pair<String, Map<String, List<String>>> response= Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-            Gson gson=new Gson();
-            JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-            for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
-                if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
-                    try {
-                        Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
-                        Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
-                        OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
-                    } catch (Exception e) {
-                        break;
-                    }
-                }
-            }//删除隧道
-        } catch (Exception ignore){}
     }
 }

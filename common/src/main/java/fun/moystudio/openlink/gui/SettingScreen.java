@@ -9,7 +9,7 @@ import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
-import fun.moystudio.openlink.mixin.IScreenMixin;
+import fun.moystudio.openlink.mixin.IScreenAccessor;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
@@ -145,7 +145,7 @@ public class SettingScreen extends Screen {
 
     //MouseEventsOverrideBegin
     public List<? extends GuiEventListener> getChildrenWithTabRenderables(){
-        List<GuiEventListener> list=(((IScreenMixin)this).getChildren());
+        List<GuiEventListener> list=(((IScreenAccessor)this).getChildren());
         if(renderableTabWidgets!=null){
             renderableTabWidgets.forEach(widget -> {
                 if (widget instanceof GuiEventListener guiEventListener) {

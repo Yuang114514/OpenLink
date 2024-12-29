@@ -20,8 +20,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.GameType;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,7 +32,6 @@ public class NewShareToLanScreen extends Screen {
     private static final Component INFO_TEXT = new TranslatableComponent("lanServer.otherPlayers");
     private final Screen lastScreen;
     private GameType gameMode;
-    private boolean commands=LanConfig.cfg.allow_commands;
 
     private static final ResourceLocation SETTING = new ResourceLocation("openlink", "textures/gui/setting_button.png");
 
@@ -101,13 +98,13 @@ public class NewShareToLanScreen extends Screen {
 
     protected void init() {
         this.addRenderableWidget(CycleButton.builder(GameType::getShortDisplayName).withValues(new GameType[]{GameType.SURVIVAL, GameType.SPECTATOR, GameType.CREATIVE, GameType.ADVENTURE}).withInitialValue(this.gameMode).create(this.width / 2 - 155, 100, 150, 20, GAME_MODE_LABEL, (cycleButton, gameType) -> this.gameMode = gameType));
-        this.addRenderableWidget(CycleButton.onOffBuilder(this.commands).create(this.width / 2 + 5, 100, 150, 20, ALLOW_COMMANDS_LABEL, (cycleButton, boolean_) -> this.commands = boolean_));
+        this.addRenderableWidget(CycleButton.onOffBuilder(LanConfig.cfg.allow_commands).create(this.width / 2 + 5, 100, 150, 20, ALLOW_COMMANDS_LABEL, (cycleButton, boolean_) -> LanConfig.cfg.allow_commands = boolean_));
         this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 28, 150, 20, new TranslatableComponent("lanServer.start"), (button1) -> {
             if(!this.couldShare)return;
             this.minecraft.setScreen((Screen)null);
             int i = HttpUtil.getAvailablePort();
             TranslatableComponent component;
-            if (this.minecraft.getSingleplayerServer().publishServer(this.gameMode, this.commands, i)) {
+            if (this.minecraft.getSingleplayerServer().publishServer(this.gameMode, LanConfig.cfg.allow_commands, i)) {
                 component = new TranslatableComponent("commands.publish.started", new Object[]{i});
             } else {
                 component = new TranslatableComponent("commands.publish.failed");

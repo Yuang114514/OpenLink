@@ -6,7 +6,7 @@ import java.lang.reflect.Method;
 public class WebBrowser {
     public boolean browserOpened=false;
     public Process browserProcess=null;
-    public String url=null;
+    public String url;
     public WebBrowser(String u){
         url=u;
     }

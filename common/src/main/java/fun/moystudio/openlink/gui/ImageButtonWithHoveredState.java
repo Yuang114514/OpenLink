@@ -7,13 +7,13 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 
 public class ImageButtonWithHoveredState extends ImageButton {
-    private ResourceLocation resourceLocation;
-    private int yTexStart;
-    private int xTexStart;
-    private int yDiffTex;
-    private int textureWidth;
-    private int textureHeight;
-    private ResourceLocation resourceLocationHovered;
+    private final ResourceLocation resourceLocation;
+    private final int yTexStart;
+    private final int xTexStart;
+    private final int yDiffTex;
+    private final int textureWidth;
+    private final int textureHeight;
+    private final ResourceLocation resourceLocationHovered;
 
     public ImageButtonWithHoveredState(int i, int j, int k, int l, int m, int n, int o, ResourceLocation resourceLocation, ResourceLocation rl2, int p, int q, OnPress onPress) {
         super(i, j, k, l, m, n, o, resourceLocation, p, q, onPress);

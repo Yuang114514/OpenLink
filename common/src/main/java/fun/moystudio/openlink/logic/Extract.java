@@ -10,7 +10,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Extract {
-    public static boolean ExtractBySuffix(File file, String suffix,File extractDir) throws Exception {//仅解压10MB以内的文件
+    public static void ExtractBySuffix(File file, String suffix,File extractDir) throws Exception {//仅解压10MB以内的文件
         if(!file.exists()) {
             throw new RuntimeException("[OpenLink] The file to extract does not exist!");
         }
@@ -47,8 +47,8 @@ public class Extract {
                 }
             },"Extract thread");
             thread.start();
-            while(thread.isAlive()){}
-            return true;
+            thread.join();
+            return;
         } else if (suffix.equals(".tar.gz")) {
             Thread thread = new Thread(()->{
                 try{
@@ -79,12 +79,11 @@ public class Extract {
             },"Extract thread");
             thread.start();
             thread.join();
-            return true;
-        } else {
-            throw new RuntimeException("[OpenLink] The suffix of the file to extract is unsupported!");
+            return;
         }
+        throw new Exception("[OpenLink] The suffix of the file to extract is unsupported!");
     }
-    public static boolean ExtractBySuffix(File file, String suffix) throws Exception {
-        return ExtractBySuffix(file,suffix,file.getParentFile());
+    public static void ExtractBySuffix(File file, String suffix) throws Exception {
+        ExtractBySuffix(file,suffix,file.getParentFile());
     }
 }
