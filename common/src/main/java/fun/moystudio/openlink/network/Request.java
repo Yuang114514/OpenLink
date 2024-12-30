@@ -2,7 +2,6 @@ package fun.moystudio.openlink.network;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.reflect.TypeToken;
-import com.google.common.reflect.TypeToken;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.*;
