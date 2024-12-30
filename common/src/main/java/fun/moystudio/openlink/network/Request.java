@@ -1,165 +1,158 @@
 package fun.moystudio.openlink.network;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.*;
 
 import javax.net.ssl.HttpsURLConnection;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.prefs.Preferences;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public class Request {
-    public static String Authorization=null;
-    public final static Map<String,List<String>> DEFAULT_HEADER=new HashMap<>(){{
+    public static String Authorization = null;
+    public final static Map<String, List<String>> DEFAULT_HEADER = new HashMap<>() {{
         put("Content-Type", Collections.singletonList("application/json"));
     }};
+    
+    public static String token = null;
+    private static final ObjectMapper objectMapper = new ObjectMapper(); // 使用Jackson的ObjectMapper
 
-    public static String token=null;
-
-    public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body) throws Exception {
-        Pair<String, Map<String, List<String>>> returnval=POST(url, header, body, false);
-        if(returnval.getSecond().containsKey("Authorization")){
-            if(Authorization==null||!Authorization.equals(returnval.getSecond().get("Authorization").get(0))){
-                Authorization=returnval.getSecond().get("Authorization").get(0);
-                writeSession();
-            }
-        }
-        return returnval;
-    }
-
-    public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body, boolean _skip) throws Exception {
-        URL postUrl=new URL(url);
-        HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
-        connection.setRequestMethod("POST");
-        if(!_skip) {
-            header.forEach(((s, strings) -> {
-                strings.forEach(s1 -> {
-                    connection.addRequestProperty(s, s1);
-                });
-            }));
-            connection.setDoOutput(true);
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = body.getBytes("utf-8");
-                os.write(input, 0, input.length);
-            }
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
-                StringBuilder re = new StringBuilder();
-                String line;
-                while ((line = br.readLine()) != null) {
-                    re.append(line.trim());
-                }
-                return new Pair<>(re.toString(), connection.getHeaderFields());
-            } catch (Exception e) {
-                if (connection.getResponseCode() >= 400) {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "utf-8"));
-                    StringBuilder re = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        re.append(line.trim());
+    public static CompletableFuture<Pair<String, Map<String, List<String>>>> POST(String url, Map<String, List<String>> header, String body) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                Pair<String, Map<String, List<String>>> response = POST(url, header, body, false);
+                if (response.getSecond().containsKey("Authorization")) {
+                    String newAuthorization = response.getSecond().get("Authorization").get(0);
+                    if (Authorization == null || !Authorization.equals(newAuthorization)) {
+                        Authorization = newAuthorization;
+                        writeSession();
                     }
-                    return new Pair<>(re.toString(), connection.getHeaderFields());
                 }
-                throw e;
+                return response;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-        }
-        else {
-            return null;
-        }
+        });
     }
 
-    public static String GET(String url, Map<String,List<String>> header) throws Exception{
-        URL postUrl=new URL(url);
-        HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
-        connection.setRequestMethod("GET");
-        header.forEach(((s, strings) -> {
-            strings.forEach(s1 -> {
-                connection.addRequestProperty(s,s1);
-            });
-        }));
-        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
-            StringBuilder re=new StringBuilder();
-            String line;
-            while((line=br.readLine())!=null){
-                re.append(line.trim());
-            }
-            return re.toString();
-        }catch (Exception e){
-            if(connection.getResponseCode()>=400){
-                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(),"utf-8"));
-                StringBuilder re=new StringBuilder();
-                String line;
-                while((line=br.readLine())!=null){
-                    re.append(line.trim());
+    public static Pair<String, Map<String, List<String>>> POST(String url, Map<String, List<String>> header, String body, boolean _skip) throws Exception {
+        if (_skip) return null;
+
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(url).openConnection();
+        connection.setRequestMethod("POST");
+        setRequestHeaders(connection, header);
+        connection.setDoOutput(true);
+
+        try (OutputStream os = connection.getOutputStream()) {
+            os.write(body.getBytes("utf-8"));
+        }
+
+        return getResponse(connection);
+    }
+
+    public static CompletableFuture<String> GET(String url, Map<String, List<String>> header) {
+        return CompletableFuture.supplyAsync(() -> {
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setRequestMethod("GET");
+                setRequestHeaders(connection, header);
+                return getResponse(connection).getFirst();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
                 }
-                return re.toString();
             }
-            throw e;
-        }
-
+        });
     }
 
-    public static Map<String,List<String>> getHeaderWithCookieByResponse(Pair<String,Map<String, List<String>>> response,Map<String,List<String>> header){
-        if(!response.getSecond().containsKey("Set-Cookie")){
-            return header;
-        }
-        List<String> cookie=response.getSecond().get("Set-Cookie");
-        Map<String,List<String>> headerWithCookie=header;
-        headerWithCookie.put("Cookie",cookie);
-        return headerWithCookie;
+    private static void setRequestHeaders(HttpURLConnection connection, Map<String, List<String>> headers) {
+        headers.forEach((key, values) -> values.forEach(value -> connection.addRequestProperty(key, value)));
     }
 
-    public static Map<String,List<String>> getHeaderWithAuthorization(Map<String,List<String>> header){
-        if(Authorization==null){
-            return header;
+    private static Pair<String, Map<String, List<String>>> getResponse(HttpURLConnection connection) throws Exception {
+        int responseCode = connection.getResponseCode();
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(responseCode >= 400 ? connection.getErrorStream() : connection.getInputStream(), "utf-8"))) {
+            String response = br.lines().collect(Collectors.joining("\n"));
+            return new Pair<>(response, connection.getHeaderFields());
         }
-        header.put("Authorization", Collections.singletonList(Authorization));
+    }
+
+    public static Map<String, List<String>> getHeaderWithCookieByResponse(Pair<String, Map<String, List<String>>> response, Map<String, List<String>> header) {
+        if (response.getSecond().containsKey("Set-Cookie")) {
+            List<String> cookie = response.getSecond().get("Set-Cookie");
+            header.put("Cookie", cookie);
+        }
+        return header;
+    }
+
+    public static Map<String, List<String>> getHeaderWithAuthorization(Map<String, List<String>> header) {
+        if (Authorization != null && !header.containsKey("Authorization")) {
+            header.put("Authorization", Collections.singletonList(Authorization));
+        }
         return header;
     }
 
     public static void writeSession() {
-        OpenLink.PREFERENCES.put("authorization",Authorization);
+        OpenLink.PREFERENCES.put("authorization", Authorization);
     }
 
     public static void readSession() {
-        Authorization=OpenLink.PREFERENCES.get("authorization",null);
-        if(Authorization==null){
-            OpenLink.LOGGER.warn("The session does not exists in user preferences!");
+        Authorization = OpenLink.PREFERENCES.get("authorization", null);
+        if (Authorization == null) {
+            OpenLink.LOGGER.warn("The session does not exist in user preferences!");
             return;
         }
-        try{
-            JsonResponseWithData<JsonUserInfo> responseWithData = getUserInfo();
-            if(responseWithData==null||!responseWithData.flag){
-                Authorization=null;
-                OpenLink.LOGGER.warn("The session has been expired!");
-            }
-        } catch (Exception e){
+        try {
+            CompletableFuture<JsonResponseWithData<JsonUserInfo>> responseFuture = ApiService.getUserInfo();
+            responseFuture.thenAccept(responseWithData -> {
+                if (responseWithData == null || !responseWithData.flag) {
+                    Authorization = null;
+                    OpenLink.LOGGER.warn("The session has expired!");
+                }
+            }).exceptionally(e -> {
+                throw new RuntimeException(e);
+            });
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static JsonResponseWithData<JsonUserInfo> getUserInfo() throws Exception {
-        if(Authorization==null) return null;
-        Gson gson=new Gson();
-        Pair<String, Map<String, List<String>>> response=POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserInfo",getHeaderWithAuthorization(DEFAULT_HEADER),"{}");
-        JsonResponseWithData<JsonUserInfo> res=gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonUserInfo>>(){}.getType());
-        if(res.data!=null)
-            Request.token=res.data.token;
-        return res;
-    }
+    public static class ApiService {
+        public static CompletableFuture<JsonResponseWithData<JsonUserInfo>> getUserInfo() {
+            return getUserInfoOrNodeList("frp/api/getUserInfo", JsonUserInfo.class);
+        }
 
-    public static JsonResponseWithData<JsonTotalAndList<JsonNode>> getNodeList() throws Exception {
-        if(Authorization==null) return null;
-        Gson gson=new Gson();
-        Pair<String, Map<String, List<String>>> response=POST(Uris.openFrpAPIUri.toString()+"frp/api/getNodeList",getHeaderWithAuthorization(DEFAULT_HEADER),"{}");
-        JsonResponseWithData<JsonTotalAndList<JsonNode>> res=gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonNode>>>(){}.getType());
-        return res;
+        public static CompletableFuture<JsonResponseWithData<JsonTotalAndList<JsonNode>>> getNodeList() {
+            return getUserInfoOrNodeList("frp/api/getNodeList", JsonTotalAndList.class);
+        }
+
+        private static <T> CompletableFuture<JsonResponseWithData<T>> getUserInfoOrNodeList(String endpoint, Class<T> clazz) {
+            if (Authorization == null) return CompletableFuture.completedFuture(null);
+
+            return POST(Uris.openFrpAPIUri.toString() + endpoint, Request.getHeaderWithAuthorization(DEFAULT_HEADER), "{}").thenApply(response -> {
+                try {
+                    JsonResponseWithData<T> res = objectMapper.readValue(response.getFirst(), new TypeToken<JsonResponseWithData<T>>() {}.getType());
+                    if (clazz == JsonUserInfo.class && res.data != null) {
+                        Request.token = res.data.token;
+                    }
+                    return res;
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            });
+        }
     }
 }

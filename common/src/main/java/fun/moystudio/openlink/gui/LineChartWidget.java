@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-//是哪个大聪明想出来让我写折线统计图的？？？给我滚出来（zirran不要删注释后面调试用，这玩意真的难写）
+//是哪个大聪明想出来让我写折线统计图的？？？（zirran不要删注释后面调试用，这玩意真的难写）
 public class LineChartWidget extends GuiComponent implements Widget, GuiEventListener {
     public List<Pair<String,Long>> dataPoints;
     //左上——右下
