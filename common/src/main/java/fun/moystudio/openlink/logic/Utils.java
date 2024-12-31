@@ -3,6 +3,9 @@ package fun.moystudio.openlink.logic;
 import fun.moystudio.openlink.gui.SettingScreen;
 import net.minecraft.network.chat.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Utils {
     public static Component EMPTY=TextComponent.EMPTY;
     public static TranslatableComponent translatableText(String key, Object... objects) {

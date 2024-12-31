@@ -20,14 +20,28 @@ import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class EventCallbacks {
     private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting_button.png");
     private static final ResourceLocation OPENLINK_SETTING_HOVERED = new ResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
-
+    private static final List<String> CONFLICT_CLASS_NAME=Arrays.asList(
+            "io.github.satxm.mcwifipnp.ShareToLanScreenNew",
+            "rikka.lanserverproperties.ModifyLanScreen"
+    );
     public static void onScreenInit(Minecraft minecraft, Screen screen){
+        CONFLICT_CLASS_NAME.forEach(className->{
+            try {
+                Class<?> clazz = Class.forName(className);
+                if(clazz.isInstance(screen)) {
+                    minecraft.setScreen(new NewShareToLanScreen(null));
+                }
+            } catch (Exception ignored) {
+            }
+
+        });
         if(screen instanceof ShareToLanScreen shareToLanScreen){
             minecraft.setScreen(new NewShareToLanScreen(((IShareToLanLastScreenAccessor)shareToLanScreen).getLastScreen()));
         }
