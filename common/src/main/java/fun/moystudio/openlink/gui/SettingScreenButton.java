@@ -20,6 +20,7 @@ public class SettingScreenButton extends Button {
     public SettingScreenButton(int i, int j, int k, int l, Component component, OnPress onPress, OnTooltip onTooltip) {
         super(i, j, k, l, component, onPress, onTooltip);
     }
+
     @Override
     public void renderButton(PoseStack arg, int k, int l, float f) {
         Minecraft minecraft = Minecraft.getInstance();

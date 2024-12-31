@@ -5,6 +5,7 @@ import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
+import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.UUIDFixer;
 import fun.moystudio.openlink.network.Request;
 import net.fabricmc.api.EnvType;
@@ -15,8 +16,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.GameType;
@@ -27,9 +26,9 @@ import java.util.List;
 
 @Environment(EnvType.CLIENT)
 public class NewShareToLanScreen extends Screen {
-    private static final Component ALLOW_COMMANDS_LABEL = new TranslatableComponent("selectWorld.allowCommands");
-    private static final Component GAME_MODE_LABEL = new TranslatableComponent("selectWorld.gameMode");
-    private static final Component INFO_TEXT = new TranslatableComponent("lanServer.otherPlayers");
+    private static final Component ALLOW_COMMANDS_LABEL = Utils.translatableText("selectWorld.allowCommands");
+    private static final Component GAME_MODE_LABEL = Utils.translatableText("selectWorld.gameMode");
+    private static final Component INFO_TEXT = Utils.translatableText("lanServer.otherPlayers");
     private final Screen lastScreen;
     private GameType gameMode;
 
@@ -48,7 +47,7 @@ public class NewShareToLanScreen extends Screen {
     boolean couldShare=true;
 
     public NewShareToLanScreen(Screen screen) {
-        super(new TranslatableComponent("lanServer.title"));
+        super(Utils.translatableText("lanServer.title"));
         this.gameMode = GameType.SURVIVAL;
         this.lastScreen = screen;
     }
@@ -69,7 +68,7 @@ public class NewShareToLanScreen extends Screen {
             this.usingfrp.active=true;
         }
         if(val.isBlank()||!LanConfig.cfg.use_frp){
-            editBox.setSuggestion(new TranslatableComponent("text.openlink.port").getString());
+            editBox.setSuggestion(Utils.translatableText("text.openlink.port").getString());
             return;
         }
         else{
@@ -99,21 +98,19 @@ public class NewShareToLanScreen extends Screen {
     protected void init() {
         this.addRenderableWidget(CycleButton.builder(GameType::getShortDisplayName).withValues(new GameType[]{GameType.SURVIVAL, GameType.SPECTATOR, GameType.CREATIVE, GameType.ADVENTURE}).withInitialValue(this.gameMode).create(this.width / 2 - 155, 100, 150, 20, GAME_MODE_LABEL, (cycleButton, gameType) -> this.gameMode = gameType));
         this.addRenderableWidget(CycleButton.onOffBuilder(LanConfig.cfg.allow_commands).create(this.width / 2 + 5, 100, 150, 20, ALLOW_COMMANDS_LABEL, (cycleButton, boolean_) -> LanConfig.cfg.allow_commands = boolean_));
-        this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 28, 150, 20, new TranslatableComponent("lanServer.start"), (button1) -> {
+        this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 28, 150, 20, Utils.translatableText("lanServer.start"), (button1) -> {
             if(!this.couldShare)return;
             this.minecraft.setScreen((Screen)null);
             int i = HttpUtil.getAvailablePort();
-            TranslatableComponent component;
             if (this.minecraft.getSingleplayerServer().publishServer(this.gameMode, LanConfig.cfg.allow_commands, i)) {
-                component = new TranslatableComponent("commands.publish.started", new Object[]{i});
+                this.minecraft.gui.getChat().addMessage(Utils.translatableText("commands.publish.started", i));
+                this.minecraft.updateTitle();
             } else {
-                component = new TranslatableComponent("commands.publish.failed");
-                this.minecraft.gui.getChat().addMessage(component);
+                this.minecraft.gui.getChat().addMessage(Utils.translatableText("commands.publish.failed"));
                 this.minecraft.updateTitle();
                 return;
             }
-            this.minecraft.gui.getChat().addMessage(component);
-            this.minecraft.updateTitle();
+
             this.minecraft.getSingleplayerServer().setUsesAuthentication(LanConfig.getAuthMode()==OnlineModeTabs.ONLINE_MODE);
             this.minecraft.getSingleplayerServer().setPvpAllowed(LanConfig.cfg.allow_pvp);
             UUIDFixer.EnableUUIDFixer=LanConfig.getAuthMode()==OnlineModeTabs.OFFLINE_FIXUUID;
@@ -133,28 +130,28 @@ public class NewShareToLanScreen extends Screen {
             if(OpenLink.disabled) return;
             if(Request.Authorization==null){
                 List<Component> list=new ArrayList<>();
-                String[] list1=new TranslatableComponent("text.openlink.lanlogintips").getString().split("\n");
+                String[] list1= Utils.translatableText("text.openlink.lanlogintips").getString().split("\n");
                 for(String s:list1){
-                    list.add(new TextComponent(s));
+                    list.add(Utils.literalText(s));
                 }
                 renderComponentTooltip(poseStack,list,i,j);
             }
         })));
         this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 28, 150, 20, CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)));
         if(OpenLink.disabled) return;
-        editBox=new EditBox(this.font,this.width / 2 + 5, 160, 150, 20,new TranslatableComponent("text.openlink.port"));
-        editBox.setSuggestion(new TranslatableComponent("text.openlink.port").getString());
+        editBox=new EditBox(this.font,this.width / 2 + 5, 160, 150, 20, Utils.translatableText("text.openlink.port"));
+        editBox.setSuggestion(Utils.translatableText("text.openlink.port").getString());
         editBox.setValue(LanConfig.cfg.last_port_value);
         this.addRenderableWidget(editBox);
-        usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, new TranslatableComponent("text.openlink.usingfrp"),((cycleButton, bool) -> {
+        usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, Utils.translatableText("text.openlink.usingfrp"),((cycleButton, bool) -> {
             LanConfig.cfg.use_frp=bool;
             editBox.setVisible(LanConfig.cfg.use_frp);
         }));
         onlinemode=CycleButton.builder((OnlineModeTabs o)-> o.component)
                 .withValues(OnlineModeTabs.values())
                 .withInitialValue(LanConfig.getAuthMode())
-                .create(this.width / 2 - 155, 130, 150, 20, new TranslatableComponent("text.openlink.onlinemodebutton"),   (button, o)->LanConfig.setAuthMode(o));
-        allowpvp=CycleButton.onOffBuilder(LanConfig.cfg.allow_pvp).create(this.width / 2 + 5, 130, 150, 20, new TranslatableComponent("mco.configure.world.pvp"),(cycleButton, object) -> LanConfig.cfg.allow_pvp=object);
+                .create(this.width / 2 - 155, 130, 150, 20, Utils.translatableText("text.openlink.onlinemodebutton"),   (button, o)->LanConfig.setAuthMode(o));
+        allowpvp=CycleButton.onOffBuilder(LanConfig.cfg.allow_pvp).create(this.width / 2 + 5, 130, 150, 20, Utils.translatableText("mco.configure.world.pvp"),(cycleButton, object) -> LanConfig.cfg.allow_pvp=object);
         this.addRenderableWidget(usingfrp);
         this.addRenderableWidget(onlinemode);
         this.addRenderableWidget(allowpvp);

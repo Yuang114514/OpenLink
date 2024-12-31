@@ -2,18 +2,18 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.datafixers.util.Pair;
+import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-//是哪个大聪明想出来让我写折线统计图的？？？给我滚出来（zirran不要删注释后面调试用，这玩意真的难写）
+//是哪个大聪明想出来让我写折线统计图的？？？（zirran不要删注释后面调试用，这玩意真的难写）
 public class LineChartWidget extends GuiComponent implements Widget, GuiEventListener {
     public List<Pair<String,Long>> dataPoints;
     //左上——右下
@@ -125,7 +125,7 @@ public class LineChartWidget extends GuiComponent implements Widget, GuiEventLis
                 drawString(poseStack, font, String.format("%.1f", k * maxDataVal.getSecond() / 5.0), x1 - font.width(String.format("%.1f", k * maxDataVal.getSecond() / 5.0)), y - 3, 0xffffff);//y轴刻度标签
             }
         } else {
-            drawCenteredString(poseStack,font,new TranslatableComponent("text.openlink.nodata"),x1+(x2-x1)/2,y1+(y2-y1)/2,0x7f66ccff);
+            drawCenteredString(poseStack,font, Utils.translatableText("text.openlink.nodata"),x1+(x2-x1)/2,y1+(y2-y1)/2,0x7f66ccff);
         }
         drawCenteredString(poseStack,font,labelX,x2-10,y2-10,0xffffff);//x轴标签
         drawString(poseStack,font,labelY,x1,y1-5,0xffffff);//y轴标签

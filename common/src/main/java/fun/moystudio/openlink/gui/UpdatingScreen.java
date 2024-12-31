@@ -2,25 +2,22 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.TranslatableComponent;
 import org.spongepowered.asm.mixin.Unique;
-
-import java.io.IOException;
 
 public class UpdatingScreen extends Screen {
     @Unique
     public int tickCount=0;
     public UpdatingScreen() {
-        super(new TranslatableComponent("text.openlink.updatefrpc"));
+        super(Utils.translatableText("text.openlink.updatefrpc"));
     }
     public MultiLineLabel text;
     boolean updated=false;
     @Override
     protected void init() {
-        text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatingfrpc"),this.width-50);
+        text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatingfrpc"),this.width-50);
     }
     @Override
     public void tick(){

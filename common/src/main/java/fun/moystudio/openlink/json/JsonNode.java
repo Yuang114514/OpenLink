@@ -1,6 +1,5 @@
 package fun.moystudio.openlink.json;
 
-import java.util.Map;
 
 public class JsonNode {
     public boolean allowEc,enableDefaultTls,needRealname,fullyLoaded;

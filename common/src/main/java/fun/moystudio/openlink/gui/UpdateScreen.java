@@ -2,6 +2,7 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.MultiLineLabel;
@@ -9,14 +10,13 @@ import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class UpdateScreen extends Screen {
     public UpdateScreen() {
-        super(new TranslatableComponent("gui.openlink.updatefrpctitle"));
+        super(Utils.translatableText("gui.openlink.updatefrpctitle"));
     }
     public Button yes;
     public Button no;
@@ -24,10 +24,10 @@ public class UpdateScreen extends Screen {
 
     @Override
     protected void init(){
-        List<String> strings=Arrays.asList(new TranslatableComponent("text.openlink.nofrpcfile").getString().split("\n"));
+        List<String> strings=Arrays.asList(Utils.translatableText("text.openlink.nofrpcfile").getString().split("\n"));
         List<Component> list = new ArrayList<>();
         strings.forEach((String)->{
-            list.add(new TextComponent(String));
+            list.add(Utils.literalText(String));
         });
         yes=new Button(this.width/4-40,this.height/5*4-10,80,20,CommonComponents.GUI_YES,button -> {
             this.minecraft.setScreen(new UpdatingScreen());
@@ -42,13 +42,13 @@ public class UpdateScreen extends Screen {
         if(Frpc.frpcVersionDate==0){
             no.active=false;
         }
-        text=MultiLineLabel.create(this.font,(FormattedText) new TranslatableComponent("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.frpcVersionDate == 0 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
+        text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.frpcVersionDate == 0 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
         //以下为原版语言按钮(修改了一下位置)
         this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
             this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
-        }, new TranslatableComponent("narrator.button.language")));
+        }, Utils.translatableText("narrator.button.language")));
     }
 
     @Override

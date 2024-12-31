@@ -18,8 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
@@ -83,7 +81,7 @@ public class EventCallbacks {
                         minecraft.stop();
                     }
                     minecraft.setScreen(null);
-                },new TextComponent("SSL Handshake Error"),new TranslatableComponent("text.openlink.sslignored")));
+                }, Utils.literalText("SSL Handshake Error"), Utils.translatableText("text.openlink.sslignored")));
             }
             if (Frpc.hasUpdate) {
                 minecraft.setScreen(new UpdateScreen());

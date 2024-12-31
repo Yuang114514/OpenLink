@@ -7,6 +7,7 @@ import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.json.JsonResponseWithCode;
 import fun.moystudio.openlink.json.JsonResponseWithData;
+import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.WebBrowser;
 import fun.moystudio.openlink.network.*;
 import net.minecraft.client.gui.components.*;
@@ -18,7 +19,7 @@ import java.util.Map;
 
 public class LoginScreen extends Screen {
     public LoginScreen(Screen last) {
-        super(new TranslatableComponent("gui.openlink.loginscreentitle"));
+        super(Utils.translatableText("gui.openlink.loginscreentitle"));
         lastscreen=last;
     }
     Screen lastscreen=null;
@@ -31,19 +32,19 @@ public class LoginScreen extends Screen {
 
     @Override
     protected void init() {
-        loginTips = MultiLineLabel.create(this.font, new TranslatableComponent("text.openlink.logintips"), this.width - 50);
+        loginTips = MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.logintips"), this.width - 50);
 
-        username = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 58, 200, 20, new TranslatableComponent("text.openlink.username"));
-        password = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 98, 200, 20, new TranslatableComponent("text.openlink.password"));
+        username = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 58, 200, 20, Utils.translatableText("text.openlink.username"));
+        password = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 98, 200, 20, Utils.translatableText("text.openlink.password"));
         username.setValue(OpenLink.PREFERENCES.get("last_username",""));
         password.setValue(OpenLink.PREFERENCES.get("last_password",""));
-        remember=new Checkbox(this.width / 2 - 100,this.height/6+133,150,20,new TranslatableComponent("text.openlink.rememberuserandpassword"),OpenLink.PREFERENCES.get("last_username",null)!=null&&OpenLink.PREFERENCES.get("last_password",null)!=null);
+        remember=new Checkbox(this.width / 2 - 100,this.height/6+133,150,20, Utils.translatableText("text.openlink.rememberuserandpassword"),OpenLink.PREFERENCES.get("last_username",null)!=null&&OpenLink.PREFERENCES.get("last_password",null)!=null);
         this.addRenderableWidget(username);
         this.addRenderableWidget(password);
         this.addRenderableWidget(remember);
         this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 178, 200, 20, CommonComponents.GUI_DONE, (button) -> {
             if (this.username.getValue().isBlank() || this.password.getValue().isBlank()) {
-                wrongmsg = new TranslatableComponent("text.openlink.notcompleted").getString();
+                wrongmsg = Utils.translatableText("text.openlink.notcompleted").getString();
                 return;
             }
             wrongmsg = "";
@@ -94,10 +95,10 @@ public class LoginScreen extends Screen {
         //原版语言按钮
         this.addRenderableWidget(new ImageButton(this.width / 2 - 130, this.height / 6 + 178, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
             this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
-        }, new TranslatableComponent("narrator.button.language")));
+        }, Utils.translatableText("narrator.button.language")));
 
         //注册
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 158 , 200, 20, new TranslatableComponent("text.openlink.no_account"), (button) -> {
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 158 , 200, 20, Utils.translatableText("text.openlink.no_account"), (button) -> {
             browser.openBrowser();
         }));
     }
@@ -106,9 +107,9 @@ public class LoginScreen extends Screen {
     public void render(PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);
         loginTips.renderCentered(poseStack, this.width / 2, 15, 16, 0xffffff);
-        drawString(poseStack, this.font, new TranslatableComponent("text.openlink.username"), this.width / 2 - 100, this.height / 6 + 33, 0xffffff);
-        drawString(poseStack, this.font, new TranslatableComponent("text.openlink.password"), this.width / 2 - 100, this.height / 6 + 83, 0xffffff);
-        drawString(poseStack, this.font, new TextComponent(wrongmsg), this.width / 2 - 100, this.height / 6 + 123, 0xff0000);
+        drawString(poseStack, this.font, Utils.translatableText("text.openlink.username"), this.width / 2 - 100, this.height / 6 + 33, 0xffffff);
+        drawString(poseStack, this.font, Utils.translatableText("text.openlink.password"), this.width / 2 - 100, this.height / 6 + 83, 0xffffff);
+        drawString(poseStack, this.font, Utils.literalText(wrongmsg), this.width / 2 - 100, this.height / 6 + 123, 0xff0000);
         super.render(poseStack, i, j, f);
     }
 

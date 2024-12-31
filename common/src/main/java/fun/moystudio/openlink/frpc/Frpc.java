@@ -4,15 +4,14 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.logic.LanConfig;
+import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.*;
 
 import java.io.*;
 import java.net.URL;
@@ -225,9 +224,9 @@ public class Frpc {
             try {
                 if(SSLUtils.sslIgnored){
                     //SSL警告
-                    Minecraft.getInstance().gui.getChat().addMessage(new TranslatableComponent("text.openlink.sslwarning"));
+                    Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.sslwarning"));
                 }
-                Minecraft.getInstance().gui.getChat().addMessage(new TranslatableComponent("text.openlink.creatingproxy"));
+                Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.creatingproxy"));
                 Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                 JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 //OpenLink隧道命名规则：openlink_mc_[本地端口号]
@@ -247,7 +246,7 @@ public class Frpc {
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 JsonResponseWithData<JsonUserInfo> userinfo=Request.getUserInfo();
                 if(userinfo.data.proxies==userProxies.data.total){
-                    throw new Exception(new TranslatableComponent("text.openlink.userproxieslimited").getString());
+                    throw new Exception(Utils.translatableText("text.openlink.userproxieslimited").getString());
                 }
                 JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
                 List<JsonNode> canUseNodes=new ArrayList<>();
@@ -354,7 +353,7 @@ public class Frpc {
                         break;
                     }
                 }//创建隧道
-                if(!found) throw new Exception(new TranslatableComponent("text.openlink.remoteportnotfound").getString());
+                if(!found) throw new Exception(Utils.translatableText("text.openlink.remoteportnotfound").getString());
                 LanConfig.cfg.last_port_value=String.valueOf(newProxy.remote_port).equals(val)?val:"";
                 response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
@@ -381,10 +380,7 @@ public class Frpc {
                 }
                 if(runningproxy==null) throw new Exception("Can not find the proxy???");
                 JsonUserProxy finalRunningproxy = runningproxy;
-                Component tmp=(new TranslatableComponent("text.openlink.frpcstartsucessfully","§n"+(SettingScreen.sensitiveInfoHiding?"§k":"")+finalRunningproxy.connectAddress))
-                        .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, finalRunningproxy.connectAddress))
-                                .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent((SettingScreen.sensitiveInfoHiding?"§k":"")+finalRunningproxy.connectAddress)))));
-                Minecraft.getInstance().gui.getChat().addMessage(tmp);
+                Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(finalRunningproxy.connectAddress));
                 List<String> list=new ArrayList<>(List.of(OpenLink.PREFERENCES.get("traffic_storage", "").split(";")));
                 while(list.size()>=MAX_TRAFFIC_STORAGE){
                     list.remove(0);
@@ -392,12 +388,9 @@ public class Frpc {
                 list.add(String.format(Locale.getDefault(),"%tD %tT",new Date(),new Date())+","+userinfo.data.traffic);
                 OpenLink.PREFERENCES.put("traffic_storage", String.join(";", list));
             } catch (Exception e) {
-                Component tmp=new TextComponent("§4[OpenLink] "+e.getMessage());
                 e.printStackTrace();
-                Minecraft.getInstance().gui.getChat().addMessage(tmp);
-                tmp=ComponentUtils.wrapInSquareBrackets(new TranslatableComponent("text.openlink.clicktorestart"))
-                        .withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/proxyrestart"))));
-                Minecraft.getInstance().gui.getChat().addMessage(tmp);
+                Minecraft.getInstance().gui.getChat().addMessage(Utils.literalText("§4[OpenLink] "+e.getClass().getName()+":"+e.getMessage()));
+                Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyRestartText());
             }
         },"Proxy startup thread").start();
 
