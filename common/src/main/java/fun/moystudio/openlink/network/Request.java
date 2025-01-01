@@ -26,7 +26,7 @@ public class Request {
 
     public static Pair<String,Map<String, List<String>>> POST(String url, Map<String,List<String>> header, String body) throws Exception {
         Pair<String, Map<String, List<String>>> returnval=POST(url, header, body, false);
-        if(returnval.getSecond().containsKey("Authorization")){
+        if(returnval!=null&&returnval.getSecond().containsKey("Authorization")){
             if(Authorization==null||!Authorization.equals(returnval.getSecond().get("Authorization").get(0))){
                 Authorization=returnval.getSecond().get("Authorization").get(0);
                 writeSession();

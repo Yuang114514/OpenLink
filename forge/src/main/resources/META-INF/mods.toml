@@ -11,7 +11,7 @@ authors = "StarCarefree, Terry_MC, zirranYa"
 description = '''
 Bring you a unique Minecraft Multiplayer playing experience OvO
 '''
-logoFile = "assets/openlink/icon.png"
+logoFile = "icon.png"
 
 [[dependencies.openlink]]
 modId = "forge"

@@ -20,33 +20,29 @@ import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.resources.ResourceLocation;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public class EventCallbacks {
     private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting_button.png");
     private static final ResourceLocation OPENLINK_SETTING_HOVERED = new ResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
-    private static final List<String> CONFLICT_CLASS_NAME=Arrays.asList(
-            "io.github.satxm.mcwifipnp.ShareToLanScreenNew",
-            "rikka.lanserverproperties.ModifyLanScreen"
-    );
-    public static void onScreenInit(Minecraft minecraft, Screen screen){
-        CONFLICT_CLASS_NAME.forEach(className->{
-            try {
-                Class<?> clazz = Class.forName(className);
-                if(clazz.isInstance(screen)) {
-                    minecraft.setScreen(new NewShareToLanScreen(null));
-                }
-            } catch (Exception ignored) {
-            }
 
-        });
+    public static void onScreenInit(Minecraft minecraft, Screen screen){
+        if(OpenLink.disabled) return;
+        for(Pair<String, Class<?>> classPair:OpenLink.CONFLICT_CLASS){
+            if(classPair.getSecond().isInstance(screen)){
+                if(ConflictSelectionScreen.canOpen!=null&& ConflictSelectionScreen.canOpen.equals(classPair)){
+                    continue;
+                }
+                minecraft.setScreen(new ConflictSelectionScreen(classPair.getFirst()));
+                return;
+            }
+        }
         if(screen instanceof ShareToLanScreen shareToLanScreen){
             minecraft.setScreen(new NewShareToLanScreen(((IShareToLanLastScreenAccessor)shareToLanScreen).getLastScreen()));
+            return;
         }
         if(screen instanceof TitleScreen){
-            if(OpenLink.disabled) return;
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
                     20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> {
                 minecraft.setScreen(new SettingScreen(null));
@@ -57,6 +53,7 @@ public class EventCallbacks {
         Frpc.stopFrpc();
     }
     public static void onLevelClear(){
+        ConflictSelectionScreen.canOpen=null;
         if(OpenLink.disabled) return;
         try{
             Pair<String, Map<String, List<String>>> response= Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");

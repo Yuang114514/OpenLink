@@ -12,6 +12,8 @@
   "tab.openlink.setting_user": "User Info",
   "temp.openlink.tobedone": "To be done...",
   "text.openlink.clicktorestart": "§o§l§cClick to restart the remote proxy",
+  "text.openlink.conflict": "§c§lConflicted Share To Lan Screen Detected: %s",
+  "text.openlink.conflict_tip": "Please select a screen to open(This screen is created by OpenLink)",
   "text.openlink.creatingproxy": "§b§o[OpenLink] Creating proxy...",
   "text.openlink.doubleclick": "Double click to open: %s",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] Started proxy successfully!\nClick to copy IP: §l[%s§b§o§l]",
