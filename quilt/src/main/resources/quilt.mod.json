@@ -12,7 +12,7 @@
         "Terry_MC": "Author",
         "zirranYa": "Mastermind"
       },
-      "icon": "assets/openlink/icon.png"
+      "icon": "icon.png"
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
     "entrypoints": {
