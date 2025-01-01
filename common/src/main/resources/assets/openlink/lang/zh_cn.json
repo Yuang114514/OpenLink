@@ -12,6 +12,8 @@
   "tab.openlink.setting_user": "用户信息",
   "temp.openlink.tobedone": "待完成...",
   "text.openlink.clicktorestart": "§o§l§c点击来重启远程隧道",
+  "text.openlink.conflict": "§c§l检测到 局域网GUI 的冲突： %s",
+  "text.openlink.conflict_tip": "请选择要打开的GUI(此GUI由 OpenLink创建)",
   "text.openlink.creatingproxy": "§b§o[OpenLink] 正在创建联机隧道...",
   "text.openlink.doubleclick": "双击打开： %s",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] 隧道启动成功！\n点击复制连接IP：§l[%s§b§o§l]",
