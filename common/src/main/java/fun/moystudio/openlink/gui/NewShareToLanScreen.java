@@ -8,8 +8,6 @@ import fun.moystudio.openlink.logic.OnlineModeTabs;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.UUIDFixer;
 import fun.moystudio.openlink.network.Request;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -24,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Environment(EnvType.CLIENT)
 public class NewShareToLanScreen extends Screen {
     private static final Component ALLOW_COMMANDS_LABEL = Utils.translatableText("selectWorld.allowCommands");
     private static final Component GAME_MODE_LABEL = Utils.translatableText("selectWorld.gameMode");
