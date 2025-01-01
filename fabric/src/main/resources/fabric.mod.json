@@ -14,7 +14,7 @@
     "sources": "https://github.com/StarCarefree/OpenLink"
   },
   "license": "MIT",
-  "icon": "assets/openlink/icon.png",
+  "icon": "icon.png",
   "environment": "client",
   "entrypoints": {
     "main": [
