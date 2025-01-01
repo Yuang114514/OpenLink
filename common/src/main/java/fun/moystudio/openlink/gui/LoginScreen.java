@@ -22,7 +22,7 @@ public class LoginScreen extends Screen {
         super(Utils.translatableText("gui.openlink.loginscreentitle"));
         lastscreen=last;
     }
-    Screen lastscreen=null;
+    Screen lastscreen;
     MultiLineLabel loginTips;
     EditBox username;
     EditBox password;

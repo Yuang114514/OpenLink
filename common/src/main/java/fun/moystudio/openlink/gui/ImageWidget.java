@@ -9,8 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 
 public class ImageWidget implements Widget, GuiEventListener {
     public ResourceLocation texture;
-    private int x,y,width,height,textureWidth,textureHeight;
-    private float uOffset,vOffset;
+    private final int x,y,width,height,textureWidth,textureHeight;
+    private final float uOffset,vOffset;
     public ImageWidget(int x1, int y1, float uOffset1, float vOffset1, int width1, int height1, int textureWidth1, int textureHeight1, ResourceLocation rl){
         x=x1;
         y=y1;
