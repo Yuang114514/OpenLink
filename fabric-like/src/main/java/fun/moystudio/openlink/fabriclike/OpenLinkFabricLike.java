@@ -13,9 +13,8 @@ public final class OpenLinkFabricLike {
     public static void init(String version,String loader,String loader_version) throws Exception {
         // Run our common setup.
         OpenLink.init(version,loader,loader_version);
-        ClientCommandManager.getActiveDispatcher().register(ClientCommandManager
-                        .literal("proxyrestart")
-                        .executes(context -> Frpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
+        ClientCommandManager.literal("proxyrestart")
+                        .executes(context -> Frpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0);
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight)->{
             EventCallbacks.onScreenInit(client,screen);
         });
