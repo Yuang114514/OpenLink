@@ -12,6 +12,8 @@
   "tab.openlink.setting_user": "Пользовательская информация",
   "temp.openlink.tobedone": "Надо сделать...",
   "text.openlink.clicktorestart": "§o§l§cНажмите, чтобы перезапустить удаленный прокси",
+  "text.openlink.conflict": "§c§lОбнаружен конфликт между общим доступом к экрану локальной сети: %s",
+  "text.openlink.conflict_tip": "Пожалуйста, выберите экран для открытия(Этот экран создан OpenLink)",
   "text.openlink.creatingproxy": "§b§o[OpenLink] Создание прокси...",
   "text.openlink.doubleclick": "Двойной клик для открытия: %s",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] Успешно запущен прокси!\nНажмите, чтобы скопировать IP: §l[%s§b§o§l]",
