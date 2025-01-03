@@ -4,12 +4,12 @@ import fun.moystudio.openlink.gui.SettingScreen;
 import net.minecraft.network.chat.*;
 
 public class Utils {
-    public static Component EMPTY=Component.empty();
+    public static Component EMPTY=TextComponent.EMPTY;
     public static MutableComponent translatableText(String key, Object... objects) {
-        return Component.translatable(key,objects);
+        return new TranslatableComponent(key,objects);
     }
     public static MutableComponent literalText(String string) {
-        return Component.literal(string);
+        return new TextComponent(string);
     }
     public static Component proxyRestartText() {
         return ComponentUtils.wrapInSquareBrackets(translatableText("text.openlink.clicktorestart"))

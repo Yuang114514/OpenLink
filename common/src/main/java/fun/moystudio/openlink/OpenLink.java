@@ -2,6 +2,7 @@ package fun.moystudio.openlink;
 
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.gui.NewShareToLanScreen;
 import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
