@@ -5,10 +5,10 @@ import net.minecraft.network.chat.*;
 
 public class Utils {
     public static Component EMPTY=TextComponent.EMPTY;
-    public static TranslatableComponent translatableText(String key, Object... objects) {
+    public static MutableComponent translatableText(String key, Object... objects) {
         return new TranslatableComponent(key,objects);
     }
-    public static TextComponent literalText(String string) {
+    public static MutableComponent literalText(String string) {
         return new TextComponent(string);
     }
     public static Component proxyRestartText() {
