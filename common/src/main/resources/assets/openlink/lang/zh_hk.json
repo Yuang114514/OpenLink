@@ -17,7 +17,7 @@
   "text.openlink.creatingproxy": "§b§o[OpenLink] 而家創建緊代理...",
   "text.openlink.doubleclick": "雙擊開啟：%s",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] 成功啟動隧道\n點擊複製IP: §l[%s§b§o§l]",
-  "text.openlink.info": "0Frpc 資訊：\n1版本：%1$s\n0模組資訊：\n1版本：%2$s\n1載入Mod框架版本：%3$s\n0翻譯：\n1簡體中文及英文（美國）：StarCarefree\n1繁體中文：Rimon12_HK\n1繁體中文（香港）：Rimon12_HK\n1印尼文：Floo\n1德文：Дмитрий Делов\n1文言文：Yamisafa, Rimon12_HK\n0作者：\n1程式設計師：Terry_MC\n1策劃：zirran_Ya\n1團隊：StarCarefree\n0授權：SCAUP & MIT",
+  "text.openlink.info": "0Frpc 資訊：\n1版本：%1$s\n0模組資訊：\n1版本：%2$s\n1載入Mod框架版本：%3$s\n0翻譯：\n1簡體中文及英文（美國）：StarCarefree\n1繁體中文（港/台）：Rimon12_HK\n1印尼文：Floo\n1韓/日語：biantwin\n1德文：Дмитрий Делов\n1文言文：Yamisafa, Rimon12_HK\n0作者：\n1程式設計師：Terry_MC\n1策劃：zirran_Ya\n1團隊：StarCarefree\n0授權：SCAUP & MIT",
   "text.openlink.lanlogintips": "§o§l§c請你先 OpenLink 設定中登入你嘅 Natayark 帳戶\n(如果你想用連機代理服務)",
   "text.openlink.loading": "加載中....",
   "text.openlink.login": "登入",
