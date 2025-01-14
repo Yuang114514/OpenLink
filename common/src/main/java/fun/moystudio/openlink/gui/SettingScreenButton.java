@@ -2,6 +2,7 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
@@ -11,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 public class SettingScreenButton extends Button {
-    public static final ResourceLocation SETTING_WIDGET_LOCATION=new ResourceLocation("openlink","textures/gui/widgets_setting.png");
+    public static final ResourceLocation SETTING_WIDGET_LOCATION=Utils.createResourceLocation("openlink","textures/gui/widgets_setting.png");
     public SettingScreenButton(int i, int j, int k, int l, Component component, OnPress onPress) {
         super(i, j, k, l, component, onPress);
     }

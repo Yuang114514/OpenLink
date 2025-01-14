@@ -103,7 +103,7 @@ public class Frpc {
         }
         OpenLink.LOGGER.info("Extracting frpc archive file...");
         Extract.ExtractBySuffix(frpcArchiveFile.getAbsoluteFile(),zsuffix);
-        OpenLink.LOGGER.info("Extracted frpc archive file sucessfully!");
+        OpenLink.LOGGER.info("Extracted frpc archive file successfully!");
         frpcArchiveFile.delete();
         OpenLink.LOGGER.info("Deleted frpc archive file!");
         frpcVersionDate=latestVersionDate;
@@ -276,26 +276,26 @@ public class Frpc {
                 if(canUseNodes.isEmpty()){
                     throw new Exception("Unable to use any node???");
                 }
-                int preferClasify = -1;
+                int preferClassify = -1;
                 try {
                     String json = Request.POST(Uris.ipstackUri.toString(), Request.DEFAULT_HEADER, "{}").getFirst();
                     JsonIP jsonIP = gson.fromJson(json, JsonIP.class);
 
                     if (jsonIP.country.equals("CN")) {
-                        preferClasify = 1;
+                        preferClassify = 1;
                     } else if (jsonIP.country.equals("HK") || jsonIP.country.equals("TW") || jsonIP.country.equals("MO")) {
-                        preferClasify = 2;
+                        preferClassify = 2;
                     } else {
-                        preferClasify = 3;
+                        preferClassify = 3;
                     }
-                    OpenLink.LOGGER.info("User Country Code: " + jsonIP.country + ", Prefer Classify: " + preferClasify);
+                    OpenLink.LOGGER.info("User Country Code: " + jsonIP.country + ", Prefer Classify: " + preferClassify);
                 } catch (Exception ignored) {
                     OpenLink.LOGGER.warn("Can not get user country! Ignoring...");
                 }
-                int finalPreferClasify = preferClasify;
+                int finalPreferClassify = preferClassify;
                 canUseNodes.sort(((o1, o2) -> {
-                    if(finalPreferClasify !=-1&&o1.classify!=o2.classify&&(o1.classify== finalPreferClasify)!=(o2.classify== finalPreferClasify))
-                        return o1.classify== finalPreferClasify ?-1:1;
+                    if(finalPreferClassify !=-1&&o1.classify!=o2.classify&&(o1.classify== finalPreferClassify)!=(o2.classify== finalPreferClassify))
+                        return o1.classify== finalPreferClassify ?-1:1;
                     if(!o1.group.equals(o2.group)){
                         int first=5,second=5;
                         if(o1.group.contains("svip")){

@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 public class EventCallbacks {
-    private static final ResourceLocation OPENLINK_SETTING = new ResourceLocation("openlink", "textures/gui/setting_button.png");
-    private static final ResourceLocation OPENLINK_SETTING_HOVERED = new ResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
+    private static final ResourceLocation OPENLINK_SETTING = Utils.createResourceLocation("openlink", "textures/gui/setting_button.png");
+    private static final ResourceLocation OPENLINK_SETTING_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
 
     public static void onScreenInit(Minecraft minecraft, Screen screen){
         if(OpenLink.disabled) return;

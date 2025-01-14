@@ -2,6 +2,7 @@ package fun.moystudio.openlink.logic;
 
 import fun.moystudio.openlink.gui.SettingScreen;
 import net.minecraft.network.chat.*;
+import net.minecraft.resources.ResourceLocation;
 
 public class Utils {
     public static Component EMPTY=TextComponent.EMPTY;
@@ -18,6 +19,9 @@ public class Utils {
     public static Component proxyStartText(String connectAddress){
         return translatableText("text.openlink.frpcstartsucessfully","§n"+(SettingScreen.sensitiveInfoHiding?"§k":"")+connectAddress).withStyle((style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, connectAddress))
                         .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, literalText((SettingScreen.sensitiveInfoHiding?"§k":"")+connectAddress)))));
+    }
+    public static ResourceLocation createResourceLocation(String namespace, String path) {
+        return new ResourceLocation(namespace,path);
     }
 
 }
