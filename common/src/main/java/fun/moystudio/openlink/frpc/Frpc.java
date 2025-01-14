@@ -155,7 +155,7 @@ public class Frpc {
                 }
                 inputStream.close();
                 outputStream.close();
-                OpenLink.LOGGER.info("Download/Update frpc sucessfully!");
+                OpenLink.LOGGER.info("Download/Update frpc successfully!");
             } catch (Exception e){
                 success.set(false);
                 e.printStackTrace();
