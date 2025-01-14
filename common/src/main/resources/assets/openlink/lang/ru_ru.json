@@ -17,7 +17,7 @@
   "text.openlink.creatingproxy": "§b§o[OpenLink] Создание прокси...",
   "text.openlink.doubleclick": "Двойной клик для открытия: %s",
   "text.openlink.frpcstartsucessfully": "§b§o[OpenLink] Успешно запущен прокси!\nНажмите, чтобы скопировать IP: §l[%s§b§o§l]",
-  "text.openlink.info": "0Frpc данные:\n1Версия: %1$s\n0Данние модификации:\n1Версия: %2$s\n1Версия загрузчика: %3$s\n0Локализация:\n1Упрощённый Китайский и Английский(США): StarCarefree\n1Традиционный Китайский: Rimon12_HK\n1Традиционный Китайский(Гонконг): Rimon12_HK\n1Индонезийский: Floo\n1Русский: Дмитрий Делов\n1Классический Китайский: Yamisafa, Rimon12_HK\n0Автор\n1Программист: Terry_MC\n1Организатор: zirran_Ya\n1Команда: StarCarefree\n0Лицензия: SCAUP & MIT",
+  "text.openlink.info": "0Frpc данные:\n1Версия: %1$s\n0Данние модификации:\n1Версия: %2$s\n1Версия загрузчика: %3$s\n0Локализация:\n1Упрощённый Китайский и Английский(США): StarCarefree\n1Традиционный китайский (Гонконг/Тайвань): Rimon12_HK\n1Индонезийский: Floo\n1Корейский/японский: biantwin\n1Русский: Дмитрий Делов\n1Классический Китайский: Yamisafa, Rimon12_HK\n0Автор\n1Программист: Terry_MC\n1Организатор: zirran_Ya\n1Команда: StarCarefree\n0Лицензия: SCAUP & MIT",
   "text.openlink.lanlogintips": "§o§l§cПожалуйста, войдите в свою учетную запись Natayark в настройках OpenLink (если вы хотите использовать прокси)",
   "text.openlink.loading": "Загрузка...",
   "text.openlink.login": "Логин",

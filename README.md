@@ -1,21 +1,15 @@
-# OpenLink Core
+<!--
+ * @Author: zirranYa 16774996@qq.com
+ * @Date: 2024-12-03 00:10:12
+ * @LastEditors: zirranYa 16774996@qq.com
+ * @LastEditTime: 2025-01-05 23:32:55
+ * @FilePath: \OpenLink\README.md
+ * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
+-->
+## OpenLink代码库-Code
 
-## OpenLink源代码库
+OvO
 
-星遥工坊开源模组，目前仍在制作当中...
-
-## 合作
+## 本地化/Localization
 
 [![Crowdin](https://badges.crowdin.net/openlink/localized.svg)](https://crowdin.com/project/openlink)
-
-## [OpenLink本地化计划/OpenLink's Localization Plan]
-
-> 简体中文：Star Carefree；
-
-> 繁体中文：Rimon12_HK；
-
-> 繁体中文(香港)：Rimon12_HK；
-
-> 印度尼西亚语：Floo；
-
-> 文言文：Yamisafa、Rimon12_HK。
