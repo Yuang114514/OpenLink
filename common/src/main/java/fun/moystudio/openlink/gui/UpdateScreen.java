@@ -35,14 +35,14 @@ public class UpdateScreen extends Screen {
         no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {
             this.onClose();
         }, (button, poseStack, i, j) -> {
-            if(Frpc.frpcVersionDate==0){
+            if(Frpc.FRPC_VERSION.length()<6){
                 renderComponentTooltip(poseStack, list, i, j);
             }
         });
-        if(Frpc.frpcVersionDate==0){
+        if(Frpc.FRPC_VERSION.length()<6){
             no.active=false;
         }
-        text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.frpcVersionDate == 0 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
+        text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.FRPC_VERSION.length()<6 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
         //以下为原版语言按钮(修改了一下位置)

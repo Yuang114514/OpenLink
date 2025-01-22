@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +23,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Frpc {
-    public static final String DEFAULT_FOLDER_NAME = "OpenFRP_0.61.0_f4d251cc_20241126/";
+    public static final String DEFAULT_FOLDER_NAME = "OF_0.61.1_4df06100_250122/";
     public static final int MAX_BUFFER_SIZE = 10485760;
     public static final int MAX_TRAFFIC_STORAGE = 4;
     private static String suffix = "";
@@ -30,12 +31,10 @@ public class Frpc {
     public static String osName;
     public static String osArch;
     public static boolean hasUpdate = false;
-    public static int frpcVersionDate = 0;
     public static String folderName = DEFAULT_FOLDER_NAME;
     public static final File frpcVersionFile = new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"frpc.json");
     public static File frpcExecutableFile;
     public static File frpcArchiveFile;
-    public static int latestVersionDate = 0;
     public static String latestVersion = "0";
     public static String FRPC_VERSION="0";
     public static Process runtimeProcess = null;
@@ -47,20 +46,18 @@ public class Frpc {
             OpenLink.LOGGER.warn("frpc.json(frpc version file) does not exist, creating...");
             frpcVersionFile.createNewFile();
             try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
-                frpcVersionFileOutput.write("{\"versiondate\":0,\"version\":\"0\"}".getBytes());
+                frpcVersionFileOutput.write("{\"version\":\"0\"}".getBytes());
             }
             OpenLink.LOGGER.info("Created frpc.json(frpc version file)!");
         }
         try(FileInputStream frpcVersionFileInput = new FileInputStream(frpcVersionFile)){
-            JsonFrpcVersion frpcVersion=gson.fromJson(new String(frpcVersionFileInput.readAllBytes(),"utf-8"), JsonFrpcVersion.class);
+            JsonFrpcVersion frpcVersion=gson.fromJson(new String(frpcVersionFileInput.readAllBytes(), StandardCharsets.UTF_8), JsonFrpcVersion.class);
             if(frpcVersion.version==null){
                 try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
-                    frpcVersionFileOutput.write("{\"versiondate\":0,\"version\":\"0\"}".getBytes());
+                    frpcVersionFileOutput.write("{\"version\":\"0\"}".getBytes());
                 }
                 frpcVersion.version="0";
-                frpcVersion.versiondate=0;
             }
-            frpcVersionDate=frpcVersion.versiondate;
             FRPC_VERSION=frpcVersion.version;
         }
 
@@ -93,9 +90,9 @@ public class Frpc {
     }
 
     public static void update() throws Exception {
-        boolean oofcd=downloadFrpcByUrl(Uris.frpcDownloadUri.toString()+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+        boolean oofcd=downloadFrpcByUrl(Uris.frpcDownloadUri+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
         if(!oofcd){
-            boolean zyghit=downloadFrpcByUrl(Uris.frpcDownloadUri1.toString()+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+            boolean zyghit=downloadFrpcByUrl(Uris.frpcDownloadUri1+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
             if(!zyghit){
                 OpenLink.LOGGER.error("Can not download frpc! Stopping...");
                 throw new RuntimeException("[OpenLink] Can not download frpc!");
@@ -106,32 +103,25 @@ public class Frpc {
         OpenLink.LOGGER.info("Extracted frpc archive file successfully!");
         frpcArchiveFile.delete();
         OpenLink.LOGGER.info("Deleted frpc archive file!");
-        frpcVersionDate=latestVersionDate;
         FRPC_VERSION=latestVersion;
         try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
-            frpcVersionFileOutput.write(("{\"versiondate\":"+ Integer.toString(latestVersionDate) +",\"version\":\""+FRPC_VERSION+"\"}").getBytes());
+            frpcVersionFileOutput.write(("{\"version\":\""+FRPC_VERSION+"\"}").getBytes());
         }
         hasUpdate=false;
     }
 
-    public static int getLatestVersionDate() throws Exception{//这玩意是手写的POST(暂时不用后面写的logic包里的POST，因为这个是检测用的)
-        Gson gson=new Gson();
-        JsonResponseWithData<JsonDownloadFile> versiondateres = gson.fromJson(Request.GET(Uris.openFrpAPIUri+"commonQuery/get?key=software",Request.DEFAULT_HEADER),new TypeToken<JsonResponseWithData<JsonDownloadFile>>(){}.getType());
-        String version=versiondateres.data.latest_full.substring(24);
-        folderName=versiondateres.data.latest_full+"/";
-        latestVersion=versiondateres.data.latest_ver;
-        return Integer.parseInt(version);
-    }
-
     public static boolean checkUpdate() throws Exception {
-        latestVersionDate=getLatestVersionDate();
+        Gson gson=new Gson();
+        JsonResponseWithData<JsonDownloadFile> frpcVersion=gson.fromJson(Request.GET(Uris.openFrpAPIUri+"commonQuery/get?key=software",Request.DEFAULT_HEADER),new TypeToken<JsonResponseWithData<JsonDownloadFile>>(){}.getType());
+        latestVersion=frpcVersion.data.latest_ver;
+        folderName=frpcVersion.data.latest_full+"/";
 
-        if(!frpcExecutableFile.exists()||frpcVersionDate<latestVersionDate){
+        if(!frpcExecutableFile.exists()|| !FRPC_VERSION.equals(latestVersion)){
             hasUpdate=true;
             if(!frpcExecutableFile.exists()){
                 OpenLink.LOGGER.warn("Frpc Executable File does not exist!");
             } else {
-                OpenLink.LOGGER.info("A frpc update was found! Latest version date:"+Integer.toString(latestVersionDate)+" Old version date:"+Integer.toString(frpcVersionDate));
+                OpenLink.LOGGER.info("A frpc update was found! Latest version:"+latestVersion+" Old version:"+FRPC_VERSION);
             }
             return true;
         }
@@ -145,7 +135,6 @@ public class Frpc {
             OpenLink.LOGGER.info("Downloading/Updating frpc from "+str+"...");
             try {
                 URL url = new URL(str);
-                String fileName = "frpc" + zsuffix;
                 BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
                 FileOutputStream outputStream = new FileOutputStream(frpcArchiveFile);
                 byte[] buffer = new byte[MAX_BUFFER_SIZE];
@@ -185,23 +174,23 @@ public class Frpc {
                 localTime.format(DateTimeFormatter.ofPattern("hh:mm:ss"))+"\n"+
                 proxyid+"\n"+
                 "OpenFrp"+"\n"
-        ).getBytes("utf-8"));
+        ).getBytes(StandardCharsets.UTF_8));
         Request.getUserInfo();
-        runtimeProcess=new ProcessBuilder(new String[]{frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)}).redirectErrorStream(true).start();
+        runtimeProcess=new ProcessBuilder(frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)).redirectErrorStream(true).start();
         new Thread(()-> {
             try {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(runtimeProcess.getInputStream()))) {
                     String line;
                     FileOutputStream fo=new FileOutputStream(logFile,true);
                     while ((line = reader.readLine()) != null) {
-                        fo.write("\n".getBytes("utf-8"));
+                        fo.write("\n".getBytes(StandardCharsets.UTF_8));
                         String[] parts = line.split("\u001B\\[");
                         for(String part:parts) {
                             if(part.isEmpty()) {
                                 continue;
                             }
                             String text = part.substring(part.indexOf("m") + 1);
-                            fo.write(text.getBytes("utf-8"));
+                            fo.write(text.getBytes(StandardCharsets.UTF_8));
                         }
                     }
                 }
@@ -219,7 +208,6 @@ public class Frpc {
     }
     public static boolean openFrp(int i, String val){
         new Thread(()->{
-            String finalval=val;
             Gson gson=new Gson();
             try {
                 if(SSLUtils.sslIgnored){
@@ -227,14 +215,14 @@ public class Frpc {
                     Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.sslwarning"));
                 }
                 Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.creatingproxy"));
-                Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                 JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 //OpenLink隧道命名规则：openlink_mc_[本地端口号]
                 for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
                     if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
                         try {
-                            Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
-                            Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
+                            Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
+                            Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
                             OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
                         } catch (Exception e) {
                             break;
@@ -242,7 +230,7 @@ public class Frpc {
                     }
                 }//删除以前用过的隧道
                 Thread.sleep(1000);
-                response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 JsonResponseWithData<JsonUserInfo> userinfo=Request.getUserInfo();
                 if(userinfo.data.proxies==userProxies.data.total){
@@ -327,8 +315,8 @@ public class Frpc {
                 JsonNode node=canUseNodes.get(0);//选取最优节点
                 OpenLink.LOGGER.info("Selected node: id:"+node.id+" allow_port:"+node.allowPort+" group:"+node.group);
                 JsonNewProxy newProxy=new JsonNewProxy();
-                newProxy.name="openlink_mc_"+String.valueOf(i);
-                newProxy.local_port= String.valueOf(i);
+                newProxy.name="openlink_mc_"+i;
+                newProxy.local_port=String.valueOf(i);
                 newProxy.node_id=node.id;
                 Random random=new Random();
                 int start,end;
@@ -343,10 +331,10 @@ public class Frpc {
                 boolean found=false;
                 for (int j = 1; j <= 5; j++) {
                     newProxy.remote_port = random.nextInt(end - start + 1) + start;
-                    if(finalval!=null&&!finalval.isBlank()&&j==1){
-                        newProxy.remote_port=Integer.parseInt(finalval);
+                    if(val !=null&&!val.isBlank()&&j==1){
+                        newProxy.remote_port=Integer.parseInt(val);
                     }
-                    response=Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
+                    response=Request.POST(Uris.openFrpAPIUri+ "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
                     OpenLink.LOGGER.info("Try "+j+": remote_port:"+newProxy.remote_port+" flag:"+gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag+" msg:"+gson.fromJson(response.getFirst(), JsonResponseWithData.class).msg);
                     if(gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag){
                         found=true;
@@ -355,11 +343,11 @@ public class Frpc {
                 }//创建隧道
                 if(!found) throw new Exception(Utils.translatableText("text.openlink.remoteportnotfound").getString());
                 LanConfig.cfg.last_port_value=String.valueOf(newProxy.remote_port).equals(val)?val:"";
-                response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 JsonUserProxy runningproxy=null;
                 for(JsonUserProxy jsonUserProxy:userProxies.data.list){
-                    if(jsonUserProxy.proxyName.equals("openlink_mc_"+String.valueOf(i))){
+                    if(jsonUserProxy.proxyName.equals("openlink_mc_"+i)){
                         runningproxy=jsonUserProxy;
                         break;
                     }
@@ -369,11 +357,11 @@ public class Frpc {
                 runFrpc(runningproxy.id);
                 //check
                 Thread.sleep(5000);
-                response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 runningproxy=null;
                 for(JsonUserProxy jsonUserProxy:userProxies.data.list){
-                    if(jsonUserProxy.proxyName.equals("openlink_mc_"+String.valueOf(i))){
+                    if(jsonUserProxy.proxyName.equals("openlink_mc_"+i)){
                         runningproxy=jsonUserProxy;
                         break;
                     }
