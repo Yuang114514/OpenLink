@@ -4,7 +4,6 @@ import fun.moystudio.openlink.logic.EventCallbacks;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.social.PlayerSocialManager;
 import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,8 +14,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
 public abstract class MinecraftMixin {
-    @Shadow @Final private PlayerSocialManager playerSocialManager;
-
     @Shadow @Final private static Logger LOGGER;
 
     @Inject(method = "stop",at = @At("HEAD"))
