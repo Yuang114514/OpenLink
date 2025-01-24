@@ -156,6 +156,9 @@ public class NewShareToLanScreen extends Screen {
                 20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> {
             this.minecraft.setScreen(new SettingScreen(this));
         }));
+        this.addRenderableWidget(new Button(this.width/2-155,190,150,20,Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)->{
+            this.minecraft.setScreen(new NodeSelectionScreen(this));
+        }));
     }
 
     public void render(PoseStack poseStack, int i, int j, float f) {

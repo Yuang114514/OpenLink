@@ -538,11 +538,11 @@ public class SettingScreen extends Screen {
 
             @Override
             public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
-                GuiComponent.fill(poseStack, x, y, x + entryWidth, y + entryHeight, 0x8f2b2b2b);
-                GuiComponent.drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.date+" "+this.startTime, x + 4, y + 4, 0x8fffffff);
-                GuiComponent.drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.levelName, x + 4, y + 4 + (entryHeight-4) / 2, 0x8fffffff);
-                GuiComponent.drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.proxyid, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.proxyid), y + 4, 0x8fffffff);
-                GuiComponent.drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.provider, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.provider), y + 4 + (entryHeight-4) / 2, 0x8fffffff);
+                fill(poseStack, x, y, x + entryWidth, y + entryHeight, 0x8f2b2b2b);
+                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.date+" "+this.startTime, x + 4, y + 4, 0x8fffffff);
+                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.levelName, x + 4, y + 4 + (entryHeight-4) / 2, 0x8fffffff);
+                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.proxyid, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.proxyid), y + 4, 0x8fffffff);
+                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.provider, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.provider), y + 4 + (entryHeight-4) / 2, 0x8fffffff);
                 if(isHovered){
                     renderTooltip(poseStack, Utils.translatableText("text.openlink.doubleclick",new File(filePath).getName()), mouseX, mouseY);
                 }
