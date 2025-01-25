@@ -65,7 +65,7 @@ public class LoginScreen extends Screen {
             }
             Map<String, List<String>> headerWithCookie = Request.getHeaderWithCookieByResponse(response, Request.DEFAULT_HEADER);
             try {
-                response = Request.POST(Uris.openidLoginUri.toString() + "api/oauth2/authorize?response_type=code&redirect_uri=" + Uris.openFrpAPIUri.toString() + "oauth_callback&client_id=openfrp", headerWithCookie, "{}");
+                response = Request.POST(Uris.openidLoginUri + "api/oauth2/authorize?response_type=code&redirect_uri=" + Uris.openFrpAPIUri + "oauth_callback&client_id=openfrp", headerWithCookie, "{}");
             } catch (Exception e) {
                 wrongmsg = e.getMessage();
                 e.printStackTrace();
@@ -93,14 +93,10 @@ public class LoginScreen extends Screen {
         }));
 
         //原版语言按钮
-        this.addRenderableWidget(new ImageButton(this.width / 2 - 130, this.height / 6 + 178, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
-            this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
-        }, Utils.translatableText("narrator.button.language")));
+        this.addRenderableWidget(new ImageButton(this.width / 2 - 130, this.height / 6 + 178, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
 
         //注册
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 158 , 200, 20, Utils.translatableText("text.openlink.no_account"), (button) -> {
-            browser.openBrowser();
-        }));
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 + 158 , 200, 20, Utils.translatableText("text.openlink.no_account"), (button) -> browser.openBrowser()));
     }
 
     @Override

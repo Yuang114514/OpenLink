@@ -2,7 +2,6 @@ package fun.moystudio.openlink;
 
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.frpc.Frpc;
-import fun.moystudio.openlink.gui.NewShareToLanScreen;
 import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
@@ -29,7 +28,7 @@ public final class OpenLink {
     public static final Logger LOGGER = LogManager.getLogger("OpenLink");
     public static final String CONFIG_DIR = "config" + File.separator + MOD_ID + File.separator;
     public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
-    public static final String EXECUTABLE_FILE_STORAGE_PATH = Path.of(getLocalStoragePos()).resolve(".openlink").toString()+File.separator;
+    public static final String EXECUTABLE_FILE_STORAGE_PATH = Path.of(getLocalStoragePos()).resolve(".openlink") +File.separator;
     public static boolean disabled=false;
     public static String VERSION,LOADER, LOADER_VERSION;
     public static List<Pair<String,Class<?>>> CONFLICT_CLASS=new ArrayList<>();
@@ -94,14 +93,17 @@ public final class OpenLink {
         });
 
         //直接用mixin打开更新屏幕就行
-        LOGGER.info("\n   ____                       _       _         _    \n" +
-                "  / __ \\                     | |     (_)       | |   \n" +
-                " | |  | | _ __    ___  _ __  | |      _  _ __  | | __\n" +
-                " | |  | || '_ \\  / _ \\| '_ \\ | |     | || '_ \\ | |/ /\n" +
-                " | |__| || |_) ||  __/| | | || |____ | || | | ||   < \n" +
-                "  \\____/ | .__/  \\___||_| |_||______||_||_| |_||_|\\_\\\n" +
-                "         | |                                         \n" +
-                "         |_|                                         ");
+        LOGGER.info("""
+                
+                   ____                       _       _         _
+                  / __ \\                     | |     (_)       | |
+                 | |  | | _ __    ___  _ __  | |      _  _ __  | | __
+                 | |  | || '_ \\  / _ \\| '_ \\ | |     | || '_ \\ | |/ /
+                 | |__| || |_) ||  __/| | | || |____ | || | | ||   <
+                  \\____/ | .__/  \\___||_| |_||______||_||_| |_||_|\\_\\
+                         | |
+                         |_|
+                """);
     }
 
     private static String getLocalStoragePos() {

@@ -44,9 +44,7 @@ public class EventCallbacks {
         }
         if(screen instanceof TitleScreen){
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
-                    20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> {
-                minecraft.setScreen(new SettingScreen(null));
-            }));
+                    20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
         }
     }
     public static void onClientStop(){
@@ -62,8 +60,8 @@ public class EventCallbacks {
             for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
                 if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
                     try {
-                        Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
-                        Request.POST(Uris.openFrpAPIUri.toString() + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + String.valueOf(jsonUserProxy.id) + "}");
+                        Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
+                        Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
                         OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
                     } catch (Exception e) {
                         break;

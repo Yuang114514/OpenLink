@@ -69,6 +69,7 @@ public class Extract {
                             }
                             fileOutputStream.close();
                         }
+                        tarEntry=tarInputStream.getNextTarEntry();
                     }
                     tarInputStream.close();
                     gzipInputStream.close();

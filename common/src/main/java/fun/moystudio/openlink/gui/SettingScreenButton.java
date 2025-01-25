@@ -18,10 +18,6 @@ public class SettingScreenButton extends Button {
     }
     protected int packedFGColor = -1;
 
-    public SettingScreenButton(int i, int j, int k, int l, Component component, OnPress onPress, OnTooltip onTooltip) {
-        super(i, j, k, l, component, onPress, onTooltip);
-    }
-
     @Override
     public void renderButton(PoseStack arg, int k, int l, float f) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -46,13 +42,4 @@ public class SettingScreenButton extends Button {
             return this.active ? 16777215 : 10526880;
         }
     }
-
-    public void setFGColor(int color) {
-        this.packedFGColor = color;
-    }
-
-    public void clearFGColor() {
-        this.packedFGColor = -1;
-    }
-
 }
