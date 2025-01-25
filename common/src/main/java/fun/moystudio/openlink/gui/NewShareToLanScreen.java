@@ -33,13 +33,17 @@ public class NewShareToLanScreen extends Screen {
 
     private static final ResourceLocation SETTING_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
 
-    private static EditBox editBox;
+    EditBox editBox;
+
+    EditBox editBox2;
 
     CycleButton<Boolean> usingfrp;
 
     CycleButton<OnlineModeTabs> onlinemode;
 
     CycleButton<Boolean> allowpvp;
+
+    Button nodeselection;
 
     boolean couldShare=true;
 
@@ -51,31 +55,53 @@ public class NewShareToLanScreen extends Screen {
 
     @Override
     public void tick(){
-        if(OpenLink.disabled) return;
-        editBox.setVisible(LanConfig.cfg.use_frp);
         couldShare=true;
+        String val2=editBox2.getValue();
+        if(val2.isBlank()){
+            editBox2.setSuggestion(Utils.translatableText("text.openlink.local_port").getString());
+        } else {
+            editBox2.setSuggestion("");
+        }
+        if((val2.length()<4||val2.length()>5)&&!val2.isBlank()){
+            couldShare=false;
+        }
+        boolean _0=true;
+        for(int i=0;i<val2.length();i++){
+            if(i==0&&val2.charAt(i)=='0'){
+                couldShare=false;
+            }
+            if(val2.charAt(i)!='0') _0=false;
+            if(!Character.isDigit(val2.charAt(i))){
+                couldShare=false;
+            }
+        }
+        if(_0&&!val2.isBlank()){
+            couldShare=false;
+        }
+        if(OpenLink.disabled) return;
         String val = editBox.getValue();
-        if(Request.Authorization==null||OpenLink.disabled){
+        editBox.setVisible(LanConfig.cfg.use_frp);
+        if(Request.Authorization==null){
             LanConfig.cfg.use_frp=false;
             usingfrp.setValue(false);
             usingfrp.active=false;
+            editBox.active=false;
+            nodeselection.active=false;
             return;
+        } else {
+            usingfrp.active=true;
         }
-        else{
-            this.usingfrp.active=true;
-        }
-        if(val.isBlank()||!LanConfig.cfg.use_frp){
-            editBox.setSuggestion(Utils.translatableText("text.openlink.port").getString());
+        if(val.isBlank()){
+            editBox.setSuggestion(Utils.translatableText("text.openlink.remote_port").getString());
             return;
-        }
-        else{
+        } else {
             editBox.setSuggestion("");
         }
         if(val.length() != 5){
             couldShare=false;
             return;
         }
-        boolean _0=true;
+        _0=true;
         for(int i=0;i<val.length();i++){
             if(i==0&&val.charAt(i)=='0'){
                 couldShare=false;
@@ -97,8 +123,8 @@ public class NewShareToLanScreen extends Screen {
         this.addRenderableWidget(CycleButton.onOffBuilder(LanConfig.cfg.allow_commands).create(this.width / 2 + 5, 100, 150, 20, ALLOW_COMMANDS_LABEL, (cycleButton, boolean_) -> LanConfig.cfg.allow_commands = boolean_));
         this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 28, 150, 20, Utils.translatableText("lanServer.start"), (button1) -> {
             if(!this.couldShare)return;
-            this.minecraft.setScreen((Screen)null);
-            int i = HttpUtil.getAvailablePort();
+            this.minecraft.setScreen(null);
+            int i = editBox2.getValue().isBlank()?HttpUtil.getAvailablePort():Integer.parseInt(editBox2.getValue());
             if (this.minecraft.getSingleplayerServer().publishServer(this.gameMode, LanConfig.cfg.allow_commands, i)) {
                 this.minecraft.gui.getChat().addMessage(Utils.translatableText("commands.publish.started", i));
                 this.minecraft.updateTitle();
@@ -135,30 +161,33 @@ public class NewShareToLanScreen extends Screen {
             }
         })));
         this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 28, 150, 20, CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)));
-        if(OpenLink.disabled) return;
-        editBox=new EditBox(this.font,this.width / 2 + 5, 160, 150, 20, Utils.translatableText("text.openlink.port"));
-        editBox.setSuggestion(Utils.translatableText("text.openlink.port").getString());
-        editBox.setValue(LanConfig.cfg.last_port_value);
-        this.addRenderableWidget(editBox);
-        usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, Utils.translatableText("text.openlink.usingfrp"),((cycleButton, bool) -> {
-            LanConfig.cfg.use_frp=bool;
-            editBox.setVisible(LanConfig.cfg.use_frp);
-        }));
+        editBox2=new EditBox(this.font,this.width/2-(OpenLink.disabled||!LanConfig.cfg.use_frp?75:155),OpenLink.disabled?160:190,150,20,Utils.translatableText("text.openlink.local_port"));
+        editBox2.setSuggestion(Utils.translatableText("text.openlink.local_port").getString());
+        this.addRenderableWidget(editBox2);
         onlinemode=CycleButton.builder((OnlineModeTabs o)-> o.component)
                 .withValues(OnlineModeTabs.values())
                 .withInitialValue(LanConfig.getAuthMode())
                 .create(this.width / 2 - 155, 130, 150, 20, Utils.translatableText("text.openlink.onlinemodebutton"),   (button, o)->LanConfig.setAuthMode(o));
         allowpvp=CycleButton.onOffBuilder(LanConfig.cfg.allow_pvp).create(this.width / 2 + 5, 130, 150, 20, Utils.translatableText("mco.configure.world.pvp"),(cycleButton, object) -> LanConfig.cfg.allow_pvp=object);
-        this.addRenderableWidget(usingfrp);
         this.addRenderableWidget(onlinemode);
         this.addRenderableWidget(allowpvp);
+        if(OpenLink.disabled) return;
+        editBox=new EditBox(this.font,this.width / 2 + 5, 190, 150, 20, Utils.translatableText("text.openlink.remote_port"));
+        editBox.setSuggestion(Utils.translatableText("text.openlink.remote_port").getString());
+        editBox.setValue(LanConfig.cfg.last_port_value);
+        this.addRenderableWidget(editBox);
+        nodeselection=new Button(this.width/2+5,160,150,20,Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(new NodeSelectionScreen(this)));
+        nodeselection.active=LanConfig.cfg.use_frp;
+        usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, Utils.translatableText("text.openlink.usingfrp"),((cycleButton, bool) -> {
+            LanConfig.cfg.use_frp=bool;
+            editBox.active=bool;
+            nodeselection.active=bool;
+            editBox2.x=this.width/2-(OpenLink.disabled||!bool?75:155);
+        }));
+        this.addRenderableWidget(nodeselection);
+        this.addRenderableWidget(usingfrp);
         this.addRenderableWidget(new ImageButtonWithHoveredState(this.width / 2 + 5 + 150 + 10, this.height - 28,
-                20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> {
-            this.minecraft.setScreen(new SettingScreen(this));
-        }));
-        this.addRenderableWidget(new Button(this.width/2-155,190,150,20,Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)->{
-            this.minecraft.setScreen(new NodeSelectionScreen(this));
-        }));
+                20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> this.minecraft.setScreen(new SettingScreen(this))));
     }
 
     public void render(PoseStack poseStack, int i, int j, float f) {

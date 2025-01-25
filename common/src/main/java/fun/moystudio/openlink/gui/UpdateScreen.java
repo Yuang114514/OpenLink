@@ -26,15 +26,9 @@ public class UpdateScreen extends Screen {
     protected void init(){
         List<String> strings=Arrays.asList(Utils.translatableText("text.openlink.nofrpcfile").getString().split("\n"));
         List<Component> list = new ArrayList<>();
-        strings.forEach((String)->{
-            list.add(Utils.literalText(String));
-        });
-        yes=new Button(this.width/4-40,this.height/5*4-10,80,20,CommonComponents.GUI_YES,button -> {
-            this.minecraft.setScreen(new UpdatingScreen());
-        });
-        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {
-            this.onClose();
-        }, (button, poseStack, i, j) -> {
+        strings.forEach((String)-> list.add(Utils.literalText(String)));
+        yes=new Button(this.width/4-40,this.height/5*4-10,80,20,CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen()));
+        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> this.onClose(), (button, poseStack, i, j) -> {
             if(Frpc.FRPC_VERSION.length()<6){
                 renderComponentTooltip(poseStack, list, i, j);
             }
@@ -46,9 +40,7 @@ public class UpdateScreen extends Screen {
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
         //以下为原版语言按钮(修改了一下位置)
-        this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> {
-            this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager()));
-        }, Utils.translatableText("narrator.button.language")));
+        this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
     }
 
     @Override

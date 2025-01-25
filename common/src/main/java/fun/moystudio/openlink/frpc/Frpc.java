@@ -38,7 +38,7 @@ public class Frpc {
     public static String latestVersion = "0";
     public static String FRPC_VERSION="0";
     public static Process runtimeProcess = null;
-
+    public static long nodeId=-1;
 
     public static void init() throws Exception {
         Gson gson=new Gson();
@@ -237,82 +237,92 @@ public class Frpc {
                     throw new Exception(Utils.translatableText("text.openlink.userproxieslimited").getString());
                 }
                 JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
-                List<JsonNode> canUseNodes=new ArrayList<>();
-                for(JsonNode now:nodelist.data.list){
-                    int groupnumber1=5,usergroupnumber;
-                    if(now.group.contains("svip")){
-                        groupnumber1=3;
+                JsonNode node=null;
+                for (JsonNode node1:nodelist.data.list){
+                    if(node1.id==nodeId){
+                        node=node1;
+                        break;
                     }
-                    if(now.group.contains("vip")){
-                        groupnumber1=2;
-                    }
-                    if(now.group.contains("normal")){
-                        groupnumber1=1;
-                    }
-                    if(userinfo.data.group.contains("svip")){
-                        usergroupnumber=3;
-                    }else if(userinfo.data.group.contains("vip")){
-                        usergroupnumber=2;
-                    }else{
-                        usergroupnumber=1;
-                    }
-                    if(groupnumber1>usergroupnumber||!now.protocolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
-                        continue;
-                    }
-                    canUseNodes.add(now);
                 }
-                if(canUseNodes.isEmpty()){
-                    throw new Exception("Unable to use any node???");
-                }
-                int preferClassify = -1;
-                try {
-                    String json = Request.POST(Uris.ipstackUri.toString(), Request.DEFAULT_HEADER, "{}").getFirst();
-                    JsonIP jsonIP = gson.fromJson(json, JsonIP.class);
+                if(node==null){
+                    OpenLink.LOGGER.info("Selecting node...");
+                    List<JsonNode> canUseNodes=new ArrayList<>();
+                    for(JsonNode now:nodelist.data.list){
+                        int groupnumber1=5,usergroupnumber;
+                        if(now.group.contains("svip")){
+                            groupnumber1=3;
+                        }
+                        if(now.group.contains("vip")){
+                            groupnumber1=2;
+                        }
+                        if(now.group.contains("normal")){
+                            groupnumber1=1;
+                        }
+                        if(userinfo.data.group.contains("svip")){
+                            usergroupnumber=3;
+                        }else if(userinfo.data.group.contains("vip")){
+                            usergroupnumber=2;
+                        }else{
+                            usergroupnumber=1;
+                        }
+                        if(groupnumber1>usergroupnumber||!now.protocolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
+                            continue;
+                        }
+                        canUseNodes.add(now);
+                    }
+                    if(canUseNodes.isEmpty()){
+                        throw new Exception("Unable to use any node???");
+                    }
+                    int preferClassify = -1;
+                    try {
+                        String json = Request.POST(Uris.ipstackUri.toString(), Request.DEFAULT_HEADER, "{}").getFirst();
+                        JsonIP jsonIP = gson.fromJson(json, JsonIP.class);
 
-                    if (jsonIP.country.equals("CN")) {
-                        preferClassify = 1;
-                    } else if (jsonIP.country.equals("HK") || jsonIP.country.equals("TW") || jsonIP.country.equals("MO")) {
-                        preferClassify = 2;
-                    } else {
-                        preferClassify = 3;
+                        if (jsonIP.country.equals("CN")) {
+                            preferClassify = 1;
+                        } else if (jsonIP.country.equals("HK") || jsonIP.country.equals("TW") || jsonIP.country.equals("MO")) {
+                            preferClassify = 2;
+                        } else {
+                            preferClassify = 3;
+                        }
+                        OpenLink.LOGGER.info("User Country Code: " + jsonIP.country + ", Prefer Classify: " + preferClassify);
+                    } catch (Exception ignored) {
+                        OpenLink.LOGGER.warn("Can not get user country! Ignoring...");
                     }
-                    OpenLink.LOGGER.info("User Country Code: " + jsonIP.country + ", Prefer Classify: " + preferClassify);
-                } catch (Exception ignored) {
-                    OpenLink.LOGGER.warn("Can not get user country! Ignoring...");
+                    int finalPreferClassify = preferClassify;
+                    canUseNodes.sort(((o1, o2) -> {
+                        if(finalPreferClassify !=-1&&o1.classify!=o2.classify&&(o1.classify== finalPreferClassify)!=(o2.classify== finalPreferClassify))
+                            return o1.classify== finalPreferClassify ?-1:1;
+                        if(!o1.group.equals(o2.group)){
+                            int first=5,second=5;
+                            if(o1.group.contains("svip")){
+                                first=3;
+                            }
+                            if(o1.group.contains("vip")){
+                                first=2;
+                            }
+                            if(o1.group.contains("normal")){
+                                first=1;
+                            }
+                            if(o2.group.contains("svip")){
+                                second=3;
+                            }
+                            if(o2.group.contains("vip")) {
+                                second=2;
+                            }
+                            if(o2.group.contains("normal")){
+                                second=1;
+                            }
+                            return first>second?-1:1;
+                        }
+                        if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)<1e-5)
+                            return o2.bandwidth*o2.bandwidthMagnification>o1.bandwidth*o1.bandwidthMagnification?1:-1;
+                        if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)
+                            return o1.needRealname?-1:1;
+                        return 0;
+                    }));
+                    node=canUseNodes.get(0);//选取最优节点
                 }
-                int finalPreferClassify = preferClassify;
-                canUseNodes.sort(((o1, o2) -> {
-                    if(finalPreferClassify !=-1&&o1.classify!=o2.classify&&(o1.classify== finalPreferClassify)!=(o2.classify== finalPreferClassify))
-                        return o1.classify== finalPreferClassify ?-1:1;
-                    if(!o1.group.equals(o2.group)){
-                        int first=5,second=5;
-                        if(o1.group.contains("svip")){
-                            first=3;
-                        }
-                        if(o1.group.contains("vip")){
-                            first=2;
-                        }
-                        if(o1.group.contains("normal")){
-                            first=1;
-                        }
-                        if(o2.group.contains("svip")){
-                            second=3;
-                        }
-                        if(o2.group.contains("vip")) {
-                            second=2;
-                        }
-                        if(o2.group.contains("normal")){
-                            second=1;
-                        }
-                        return first>second?-1:1;
-                    }
-                    if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)<1e-5)
-                        return o2.bandwidth*o2.bandwidthMagnification>o1.bandwidth*o1.bandwidthMagnification?1:-1;
-                    if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)
-                        return o1.needRealname?-1:1;
-                    return 0;
-                }));
-                JsonNode node=canUseNodes.get(0);//选取最优节点
                 OpenLink.LOGGER.info("Selected node: id:"+node.id+" allow_port:"+node.allowPort+" group:"+node.group);
                 JsonNewProxy newProxy=new JsonNewProxy();
                 newProxy.name="openlink_mc_"+i;
@@ -375,6 +385,7 @@ public class Frpc {
                 }
                 list.add(String.format(Locale.getDefault(),"%tD %tT",new Date(),new Date())+","+userinfo.data.traffic);
                 OpenLink.PREFERENCES.put("traffic_storage", String.join(";", list));
+                nodeId=-1;
             } catch (Exception e) {
                 e.printStackTrace();
                 Minecraft.getInstance().gui.getChat().addMessage(Utils.literalText("§4[OpenLink] "+e.getClass().getName()+":"+e.getMessage()));

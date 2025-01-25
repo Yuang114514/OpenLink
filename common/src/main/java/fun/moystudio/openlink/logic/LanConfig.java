@@ -9,6 +9,7 @@ import fun.moystudio.openlink.json.JsonLanConfig;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 
 public class LanConfig {
     public static JsonLanConfig cfg=new JsonLanConfig();
@@ -32,6 +33,6 @@ public class LanConfig {
         Gson gson=new GsonBuilder().setPrettyPrinting().create();
         cfgfile.createNewFile();
         FileOutputStream fo = new FileOutputStream(cfgfile);
-        fo.write(gson.toJson(cfg,new TypeToken<JsonLanConfig>(){}.getType()).getBytes("utf-8"));
+        fo.write(gson.toJson(cfg,new TypeToken<JsonLanConfig>(){}.getType()).getBytes(StandardCharsets.UTF_8));
     }
 }

@@ -27,12 +27,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.List;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -126,6 +128,11 @@ public class SettingScreen extends Screen {
                     (dataXY, poseStack, i1, j1)-> renderComponentTooltip(poseStack,
                             Arrays.stream(new Component[]{Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
                             i1,j1)));
+        tabUser.add(new Button(10,65+j+5+40,j,20,Utils.translatableText("text.openlink.logout"),button -> {
+            Request.Authorization=null;
+            Request.writeSession();
+            this.minecraft.setScreen(new SettingScreen(lastscreen));
+        }));
         //UserInfo的Login分屏
         tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,Utils.createResourceLocation("openlink","textures/gui/openfrp_icon.png")));
         tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20, Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen))))));
@@ -216,14 +223,14 @@ public class SettingScreen extends Screen {
             Supplier<? extends GuiEventListener> supplier = var11;
 
             while(booleanSupplier.getAsBoolean()) {
-                GuiEventListener guiEventListener2 = (GuiEventListener)supplier.get();
+                GuiEventListener guiEventListener2 = supplier.get();
                 if (guiEventListener2.changeFocus(bl)) {
                     this.setFocused(guiEventListener2);
                     return true;
                 }
             }
 
-            this.setFocused((GuiEventListener)null);
+            this.setFocused(null);
             return false;
         }
     }
@@ -284,11 +291,11 @@ public class SettingScreen extends Screen {
                         try {
                             Files.walkFileTree(logsPath, new SimpleFileVisitor<>() {
                                 @Override
-                                public @NotNull FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                                public @NotNull FileVisitResult visitFile(Path file, @NotNull BasicFileAttributes attrs) throws IOException {
                                     File logFile = file.toFile();
                                     if (logFile.isFile() && logFile.getName().endsWith(".log")) {
                                         FileInputStream fis = new FileInputStream(logFile);
-                                        String logContent = new String(fis.readAllBytes(), "utf-8");
+                                        String logContent = new String(fis.readAllBytes(), StandardCharsets.UTF_8);
                                         String[] lines = logContent.split("\n");
                                         entries.add(selectionList.ofEntry(logFile.getPath(), lines[0], lines[1], lines[2], lines[3], lines[4]));
                                     }
@@ -333,17 +340,18 @@ public class SettingScreen extends Screen {
                     ComponentWidget nowgroup=(ComponentWidget)tabUser.get(4);
                     ComponentWidget nowproxy=(ComponentWidget)tabUser.get(5);
                     LineChartWidget nowtraffic=(LineChartWidget)tabUser.get(6);
-                    nowuser.component= Utils.translatableText("text.openlink.loading");
-                    nowid.component= Utils.EMPTY;
-                    nowemail.component= Utils.EMPTY;
-                    nowgroup.component= Utils.EMPTY;
-                    nowproxy.component= Utils.EMPTY;
+                    nowuser.component=Utils.translatableText("text.openlink.loading");
+                    nowid.component=Utils.EMPTY;
+                    nowemail.component=Utils.EMPTY;
+                    nowgroup.component=Utils.EMPTY;
+                    nowproxy.component=Utils.EMPTY;
                     tabUser.set(1,nowuser);
                     new Thread(() -> {
                         try {
                             userInfo = Request.getUserInfo();
                             if(userInfo==null||!userInfo.flag){
                                 Request.Authorization=null;
+                                Request.writeSession();
                                 throw new Exception("[OpenLink] Session expired!");
                             }
                         } catch (Exception e) {
@@ -358,7 +366,7 @@ public class SettingScreen extends Screen {
                         StringBuilder sha256=new StringBuilder();
                         for (byte b:messageDigest.digest(userInfo.data.email.toLowerCase().getBytes(StandardCharsets.UTF_8)))
                             sha256.append(String.format("%02x",b));
-                        nowavatar.texture=new WebTextureResourceLocation(Uris.weavatarUri.toString()+sha256.toString()+".png?s=400").location;
+                        nowavatar.texture=new WebTextureResourceLocation(Uris.weavatarUri.toString()+ sha256+".png?s=400").location;
                         nowuser.component= Utils.literalText(userInfo.data.username);
                         nowid.component= Utils.literalText("#"+userInfo.data.id);
                         nowid.x=10+nowuser.font.width(nowuser.component)+1;

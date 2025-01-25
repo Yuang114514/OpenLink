@@ -9,12 +9,8 @@ import fun.moystudio.openlink.json.*;
 import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.URL;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.prefs.Preferences;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 public class Request {
     public static String Authorization=null;
@@ -40,17 +36,13 @@ public class Request {
         HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
         connection.setRequestMethod("POST");
         if(!_skip) {
-            header.forEach(((s, strings) -> {
-                strings.forEach(s1 -> {
-                    connection.addRequestProperty(s, s1);
-                });
-            }));
+            header.forEach(((s, strings) -> strings.forEach(s1 -> connection.addRequestProperty(s, s1))));
             connection.setDoOutput(true);
             try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = body.getBytes("utf-8");
+                byte[] input = body.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
-            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), "utf-8"))) {
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
                 StringBuilder re = new StringBuilder();
                 String line;
                 while ((line = br.readLine()) != null) {
@@ -59,7 +51,7 @@ public class Request {
                 return new Pair<>(re.toString(), connection.getHeaderFields());
             } catch (Exception e) {
                 if (connection.getResponseCode() >= 400) {
-                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), "utf-8"));
+                    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
                     StringBuilder re = new StringBuilder();
                     String line;
                     while ((line = br.readLine()) != null) {
@@ -79,12 +71,8 @@ public class Request {
         URL postUrl=new URL(url);
         HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
         connection.setRequestMethod("GET");
-        header.forEach(((s, strings) -> {
-            strings.forEach(s1 -> {
-                connection.addRequestProperty(s,s1);
-            });
-        }));
-        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"))){
+        header.forEach(((s, strings) -> strings.forEach(s1 -> connection.addRequestProperty(s,s1))));
+        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))){
             StringBuilder re=new StringBuilder();
             String line;
             while((line=br.readLine())!=null){
@@ -93,7 +81,7 @@ public class Request {
             return re.toString();
         }catch (Exception e){
             if(connection.getResponseCode()>=400){
-                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(),"utf-8"));
+                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
                 StringBuilder re=new StringBuilder();
                 String line;
                 while((line=br.readLine())!=null){
@@ -111,9 +99,8 @@ public class Request {
             return header;
         }
         List<String> cookie=response.getSecond().get("Set-Cookie");
-        Map<String,List<String>> headerWithCookie=header;
-        headerWithCookie.put("Cookie",cookie);
-        return headerWithCookie;
+        header.put("Cookie",cookie);
+        return header;
     }
 
     public static Map<String,List<String>> getHeaderWithAuthorization(Map<String,List<String>> header){
@@ -125,11 +112,12 @@ public class Request {
     }
 
     public static void writeSession() {
-        OpenLink.PREFERENCES.put("authorization",Authorization);
+        OpenLink.PREFERENCES.put("authorization", Objects.requireNonNullElse(Authorization, "null"));
     }
 
     public static void readSession() {
         Authorization=OpenLink.PREFERENCES.get("authorization",null);
+        if(Authorization.equals("null")) Authorization=null;
         if(Authorization==null){
             OpenLink.LOGGER.warn("The session does not exists in user preferences!");
             return;
@@ -138,6 +126,7 @@ public class Request {
             JsonResponseWithData<JsonUserInfo> responseWithData = getUserInfo();
             if(responseWithData==null||!responseWithData.flag){
                 Authorization=null;
+                writeSession();
                 OpenLink.LOGGER.warn("The session has been expired!");
             }
         } catch (Exception e){
