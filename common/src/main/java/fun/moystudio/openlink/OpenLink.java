@@ -44,6 +44,7 @@ public final class OpenLink {
         LOADER=loader;
         LOADER_VERSION=loader_version;
         LOGGER.info("Initializing OpenLink on "+loader+" "+loader_version);
+        LOGGER.info("OpenLink Storage Path: "+EXECUTABLE_FILE_STORAGE_PATH);
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);
@@ -107,20 +108,22 @@ public final class OpenLink {
     }
 
     private static String getLocalStoragePos() {
-        Path userHome1=null,userHome2=null,userHome3=null,userHome;
-        try{
-            userHome1 = Paths.get(System.getProperty("user.home"));
-            userHome2 = Paths.get(System.getenv("HOME"));
-            userHome3 = Paths.get(System.getenv("USERPROFILE"));
-        } catch (Exception ignored){
-        }
-        if(userHome2!=null&&Files.exists(userHome2)){
+        Path userHome1,userHome2,userHome3,userHome;
+        userHome1 = Paths.get(Objects.requireNonNullElse(System.getProperty("user.home"),"./"));
+        userHome2 = Paths.get(Objects.requireNonNullElse(System.getenv("HOME"),"./"));
+        userHome3 = Paths.get(Objects.requireNonNullElse(System.getenv("USERPROFILE"),"./"));
+        if(!userHome2.toString().equals("./")){
             userHome=userHome2;
-        }
-        if(userHome3!=null&&Files.exists(userHome3)){
+        } else if(!userHome3.toString().equals("./")){
             userHome=userHome3;
+        } else if(!userHome1.toString().equals("./")){
+            userHome=userHome1;
+        } else {
+            userHome=Paths.get("./");
         }
-        userHome=userHome1;
+
+        userHome=userHome.toAbsolutePath();
+        userHome.toFile().mkdirs();
 
         String macAppSupport = System.getProperty("os.name").contains("OS X") ? userHome.resolve("Library/Application Support").toString() : null;
         String localAppData = System.getenv("LocalAppData");
@@ -129,7 +132,6 @@ public final class OpenLink {
         if (xdgDataHome == null) {
             xdgDataHome = userHome.resolve(".local/share").toString();
         }
-
         return Stream.of(localAppData, macAppSupport).filter(Objects::nonNull).findFirst().orElse(xdgDataHome);
     }
 }
