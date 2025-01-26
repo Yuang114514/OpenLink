@@ -28,7 +28,7 @@ public final class OpenLink {
     public static final Logger LOGGER = LogManager.getLogger("OpenLink");
     public static final String CONFIG_DIR = "config" + File.separator + MOD_ID + File.separator;
     public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
-    public static final String EXECUTABLE_FILE_STORAGE_PATH = Path.of(getLocalStoragePos()).resolve(".openlink") +File.separator;
+    public static final String EXECUTABLE_FILE_STORAGE_PATH =Path.of(getLocalStoragePos()).resolve(".openlink")+File.separator;
     public static boolean disabled=false;
     public static String VERSION,LOADER, LOADER_VERSION;
     public static List<Pair<String,Class<?>>> CONFLICT_CLASS=new ArrayList<>();
@@ -107,11 +107,20 @@ public final class OpenLink {
     }
 
     private static String getLocalStoragePos() {
-        Path userHome = Paths.get(System.getProperty("user.home"));
-        Path oldPath = userHome.resolve(".openlink");
-        if (Files.exists(oldPath)) {
-            return userHome.toString();
+        Path userHome1=null,userHome2=null,userHome3=null,userHome;
+        try{
+            userHome1 = Paths.get(System.getProperty("user.home"));
+            userHome2 = Paths.get(System.getenv("HOME"));
+            userHome3 = Paths.get(System.getenv("USERPROFILE"));
+        } catch (Exception ignored){
         }
+        if(userHome2!=null&&Files.exists(userHome2)){
+            userHome=userHome2;
+        }
+        if(userHome3!=null&&Files.exists(userHome3)){
+            userHome=userHome3;
+        }
+        userHome=userHome1;
 
         String macAppSupport = System.getProperty("os.name").contains("OS X") ? userHome.resolve("Library/Application Support").toString() : null;
         String localAppData = System.getenv("LocalAppData");
