@@ -31,7 +31,7 @@
   "text.openlink.node_available": "§a§lAvailable",
   "text.openlink.node_needrealname": "§6§lNeed real name",
   "text.openlink.node_unavailable": "§c§lUnavailable",
-  "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in game directory,\n§o§l§cplease download it.",
+  "text.openlink.nofrpcfile": "§3Unable to find Frpc executable file in game directory,\n§o§l§cplease download it.",
   "text.openlink.notcompleted": "Username or password does not completed.",
   "text.openlink.now": "Now",
   "text.openlink.onlinemodebutton": "Auth Mode",
