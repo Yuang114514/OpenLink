@@ -27,8 +27,8 @@ public final class OpenLink {
     public static final String MOD_ID = "openlink";
     public static final Logger LOGGER = LogManager.getLogger("OpenLink");
     public static final String CONFIG_DIR = "config" + File.separator + MOD_ID + File.separator;
-    public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
-    public static final String EXECUTABLE_FILE_STORAGE_PATH =Path.of(getLocalStoragePos()).resolve(".openlink")+File.separator;
+    public static Preferences PREFERENCES;
+    public static String EXECUTABLE_FILE_STORAGE_PATH;
     public static boolean disabled=false;
     public static String VERSION,LOADER, LOADER_VERSION;
     public static List<Pair<String,Class<?>>> CONFLICT_CLASS=new ArrayList<>();
@@ -44,7 +44,9 @@ public final class OpenLink {
         LOADER=loader;
         LOADER_VERSION=loader_version;
         LOGGER.info("Initializing OpenLink on "+loader+" "+loader_version);
+        EXECUTABLE_FILE_STORAGE_PATH=Path.of(getLocalStoragePos()).resolve(".openlink")+File.separator;
         LOGGER.info("OpenLink Storage Path: "+EXECUTABLE_FILE_STORAGE_PATH);
+        PREFERENCES=Preferences.userNodeForPackage(OpenLink.class);
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);
