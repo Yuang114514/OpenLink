@@ -5,7 +5,7 @@
   "gui.openlink.loginscreentitle": "Natayark账户登录",
   "gui.openlink.nodeselectionscreentitle": "节点选择",
   "gui.openlink.settingscreentitle": "OpenLink 面板",
-  "gui.openlink.updatefrpctitle": "§l§g发现一个新的Frpc核心！",
+  "gui.openlink.updatefrpctitle": "§l§g发现一个新的frpc核心！",
   "setting.openlink.information_show": "隐藏敏感信息",
   "tab.openlink.setting_info": "相关",
   "tab.openlink.setting_log": "隧道日志",
