@@ -1,6 +1,5 @@
 package fun.moystudio.openlink.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.LanConfig;
@@ -8,19 +7,20 @@ import fun.moystudio.openlink.logic.OnlineModeTabs;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.UUIDFixer;
 import fun.moystudio.openlink.network.Request;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.GameType;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class NewShareToLanScreen extends Screen {
     private static final Component ALLOW_COMMANDS_LABEL = Utils.translatableText("selectWorld.allowCommands");
@@ -121,7 +121,7 @@ public class NewShareToLanScreen extends Screen {
     protected void init() {
         this.addRenderableWidget(CycleButton.builder(GameType::getShortDisplayName).withValues(GameType.SURVIVAL, GameType.SPECTATOR, GameType.CREATIVE, GameType.ADVENTURE).withInitialValue(this.gameMode).create(this.width / 2 - 155, 100, 150, 20, GAME_MODE_LABEL, (cycleButton, gameType) -> this.gameMode = gameType));
         this.addRenderableWidget(CycleButton.onOffBuilder(LanConfig.cfg.allow_commands).create(this.width / 2 + 5, 100, 150, 20, ALLOW_COMMANDS_LABEL, (cycleButton, boolean_) -> LanConfig.cfg.allow_commands = boolean_));
-        this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 28, 150, 20, Utils.translatableText("lanServer.start"), (button1) -> {
+        this.addRenderableWidget(Button.builder(Utils.translatableText("lanServer.start"), (button1) -> {
             if(!this.couldShare)return;
             this.minecraft.setScreen(null);
             int i = editBox2.getValue().isBlank()?HttpUtil.getAvailablePort():Integer.parseInt(editBox2.getValue());
@@ -149,18 +149,8 @@ public class NewShareToLanScreen extends Screen {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-        },((button1, poseStack, i, j) -> {
-            if(OpenLink.disabled) return;
-            if(Request.Authorization==null){
-                List<Component> list=new ArrayList<>();
-                String[] list1= Utils.translatableText("text.openlink.lanlogintips").getString().split("\n");
-                for(String s:list1){
-                    list.add(Utils.literalText(s));
-                }
-                renderComponentTooltip(poseStack,list,i,j);
-            }
-        })));
-        this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 28, 150, 20, CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)));
+        }).bounds(this.width / 2 - 155, this.height - 28, 150, 20).tooltip(getToolTip()).build());
+        this.addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)).bounds(this.width / 2 + 5, this.height - 28, 150, 20).build());
         editBox2=new EditBox(this.font,this.width/2-(OpenLink.disabled||!LanConfig.cfg.use_frp?75:155),OpenLink.disabled?160:190,150,20,Utils.translatableText("text.openlink.local_port"));
         editBox2.setSuggestion(Utils.translatableText("text.openlink.local_port").getString());
         this.addRenderableWidget(editBox2);
@@ -176,13 +166,13 @@ public class NewShareToLanScreen extends Screen {
         editBox.setSuggestion(Utils.translatableText("text.openlink.remote_port").getString());
         editBox.setValue(LanConfig.cfg.last_port_value);
         this.addRenderableWidget(editBox);
-        nodeselection=new Button(this.width/2+5,160,150,20,Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(new NodeSelectionScreen(this)));
+        nodeselection=Button.builder(Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(new NodeSelectionScreen(this))).bounds(this.width/2+5,160,150,20).build();
         nodeselection.active=LanConfig.cfg.use_frp;
         usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, Utils.translatableText("text.openlink.usingfrp"),((cycleButton, bool) -> {
             LanConfig.cfg.use_frp=bool;
             editBox.active=bool;
             nodeselection.active=bool;
-            editBox2.x=this.width/2-(OpenLink.disabled||!bool?75:155);
+            editBox2.setX(this.width/2-(OpenLink.disabled||!bool?75:155));
         }));
         this.addRenderableWidget(nodeselection);
         this.addRenderableWidget(usingfrp);
@@ -190,10 +180,23 @@ public class NewShareToLanScreen extends Screen {
                 20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> this.minecraft.setScreen(new SettingScreen(this))));
     }
 
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        this.renderBackground(poseStack);
-        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 50, 16777215);
-        drawCenteredString(poseStack, this.font, INFO_TEXT, this.width / 2, 82, 16777215);
-        super.render(poseStack, i, j, f);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 50, 16777215);
+        guiGraphics.drawCenteredString(this.font, INFO_TEXT, this.width / 2, 82, 16777215);
+        super.render(guiGraphics, i, j, f);
+    }
+
+    private Tooltip getToolTip(){
+        if(OpenLink.disabled) return Tooltip.create(Utils.EMPTY);
+        if(Request.Authorization==null){
+            MutableComponent component= (MutableComponent) Utils.EMPTY;
+            String[] list1=Utils.translatableText("text.openlink.lanlogintips").getString().split("\n");
+            for(String s:list1){
+                component.append(Utils.literalText(s));
+            }
+            return Tooltip.create(component);
+        }
+        return Tooltip.create(Utils.EMPTY);
     }
 }

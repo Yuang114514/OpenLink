@@ -1,11 +1,11 @@
 package fun.moystudio.openlink.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.json.JsonNode;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
@@ -35,7 +35,7 @@ public class NodeSelectionScreen extends Screen {
             selectionList=new NodeSelectionList(this.minecraft);
         }
         selectionList.changePos(this.width, this.height, 32, this.height-65+4);
-        this.addWidget(done=new Button(this.width / 2 - 100, this.height - 38, 200, 20, CommonComponents.GUI_DONE, (button) -> {
+        this.addWidget(done=Button.builder(CommonComponents.GUI_DONE, (button) -> {
             if(selectionList==null||selectionList.getSelected()==null||selectionList.getSelected().node.id==-1){
                 Frpc.nodeId=-1;
                 this.minecraft.setScreen(lastscreen);
@@ -43,19 +43,19 @@ public class NodeSelectionScreen extends Screen {
             }
             Frpc.nodeId=selectionList.getSelected().node.id;
             this.minecraft.setScreen(lastscreen);
-        }));
+        }).bounds(this.width / 2 - 100, this.height - 38, 200, 20).build());
         this.addWidget(selectionList);
     }
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        super.render(poseStack, i, j, f);
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        super.render(guiGraphics, i, j, f);
+        this.renderBackground(guiGraphics);
         if(selectionList!=null){
-            selectionList.render(poseStack,i,j,f);
+            selectionList.render(guiGraphics,i,j,f);
         }
-        drawCenteredString(poseStack,this.font,this.title,this.width/2,16,0xffffff);
-        done.render(poseStack,i,j,f);
+        guiGraphics.drawCenteredString(this.font,this.title,this.width/2,16,0xffffff);
+        done.render(guiGraphics,i,j,f);
     }
 
     class NodeSelectionList extends ObjectSelectionList<NodeSelectionList.Entry>{
@@ -101,7 +101,7 @@ public class NodeSelectionScreen extends Screen {
         }
 
         @Override
-        protected boolean isFocused(){
+        public boolean isFocused(){
             return NodeSelectionScreen.this.getFocused() == this;
         }
 
@@ -116,8 +116,8 @@ public class NodeSelectionScreen extends Screen {
         }
 
         @Override
-        public void render(PoseStack poseStack, int i, int j, float f) {
-            super.render(poseStack, i, j, f);
+        public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+            super.render(guiGraphics, i, j, f);
         }
 
         public class Entry extends ObjectSelectionList.Entry<Entry>{
@@ -145,8 +145,8 @@ public class NodeSelectionScreen extends Screen {
             }
 
             @Override
-            public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
-                fill(poseStack,x,y,x+entryWidth,y+entryHeight,0x8f2b2b2b);
+            public void render(GuiGraphics guiGraphics, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
+                guiGraphics.fill(x,y,x+entryWidth,y+entryHeight,0x8f2b2b2b);
                 String group=null;
                 if(this.node.group!=null){
                     group = this.node.group.split(";")[0].toUpperCase();
@@ -157,10 +157,10 @@ public class NodeSelectionScreen extends Screen {
                         group="§6§l"+group;
                     }
                 }
-                drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, "#"+this.node.id+" "+this.node.name+(group!=null&&!group.equals("ADMIN")&&!group.equals("DEV")?" "+group:""), x + 4, y + 4, 0xffffffff);
-                drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
-                drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.fullyLoaded||this.node.status!=200?Utils.translatableText("text.openlink.node_unavailable"):(this.node.needRealname?Utils.translatableText("text.openlink.node_needrealname"):Utils.translatableText("text.openlink.node_available")), x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.fullyLoaded||this.node.status!=200?Utils.translatableText("text.openlink.node_unavailable"):(this.node.needRealname?Utils.translatableText("text.openlink.node_needrealname"):Utils.translatableText("text.openlink.node_available"))), y + 4, 0xffffffff);
-                drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:""), x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:"")), y + 4 + (entryHeight-4) / 2, 0xffffffff);
+                guiGraphics.drawString(NodeSelectionScreen.NodeSelectionList.this.minecraft.font, "#"+this.node.id+" "+this.node.name+(group!=null&&!group.equals("ADMIN")&&!group.equals("DEV")?" "+group:""), x + 4, y + 4, 0xffffffff);
+                guiGraphics.drawString(NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
+                guiGraphics.drawString(NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.fullyLoaded||this.node.status!=200?Utils.translatableText("text.openlink.node_unavailable"):(this.node.needRealname?Utils.translatableText("text.openlink.node_needrealname"):Utils.translatableText("text.openlink.node_available")), x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.fullyLoaded||this.node.status!=200?Utils.translatableText("text.openlink.node_unavailable"):(this.node.needRealname?Utils.translatableText("text.openlink.node_needrealname"):Utils.translatableText("text.openlink.node_available"))), y + 4, 0xffffffff);
+                guiGraphics.drawString(NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:""), x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:"")), y + 4 + (entryHeight-4) / 2, 0xffffffff);
             }
         }
     }

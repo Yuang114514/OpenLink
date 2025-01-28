@@ -1,11 +1,10 @@
 package fun.moystudio.openlink.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.components.ObjectSelectionList;
@@ -27,7 +26,7 @@ public class ConflictSelectionScreen extends Screen {
         text=MultiLineLabel.create(this.font, this.title, this.width-50);
         conflictSelectionList=new ConflictSelectionList(this.minecraft);
         this.addWidget(conflictSelectionList);
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 38, 200, 20, CommonComponents.GUI_DONE, (button) -> {
+        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE,(button) -> {
             ConflictSelectionList.Entry entry = this.conflictSelectionList.getSelected();
             if (entry != null) {
                 try {
@@ -38,14 +37,14 @@ public class ConflictSelectionScreen extends Screen {
                     throw new RuntimeException(e);
                 }
             }
-        }));
+        }).bounds(this.width / 2 - 100, this.height - 38, 200, 20).build());
     }
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        conflictSelectionList.render(poseStack,i,j,f);
-        text.renderCentered(poseStack,this.width/2,16,16,0xffffff);
-        drawCenteredString(poseStack,this.font,Utils.translatableText("text.openlink.conflict_tip"),this.width/2,this.height-58,0xffffff);
-        super.render(poseStack,i,j,f);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        conflictSelectionList.render(guiGraphics,i,j,f);
+        text.renderCentered(guiGraphics,this.width/2,16,16,0xffffff);
+        guiGraphics.drawCenteredString(this.font,Utils.translatableText("text.openlink.conflict_tip"),this.width/2,this.height-58,0xffffff);
+        super.render(guiGraphics,i,j,f);
     }
 
     class ConflictSelectionList extends ObjectSelectionList<ConflictSelectionList.Entry>{
@@ -73,11 +72,11 @@ public class ConflictSelectionScreen extends Screen {
             return super.getRowWidth() + 50;
         }
 
-        protected void renderBackground(PoseStack poseStack) {
-            ConflictSelectionScreen.this.renderBackground(poseStack);
+        protected void renderBackground(GuiGraphics guiGraphics) {
+            ConflictSelectionScreen.this.renderBackground(guiGraphics);
         }
 
-        protected boolean isFocused() {
+        public boolean isFocused() {
             return ConflictSelectionScreen.this.getFocused() == this;
         }
 
@@ -111,8 +110,8 @@ public class ConflictSelectionScreen extends Screen {
             }
 
             @Override
-            public void render(PoseStack poseStack, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
-                GuiComponent.drawCenteredString(poseStack,ConflictSelectionScreen.this.font, modid+": "+clazz.getSimpleName(),ConflictSelectionList.this.width/2,j+1, 0xffffff);
+            public void render(GuiGraphics guiGraphics, int i, int j, int k, int l, int m, int n, int o, boolean bl, float f) {
+                guiGraphics.drawCenteredString(ConflictSelectionScreen.this.font, modid+": "+clazz.getSimpleName(),ConflictSelectionList.this.width/2,j+1, 0xffffff);
             }
         }
     }

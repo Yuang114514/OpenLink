@@ -2,7 +2,6 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
@@ -14,7 +13,7 @@ import fun.moystudio.openlink.mixin.IScreenAccessor;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
@@ -35,8 +34,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
 
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
@@ -50,7 +47,7 @@ public class SettingScreen extends Screen {
     SettingTabs lasttab=null;
     SettingScreenButton buttonLog,buttonInfo,buttonUser,buttonSetting;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
-    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
+    List<Renderable> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
     public static List<InfoObjectSelectionList.Information> informationList;
     public static final ResourceLocation BACKGROUND_SETTING=Utils.createResourceLocation("openlink","textures/gui/background_setting.png");
     public static boolean sensitiveInfoHiding;
@@ -94,17 +91,17 @@ public class SettingScreen extends Screen {
         addRenderableWidget(buttonSetting);
         //Temp variables
         ResourceLocation lastlocationimage=!tabUser.isEmpty()?((ImageWidget)tabUser.get(0)).texture:Utils.createResourceLocation("openlink","textures/gui/default_avatar.png");
-        Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).component: Utils.EMPTY;
-        Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).component: Utils.EMPTY;
-        Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).component: Utils.EMPTY;
-        Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).component: Utils.EMPTY;
-        Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).component: Utils.EMPTY;
-        int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
+        Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).getMessage(): Utils.EMPTY;
+        Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).getMessage(): Utils.EMPTY;
+        Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).getMessage(): Utils.EMPTY;
+        Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).getMessage(): Utils.EMPTY;
+        Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).getMessage(): Utils.EMPTY;
+        int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).getX():10;
         List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTraffic();
-        LogObjectSelectionList lastlogselectionlist=!tabLog.isEmpty()?((LogObjectSelectionList)tabLog.get(0)):new LogObjectSelectionList(minecraft,this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,40);
-        lastlogselectionlist.changePos(this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5);
-        InfoObjectSelectionList lastinfoselectionlist=!tabInfo.isEmpty()?((InfoObjectSelectionList)tabInfo.get(0)):new InfoObjectSelectionList(minecraft,this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,informationList.size()*(this.minecraft.font.lineHeight+5)+5);
-        lastinfoselectionlist.changePos(this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5);
+        LogObjectSelectionList lastlogselectionlist=!tabLog.isEmpty()?((LogObjectSelectionList)tabLog.get(0)):new LogObjectSelectionList(minecraft,this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5,40);
+        lastlogselectionlist.changePos(this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5);
+        InfoObjectSelectionList lastinfoselectionlist=!tabInfo.isEmpty()?((InfoObjectSelectionList)tabInfo.get(0)):new InfoObjectSelectionList(minecraft,this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5,informationList.size()*(this.minecraft.font.lineHeight+5)+5);
+        lastinfoselectionlist.changePos(this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5);
         //Clear tabs
         tabUser.clear();
         tabLogin_User.clear();
@@ -124,33 +121,29 @@ public class SettingScreen extends Screen {
                     this.font,
                     10+j+20, 65+5,
                     this.width-20, 60+this.height-75-15,
-                    Utils.translatableText("text.openlink.x_axis_label"), Utils.translatableText("text.openlink.y_axis_label"), lastdatapoints,
-                    (dataXY, poseStack, i1, j1)-> renderComponentTooltip(poseStack,
-                            Arrays.stream(new Component[]{Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
-                            i1,j1)));
-        tabUser.add(new Button(10,65+j+5+40,j,20,Utils.translatableText("text.openlink.logout"),button -> {
+                    Utils.translatableText("text.openlink.x_axis_label"), Utils.translatableText("text.openlink.y_axis_label"), lastdatapoints));
+        tabUser.add(Button.builder(Utils.translatableText("text.openlink.logout"),button -> {
             Request.Authorization=null;
             Request.writeSession();
             this.minecraft.setScreen(new SettingScreen(lastscreen));
-        }));
+        }).bounds(10,65+j+5+40,j,20).build());
         //UserInfo的Login分屏
         tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,Utils.createResourceLocation("openlink","textures/gui/openfrp_icon.png")));
-        tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20, Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen))))));
+        tabLogin_User.add(Button.builder(Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen))))).bounds(this.width/2+20,(this.height-75)/2+60-10,40,20).build());
         //Log
         tabLog.add(lastlogselectionlist);
         //Info
         tabInfo.add(lastinfoselectionlist);
         //Setting
-        tabSetting.add(new ChartWidget(10,65,this.buttonSetting.x+this.buttonSetting.getWidth()-10-5,40, Utils.translatableText("text.openlink.secure"),0x8f2b2b2b));
+        tabSetting.add(new ChartWidget(10,65,this.buttonSetting.getX()+this.buttonSetting.getWidth()-10-5,40, Utils.translatableText("text.openlink.secure"),0x8f2b2b2b));
         tabSetting.add(new ComponentWidget(this.font,15,87,0xffffff, Utils.translatableText("setting.openlink.information_show"),false));
-        tabSetting.add(CycleButton.onOffBuilder(sensitiveInfoHiding).displayOnlyValue().create(this.buttonSetting.x+this.buttonSetting.getWidth()-75-5,80,75,20, Utils.translatableText("setting.information_show"),(cycleButton, object) -> {
+        tabSetting.add(CycleButton.onOffBuilder(sensitiveInfoHiding).displayOnlyValue().create(this.buttonSetting.getX()+this.buttonSetting.getWidth()-75-5,80,75,20, Utils.translatableText("setting.information_show"),(cycleButton, object) -> {
             sensitiveInfoHiding = object;
             OpenLink.PREFERENCES.putBoolean("setting_sensitive_info_hiding", object);
         }));
         tabSetting.add(new ComponentWidget(this.font,this.width/2,this.height/2,0xffffff, Utils.translatableText("temp.openlink.tobedone"),true));
     }
-
-    //MouseEventsOverrideBegin
+    
     public List<? extends GuiEventListener> getChildrenWithTabRenderables(){
         List<GuiEventListener> list=(((IScreenAccessor)this).getChildren());
         if(renderableTabWidgets!=null){
@@ -162,11 +155,12 @@ public class SettingScreen extends Screen {
         }
         return list;
     }
-
+    
+    //MouseEventsOverrideBegin
     @Override
     public boolean mouseClicked(double d, double e, int i) {
         if(renderableTabWidgets!=null){
-            for(Widget widget:renderableTabWidgets){
+            for(Renderable widget:renderableTabWidgets){
                 if (widget instanceof GuiEventListener guiEventListener) {
                     if (guiEventListener.mouseClicked(d, e, i)) {
                         this.setFocused(guiEventListener);
@@ -180,59 +174,6 @@ public class SettingScreen extends Screen {
             }
         }
         return super.mouseClicked(d, e, i);
-    }
-
-    @Override
-    public boolean changeFocus(boolean bl) {
-        GuiEventListener guiEventListener = this.getFocused();
-        boolean bl2 = guiEventListener != null;
-        if (bl2 && guiEventListener.changeFocus(bl)) {
-            return true;
-        } else {
-            List<? extends GuiEventListener> list = this.getChildrenWithTabRenderables();
-            int i = list.indexOf(guiEventListener);
-            int j;
-            if (bl2 && i >= 0) {
-                j = i + (bl ? 1 : 0);
-            } else if (bl) {
-                j = 0;
-            } else {
-                j = list.size();
-            }
-
-            ListIterator<? extends GuiEventListener> listIterator = list.listIterator(j);
-            BooleanSupplier var10000;
-            if (bl) {
-                Objects.requireNonNull(listIterator);
-                var10000 = listIterator::hasNext;
-            } else {
-                Objects.requireNonNull(listIterator);
-                var10000 = listIterator::hasPrevious;
-            }
-
-            BooleanSupplier booleanSupplier = var10000;
-            Supplier var11;
-            if (bl) {
-                Objects.requireNonNull(listIterator);
-                var11 = listIterator::next;
-            } else {
-                Objects.requireNonNull(listIterator);
-                var11 = listIterator::previous;
-            }
-
-            Supplier<? extends GuiEventListener> supplier = var11;
-
-            while(booleanSupplier.getAsBoolean()) {
-                GuiEventListener guiEventListener2 = supplier.get();
-                if (guiEventListener2.changeFocus(bl)) {
-                    this.setFocused(guiEventListener2);
-                    return true;
-                }
-            }
-
-            this.setFocused(null);
-            return false;
-        }
     }
 
     @Override
@@ -251,7 +192,7 @@ public class SettingScreen extends Screen {
     public @NotNull Optional<GuiEventListener> getChildAt(double d, double e) {
         Optional<GuiEventListener> toReturn=super.getChildAt(d,e);
         if(toReturn.isEmpty()&&renderableTabWidgets!=null){
-            for(Widget widget:renderableTabWidgets){
+            for(Renderable widget:renderableTabWidgets){
                 if (widget instanceof GuiEventListener guiEventListener) {
                     if (guiEventListener.isMouseOver(d, e)) {
                         return Optional.of(guiEventListener);
@@ -264,15 +205,13 @@ public class SettingScreen extends Screen {
     //End
 
     @Override
-    public void render(PoseStack poseStack,int i,int j,float f){
-        this.renderBackground(poseStack);
-        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
-        RenderSystem.setShaderTexture(0,BACKGROUND_SETTING);
-        blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);
-        fill(poseStack,5,60,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,0x8F000000);
-        title.renderCentered(poseStack,this.width/2,15);
-        if(renderableTabWidgets!=null) renderableTabWidgets.forEach(widget -> widget.render(poseStack,i,j,f));
-        super.render(poseStack,i,j,f);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f){
+        this.renderBackground(guiGraphics);
+        guiGraphics.blit(BACKGROUND_SETTING,0,0,0,0,this.width,this.height,this.width,this.height);
+        guiGraphics.fill(5,60,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5,0x8F000000);
+        title.renderCentered(guiGraphics,this.width/2,15);
+        if(renderableTabWidgets!=null) renderableTabWidgets.forEach(widget -> widget.render(guiGraphics,i,j,f));
+        super.render(guiGraphics,i,j,f);
     }
 
     private void onTab() {
@@ -340,11 +279,11 @@ public class SettingScreen extends Screen {
                     ComponentWidget nowgroup=(ComponentWidget)tabUser.get(4);
                     ComponentWidget nowproxy=(ComponentWidget)tabUser.get(5);
                     LineChartWidget nowtraffic=(LineChartWidget)tabUser.get(6);
-                    nowuser.component=Utils.translatableText("text.openlink.loading");
-                    nowid.component=Utils.EMPTY;
-                    nowemail.component=Utils.EMPTY;
-                    nowgroup.component=Utils.EMPTY;
-                    nowproxy.component=Utils.EMPTY;
+                    nowuser.setMessage(Utils.translatableText("text.openlink.loading"));
+                    nowid.setMessage(Utils.EMPTY);
+                    nowemail.setMessage(Utils.EMPTY);
+                    nowgroup.setMessage(Utils.EMPTY);
+                    nowproxy.setMessage(Utils.EMPTY);
                     tabUser.set(1,nowuser);
                     new Thread(() -> {
                         try {
@@ -367,12 +306,12 @@ public class SettingScreen extends Screen {
                         for (byte b:messageDigest.digest(userInfo.data.email.toLowerCase().getBytes(StandardCharsets.UTF_8)))
                             sha256.append(String.format("%02x",b));
                         nowavatar.texture=new WebTextureResourceLocation(Uris.weavatarUri.toString()+ sha256+".png?s=400").location;
-                        nowuser.component= Utils.literalText(userInfo.data.username);
-                        nowid.component= Utils.literalText("#"+userInfo.data.id);
-                        nowid.x=10+nowuser.font.width(nowuser.component)+1;
-                        nowemail.component= Utils.literalText((SettingScreen.sensitiveInfoHiding?"§k":"")+userInfo.data.email);
-                        nowgroup.component= Utils.literalText(userInfo.data.friendlyGroup);
-                        nowproxy.component= Utils.translatableText("text.openlink.proxycount",userInfo.data.used,userInfo.data.proxies);
+                        nowuser.setMessage(Utils.literalText(userInfo.data.username));
+                        nowid.setMessage(Utils.literalText("#"+userInfo.data.id));
+                        nowid.setX(10+nowuser.font.width(nowuser.getMessage())+1);
+                        nowemail.setMessage(Utils.literalText((SettingScreen.sensitiveInfoHiding?"§k":"")+userInfo.data.email));
+                        nowgroup.setMessage(Utils.literalText(userInfo.data.friendlyGroup));
+                        nowproxy.setMessage(Utils.translatableText("text.openlink.proxycount",userInfo.data.used,userInfo.data.proxies));
                         List<Pair<String,Long>> dataPoints=readTraffic();
                         dataPoints.add(new Pair<>(Utils.translatableText("text.openlink.now").getString(),userInfo.data.traffic));
                         nowtraffic.dataPoints=dataPoints;
@@ -440,9 +379,9 @@ public class SettingScreen extends Screen {
         }
 
         @Override
-        public void render(PoseStack poseStack, int i, int j, float f) {
+        public void render(GuiGraphics guiGraphics, int i, int j, float f) {
             enableScissor();
-            super.render(poseStack, i, j, f);
+            super.render(guiGraphics, i, j, f);
             RenderSystem.disableScissor();
         }
 
@@ -485,7 +424,7 @@ public class SettingScreen extends Screen {
         }
 
         @Override
-        protected boolean isFocused() {
+        public boolean isFocused() {
             return SettingScreen.this.getFocused() == this;
         }
 
@@ -545,14 +484,14 @@ public class SettingScreen extends Screen {
             }
 
             @Override
-            public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
-                fill(poseStack, x, y, x + entryWidth, y + entryHeight, 0x8f2b2b2b);
-                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.date+" "+this.startTime, x + 4, y + 4, 0x8fffffff);
-                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.levelName, x + 4, y + 4 + (entryHeight-4) / 2, 0x8fffffff);
-                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.proxyid, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.proxyid), y + 4, 0x8fffffff);
-                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.provider, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.provider), y + 4 + (entryHeight-4) / 2, 0x8fffffff);
+            public void render(GuiGraphics guiGraphics, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
+                guiGraphics.fill(x, y, x + entryWidth, y + entryHeight, 0x8f2b2b2b);
+                guiGraphics.drawString(SettingScreen.LogObjectSelectionList.this.minecraft.font, this.date+" "+this.startTime, x + 4, y + 4, 0x8fffffff);
+                guiGraphics.drawString(SettingScreen.LogObjectSelectionList.this.minecraft.font, this.levelName, x + 4, y + 4 + (entryHeight-4) / 2, 0x8fffffff);
+                guiGraphics.drawString(SettingScreen.LogObjectSelectionList.this.minecraft.font, this.proxyid, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.proxyid), y + 4, 0x8fffffff);
+                guiGraphics.drawString(SettingScreen.LogObjectSelectionList.this.minecraft.font, this.provider, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.provider), y + 4 + (entryHeight-4) / 2, 0x8fffffff);
                 if(isHovered){
-                    renderTooltip(poseStack, Utils.translatableText("text.openlink.doubleclick",new File(filePath).getName()), mouseX, mouseY);
+                    guiGraphics.renderTooltip(LogObjectSelectionList.this.minecraft.font, Utils.translatableText("text.openlink.doubleclick",new File(filePath).getName()), mouseX, mouseY);
                 }
             }
         }
@@ -572,9 +511,9 @@ public class SettingScreen extends Screen {
         }
 
         @Override
-        public void render(PoseStack poseStack, int i, int j, float f) {
+        public void render(GuiGraphics guiGraphics, int i, int j, float f) {
             enableScissor();
-            super.render(poseStack, i, j, f);
+            super.render(guiGraphics, i, j, f);
             RenderSystem.disableScissor();
         }
 
@@ -614,11 +553,11 @@ public class SettingScreen extends Screen {
                 this.inChart=inChart;
                 this.component=component;
             }
-            public void render(PoseStack poseStack, int x, int y, int width){
+            public void render(GuiGraphics guiGraphics, int x, int y, int width){
                 if(inChart){
-                    GuiComponent.fill(poseStack, x, y, x + width, y + Minecraft.getInstance().font.lineHeight+5, 0x8f2b2b2b);
+                    guiGraphics.fill(x, y, x + width, y + Minecraft.getInstance().font.lineHeight+5, 0x8f2b2b2b);
                 }
-                GuiComponent.drawString(poseStack, Minecraft.getInstance().font, this.component, x+(inChart?4:0), y+2, 0xffffffff);
+                guiGraphics.drawString(Minecraft.getInstance().font, this.component, x+(inChart?4:0), y+2, 0xffffffff);
             }
         }
 
@@ -637,9 +576,9 @@ public class SettingScreen extends Screen {
             }
 
             @Override
-            public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
+            public void render(GuiGraphics guiGraphics, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
                 for(int i1=0;i1<this.informations.size();i1++){
-                    this.informations.get(i1).render(poseStack,x,y+i1*(Minecraft.getInstance().font.lineHeight+5),entryWidth);
+                    this.informations.get(i1).render(guiGraphics,x,y+i1*(Minecraft.getInstance().font.lineHeight+5),entryWidth);
                 }
 
             }

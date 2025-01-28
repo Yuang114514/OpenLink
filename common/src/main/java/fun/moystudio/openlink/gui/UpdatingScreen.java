@@ -1,8 +1,9 @@
 package fun.moystudio.openlink.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
+
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.Utils;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Unique;
@@ -38,9 +39,9 @@ public class UpdatingScreen extends Screen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        this.renderBackground(poseStack);
-        text.renderCentered(poseStack,this.width/2,this.height/2,16,0xffffff);
-        super.render(poseStack,i,j,f);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        text.renderCentered(guiGraphics,this.width/2,this.height/2,16,0xffffff);
+        super.render(guiGraphics,i,j,f);
     }
 }

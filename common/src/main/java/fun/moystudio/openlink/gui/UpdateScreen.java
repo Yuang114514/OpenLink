@@ -1,16 +1,16 @@
 package fun.moystudio.openlink.gui;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.Utils;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,15 +24,9 @@ public class UpdateScreen extends Screen {
 
     @Override
     protected void init(){
-        List<String> strings=Arrays.asList(Utils.translatableText("text.openlink.nofrpcfile").getString().split("\n"));
-        List<Component> list = new ArrayList<>();
-        strings.forEach((String)-> list.add(Utils.literalText(String)));
-        yes=new Button(this.width/4-40,this.height/5*4-10,80,20,CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen()));
-        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> this.onClose(), (button, poseStack, i, j) -> {
-            if(Frpc.FRPC_VERSION.length()<6){
-                renderComponentTooltip(poseStack, list, i, j);
-            }
-        });
+
+        yes=Button.builder(CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen())).bounds(this.width/4-40,this.height/5*4-10,80,20).build();
+        no=Button.builder(CommonComponents.GUI_NO,button -> this.onClose()).tooltip(getTooltip()).bounds(this.width/4*3-40,this.height/5*4-10,80,20).build();
         if(Frpc.FRPC_VERSION.length()<6){
             no.active=false;
         }
@@ -43,10 +37,20 @@ public class UpdateScreen extends Screen {
         this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
     }
 
+    private Tooltip getTooltip(){
+        List<String> strings=Arrays.asList(Utils.translatableText("text.openlink.nofrpcfile").getString().split("\n"));
+        MutableComponent component= (MutableComponent) Utils.EMPTY;
+        strings.forEach((String)-> component.append(Utils.literalText(String)));
+        if(Frpc.FRPC_VERSION.length()<6){
+            return Tooltip.create(component);
+        }
+        return Tooltip.create(Utils.EMPTY);
+    }
+
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        this.renderBackground(poseStack);
-        text.renderCentered(poseStack,this.width/2,this.height/10,16,0xffffff);
-        super.render(poseStack,i,j,f);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        text.renderCentered(guiGraphics,this.width/2,this.height/10,16,0xffffff);
+        super.render(guiGraphics,i,j,f);
     }
 }

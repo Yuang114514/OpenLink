@@ -1,31 +1,30 @@
 package fun.moystudio.openlink.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Widget;
-import net.minecraft.client.gui.components.events.GuiEventListener;
+import fun.moystudio.openlink.logic.Utils;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.resources.ResourceLocation;
 
-public class ImageWidget implements Widget, GuiEventListener {
+public class ImageWidget extends AbstractWidget {
     public ResourceLocation texture;
-    private final int x,y,width,height,textureWidth,textureHeight;
+    private final int textureWidth,textureHeight;
     private final float uOffset,vOffset;
     public ImageWidget(int x1, int y1, float uOffset1, float vOffset1, int width1, int height1, int textureWidth1, int textureHeight1, ResourceLocation rl){
-        x=x1;
-        y=y1;
+        super(x1,y1,width1,height1, Utils.EMPTY);
         uOffset=uOffset1;
         vOffset=vOffset1;
-        width=width1;
-        height=height1;
         textureWidth=textureWidth1;
         textureHeight=textureHeight1;
         texture=rl;
     }
+
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
-        RenderSystem.setShaderTexture(0,texture);
-        GuiComponent.blit(poseStack,x,y,uOffset,vOffset,width,height,textureWidth,textureHeight);
+    protected void renderWidget(GuiGraphics guiGraphics, int i, int j, float f) {
+        guiGraphics.blit(texture,this.getX(),this.getY(),uOffset,vOffset,width,height,textureWidth,textureHeight);
+    }
+
+    @Override
+    protected void updateWidgetNarration(NarrationElementOutput narrationElementOutput) {
     }
 }

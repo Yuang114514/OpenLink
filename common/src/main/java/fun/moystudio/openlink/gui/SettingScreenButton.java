@@ -1,39 +1,32 @@
 package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
+import java.util.function.Supplier;
+
 public class SettingScreenButton extends Button {
     public static final ResourceLocation SETTING_WIDGET_LOCATION=Utils.createResourceLocation("openlink","textures/gui/widgets_setting.png");
     public SettingScreenButton(int i, int j, int k, int l, Component component, OnPress onPress) {
-        super(i, j, k, l, component, onPress);
+        super(i, j, k, l, component, onPress, Supplier::get);
     }
     protected int packedFGColor = -1;
 
     @Override
-    public void renderButton(PoseStack arg, int k, int l, float f) {
+    public void renderWidget(GuiGraphics guiGraphics, int k, int l, float f) {
         Minecraft minecraft = Minecraft.getInstance();
-        Font font = minecraft.font;
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, SETTING_WIDGET_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        int i = this.getYImage(this.isHoveredOrFocused());
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
         RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(arg, this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-        this.blit(arg, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-        this.renderBg(arg, minecraft, k, l);
-        int j = this.getFGColor();
-        drawCenteredString(arg, font, this.getMessage(), this.x + (this.width/2), this.y + (this.height-8)/2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        guiGraphics.blitNineSliced(SETTING_WIDGET_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, this.getTextureY());
+        guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+        this.renderString(guiGraphics, minecraft.font, this.getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
     }
     public int getFGColor() {
         if (this.packedFGColor != -1) {
@@ -41,5 +34,15 @@ public class SettingScreenButton extends Button {
         } else {
             return this.active ? 16777215 : 10526880;
         }
+    }
+    private int getTextureY() {
+        int i = 1;
+        if (!this.active) {
+            i = 0;
+        } else if (this.isHoveredOrFocused()) {
+            i = 2;
+        }
+
+        return 46 + i * 20;
     }
 }

@@ -15,8 +15,8 @@ public class ConfirmScreenWithLanguageButton extends ConfirmScreen {
 
     @Override
     protected void addButtons(int i) {
-        this.addExitButton(new Button(this.width / 2 - 155, i, 150, 20, this.yesButton, (button) -> this.callback.accept(true)));
-        this.addExitButton(new Button(this.width / 2 - 155 + 160, i, 150, 20, this.noButton, (button) -> this.callback.accept(false)));
-        this.addRenderableWidget(new ImageButton(this.width / 2 - 185, i, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
+        this.addExitButton(Button.builder(this.yesButton, (button) -> this.callback.accept(true)).bounds(this.width / 2 - 155, i, 150, 20).build());
+        this.addExitButton(Button.builder(this.noButton, (button) -> this.callback.accept(false)).bounds(this.width / 2 - 155 + 160, i, 150, 20).build());
+        this.addRenderableWidget(new ImageButton(this.width / 2 - 185, i, 20, 20, 0, 106, 200, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
     }
 }
