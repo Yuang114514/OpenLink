@@ -1,4 +1,5 @@
 modLoader = "javafml"
+# Change Forge Loader Version here(version migrate)
 loaderVersion = "[40,)"
 issueTrackerURL = "https://github.com/StarCarefree/OpenLink/issues"
 license = "MIT"
@@ -16,6 +17,7 @@ logoFile = "icon.png"
 [[dependencies.openlink]]
 modId = "forge"
 mandatory = true
+# And here
 versionRange = "[40,)"
 ordering = "NONE"
 side = "CLIENT"
@@ -23,6 +25,7 @@ side = "CLIENT"
 [[dependencies.openlink]]
 modId = "minecraft"
 mandatory = true
+# Change Minecraft Version here(version migrate)
 versionRange = "[1.18.2,)"
 ordering = "NONE"
 side = "CLIENT"
