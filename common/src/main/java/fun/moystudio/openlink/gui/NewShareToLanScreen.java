@@ -83,6 +83,7 @@ public class NewShareToLanScreen extends Screen {
         editBox.setVisible(LanConfig.cfg.use_frp);
         if(Request.Authorization==null){
             LanConfig.cfg.use_frp=false;
+            editBox.setValue("");
             usingfrp.setValue(false);
             usingfrp.active=false;
             editBox.active=false;
@@ -97,24 +98,26 @@ public class NewShareToLanScreen extends Screen {
         } else {
             editBox.setSuggestion("");
         }
-        if(val.length() != 5){
-            couldShare=false;
-            return;
-        }
-        _0=true;
-        for(int i=0;i<val.length();i++){
-            if(i==0&&val.charAt(i)=='0'){
-                couldShare=false;
+        if(LanConfig.cfg.use_frp) {
+            if (val.length() != 5) {
+                couldShare = false;
                 return;
             }
-            if(val.charAt(i)!='0') _0=false;
-            if(!Character.isDigit(val.charAt(i))){
-                couldShare=false;
-                return;
+            _0 = true;
+            for (int i = 0; i < val.length(); i++) {
+                if (i == 0 && val.charAt(i) == '0') {
+                    couldShare = false;
+                    return;
+                }
+                if (val.charAt(i) != '0') _0 = false;
+                if (!Character.isDigit(val.charAt(i))) {
+                    couldShare = false;
+                    return;
+                }
             }
-        }
-        if(_0){
-            couldShare=false;
+            if (_0) {
+                couldShare = false;
+            }
         }
     }
 
