@@ -1,11 +1,14 @@
 package fun.moystudio.openlink;
 
+import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.gui.SettingScreen;
+import fun.moystudio.openlink.json.JsonIP;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
+import fun.moystudio.openlink.network.Uris;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +16,6 @@ import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -27,11 +29,12 @@ public final class OpenLink {
     public static final String MOD_ID = "openlink";
     public static final Logger LOGGER = LogManager.getLogger("OpenLink");
     public static final String CONFIG_DIR = "config" + File.separator + MOD_ID + File.separator;
-    public static final Preferences PREFERENCES = Preferences.userNodeForPackage(OpenLink.class);
-    public static final String EXECUTABLE_FILE_STORAGE_PATH = Path.of(getLocalStoragePos()).resolve(".openlink") +File.separator;
+    public static Preferences PREFERENCES;
+    public static String EXECUTABLE_FILE_STORAGE_PATH;
     public static boolean disabled=false;
     public static String VERSION,LOADER, LOADER_VERSION;
-    public static List<Pair<String,Class<?>>> CONFLICT_CLASS=new ArrayList<>();
+    public static List<Pair<String,Class<?>>> CONFLICT_CLASS = new ArrayList<>();
+    public static int PREFER_CLASSIFY;
     private static final List<Pair<String,String>> CONFLICT_CLASS_NAME=Arrays.asList(//Do NOT use Class object here!!!!!!!(By Terry_MC)
             Pair.of("mcwifipnp","io.github.satxm.mcwifipnp.ShareToLanScreenNew"),
             Pair.of("lanserverproperties","rikka.lanserverproperties.ModifyLanScreen"),
@@ -44,6 +47,10 @@ public final class OpenLink {
         LOADER=loader;
         LOADER_VERSION=loader_version;
         LOGGER.info("Initializing OpenLink on "+loader+" "+loader_version);
+        EXECUTABLE_FILE_STORAGE_PATH=Path.of(getLocalStoragePos()).resolve(".openlink")+File.separator;
+        LOGGER.info("OpenLink Storage Path: "+EXECUTABLE_FILE_STORAGE_PATH);
+        PREFERENCES=Preferences.userNodeForPackage(OpenLink.class);
+        PREFER_CLASSIFY = getPreferClassify();
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);
@@ -107,11 +114,22 @@ public final class OpenLink {
     }
 
     private static String getLocalStoragePos() {
-        Path userHome = Paths.get(System.getProperty("user.home"));
-        Path oldPath = userHome.resolve(".openlink");
-        if (Files.exists(oldPath)) {
-            return userHome.toString();
+        Path userHome1,userHome2,userHome3,userHome;
+        userHome1 = Paths.get(Objects.requireNonNullElse(System.getProperty("user.home"),"./"));
+        userHome2 = Paths.get(Objects.requireNonNullElse(System.getenv("HOME"),"./"));
+        userHome3 = Paths.get(Objects.requireNonNullElse(System.getenv("USERPROFILE"),"./"));
+        if(!userHome2.toString().equals("./")){
+            userHome=userHome2;
+        } else if(!userHome3.toString().equals("./")){
+            userHome=userHome3;
+        } else if(!userHome1.toString().equals("./")){
+            userHome=userHome1;
+        } else {
+            userHome=Paths.get("./");
         }
+
+        userHome=userHome.toAbsolutePath();
+        userHome.toFile().mkdirs();
 
         String macAppSupport = System.getProperty("os.name").contains("OS X") ? userHome.resolve("Library/Application Support").toString() : null;
         String localAppData = System.getenv("LocalAppData");
@@ -120,7 +138,27 @@ public final class OpenLink {
         if (xdgDataHome == null) {
             xdgDataHome = userHome.resolve(".local/share").toString();
         }
-
         return Stream.of(localAppData, macAppSupport).filter(Objects::nonNull).findFirst().orElse(xdgDataHome);
+    }
+
+    private static int getPreferClassify(){
+        Gson gson = new Gson();
+        int preferClassify = -1;
+        try {
+            String json = Request.POST(Uris.ipstackUri.toString(), Request.DEFAULT_HEADER, "{}").getFirst();
+            JsonIP jsonIP = gson.fromJson(json, JsonIP.class);
+
+            if (jsonIP.country.equals("CN")) {
+                preferClassify = 1;
+            } else if (jsonIP.country.equals("HK") || jsonIP.country.equals("TW") || jsonIP.country.equals("MO")) {
+                preferClassify = 2;
+            } else {
+                preferClassify = 3;
+            }
+            OpenLink.LOGGER.info("User Country Code: " + jsonIP.country + ", Prefer Classify: " + preferClassify);
+        } catch (Exception ignored) {
+            OpenLink.LOGGER.warn("Can not get user country! Ignoring...");
+        }
+        return preferClassify;
     }
 }

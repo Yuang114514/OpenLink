@@ -78,6 +78,7 @@ public class NodeSelectionScreen extends Screen {
                         this.addEntry(entry1);
                         if(node.id==Frpc.nodeId){
                             this.setSelected(entry1);
+                            this.centerScrollOn(entry1);
                         }
                     }
 

@@ -117,8 +117,9 @@ public class Request {
 
     public static void readSession() {
         Authorization=OpenLink.PREFERENCES.get("authorization",null);
-        if(Authorization.equals("null")) Authorization=null;
-        if(Authorization==null){
+
+        if(Authorization==null||Authorization.equals("null")){
+            Authorization=null;
             OpenLink.LOGGER.warn("The session does not exists in user preferences!");
             return;
         }

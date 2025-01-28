@@ -273,26 +273,9 @@ public class Frpc {
                     if(canUseNodes.isEmpty()){
                         throw new Exception("Unable to use any node???");
                     }
-                    int preferClassify = -1;
-                    try {
-                        String json = Request.POST(Uris.ipstackUri.toString(), Request.DEFAULT_HEADER, "{}").getFirst();
-                        JsonIP jsonIP = gson.fromJson(json, JsonIP.class);
-
-                        if (jsonIP.country.equals("CN")) {
-                            preferClassify = 1;
-                        } else if (jsonIP.country.equals("HK") || jsonIP.country.equals("TW") || jsonIP.country.equals("MO")) {
-                            preferClassify = 2;
-                        } else {
-                            preferClassify = 3;
-                        }
-                        OpenLink.LOGGER.info("User Country Code: " + jsonIP.country + ", Prefer Classify: " + preferClassify);
-                    } catch (Exception ignored) {
-                        OpenLink.LOGGER.warn("Can not get user country! Ignoring...");
-                    }
-                    int finalPreferClassify = preferClassify;
                     canUseNodes.sort(((o1, o2) -> {
-                        if(finalPreferClassify !=-1&&o1.classify!=o2.classify&&(o1.classify== finalPreferClassify)!=(o2.classify== finalPreferClassify))
-                            return o1.classify== finalPreferClassify ?-1:1;
+                        if(OpenLink.PREFER_CLASSIFY!=-1&&o1.classify!=o2.classify&&(o1.classify== OpenLink.PREFER_CLASSIFY)!=(o2.classify==OpenLink.PREFER_CLASSIFY))
+                            return o1.classify==OpenLink.PREFER_CLASSIFY?-1:1;
                         if(!o1.group.equals(o2.group)){
                             int first=5,second=5;
                             if(o1.group.contains("svip")){
