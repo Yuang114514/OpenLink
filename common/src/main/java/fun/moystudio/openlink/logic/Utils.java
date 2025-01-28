@@ -5,12 +5,12 @@ import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 
 public class Utils {
-    public static Component EMPTY=TextComponent.EMPTY;
+    public static Component EMPTY=Component.empty();
     public static MutableComponent translatableText(String key, Object... objects) {
-        return new TranslatableComponent(key,objects);
+        return Component.translatable(key, objects);
     }
     public static MutableComponent literalText(String string) {
-        return new TextComponent(string);
+        return Component.literal(string);
     }
     public static Component proxyRestartText() {
         return ComponentUtils.wrapInSquareBrackets(translatableText("text.openlink.clicktorestart"))
