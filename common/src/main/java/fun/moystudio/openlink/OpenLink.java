@@ -1,11 +1,14 @@
 package fun.moystudio.openlink;
 
+import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.gui.SettingScreen;
+import fun.moystudio.openlink.json.JsonIP;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
+import fun.moystudio.openlink.network.Uris;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,7 +16,6 @@ import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -31,7 +33,8 @@ public final class OpenLink {
     public static String EXECUTABLE_FILE_STORAGE_PATH;
     public static boolean disabled=false;
     public static String VERSION,LOADER, LOADER_VERSION;
-    public static List<Pair<String,Class<?>>> CONFLICT_CLASS=new ArrayList<>();
+    public static List<Pair<String,Class<?>>> CONFLICT_CLASS = new ArrayList<>();
+    public static int PREFER_CLASSIFY;
     private static final List<Pair<String,String>> CONFLICT_CLASS_NAME=Arrays.asList(//Do NOT use Class object here!!!!!!!(By Terry_MC)
             Pair.of("mcwifipnp","io.github.satxm.mcwifipnp.ShareToLanScreenNew"),
             Pair.of("lanserverproperties","rikka.lanserverproperties.ModifyLanScreen"),
@@ -47,6 +50,7 @@ public final class OpenLink {
         EXECUTABLE_FILE_STORAGE_PATH=Path.of(getLocalStoragePos()).resolve(".openlink")+File.separator;
         LOGGER.info("OpenLink Storage Path: "+EXECUTABLE_FILE_STORAGE_PATH);
         PREFERENCES=Preferences.userNodeForPackage(OpenLink.class);
+        PREFER_CLASSIFY = getPreferClassify();
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);
@@ -135,5 +139,26 @@ public final class OpenLink {
             xdgDataHome = userHome.resolve(".local/share").toString();
         }
         return Stream.of(localAppData, macAppSupport).filter(Objects::nonNull).findFirst().orElse(xdgDataHome);
+    }
+
+    private static int getPreferClassify(){
+        Gson gson = new Gson();
+        int preferClassify = -1;
+        try {
+            String json = Request.POST(Uris.ipstackUri.toString(), Request.DEFAULT_HEADER, "{}").getFirst();
+            JsonIP jsonIP = gson.fromJson(json, JsonIP.class);
+
+            if (jsonIP.country.equals("CN")) {
+                preferClassify = 1;
+            } else if (jsonIP.country.equals("HK") || jsonIP.country.equals("TW") || jsonIP.country.equals("MO")) {
+                preferClassify = 2;
+            } else {
+                preferClassify = 3;
+            }
+            OpenLink.LOGGER.info("User Country Code: " + jsonIP.country + ", Prefer Classify: " + preferClassify);
+        } catch (Exception ignored) {
+            OpenLink.LOGGER.warn("Can not get user country! Ignoring...");
+        }
+        return preferClassify;
     }
 }
