@@ -1,4 +1,4 @@
-name: Auto Merge Crowdin PRs
+name: Version Auto Merge After CR PR
 
 on:
   pull_request:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v5
 
       - name: Set up GitHub CLI
         run: |
@@ -55,9 +55,4 @@ jobs:
       - name: Merge 1.20.6 into 1.20.4
         run: |
           gh pr create --base 1.20.6 --head 1.20.4 --title "Merge 1.20.4 into 1.20.6" --body "Auto merge after Crowdin update" --draft
-          gh pr merge --auto
-
-      - name: Merge 1.21 into 1.20.6
-        run: |
-          gh pr create --base 1.21 --head 1.20.6 --title "Merge 1.20.6 into 1.21" --body "Auto merge after Crowdin update" --draft
           gh pr merge --auto
