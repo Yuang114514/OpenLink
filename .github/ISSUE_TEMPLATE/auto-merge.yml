@@ -1,0 +1,37 @@
+name: Auto Merge Crowdin PRs
+
+on:
+  pull_request:
+    branches:
+      - master
+    types: [closed]
+    # Only trigger on merged PRs that have a label `crowdin`
+    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'crowdin')
+
+jobs:
+  merge-branches:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up GitHub CLI
+        run: |
+          curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /usr/share/keyrings/github.asc
+          sudo apt update
+          sudo apt install gh
+
+      - name: Configure git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Merge 1.19.2 into master
+        run: |
+          gh pr create --base 1.19.2 --head master --title "Merge master into 1.19.2" --body "Auto merge after Crowdin update" --draft
+          gh pr merge --auto
+
+      - name: Merge 1.20.1 into 1.19.2
+        run: |
+          gh pr create --base 1.20.1 --head 1.19.2 --title "Merge 1.19.2 into 1.20.1" --body "Auto merge after Crowdin update" --draft
+          gh pr merge --auto
