@@ -5,7 +5,6 @@ on:
     branches:
       - master
     types: [closed]
-    # Only trigger on merged PRs that have a label `crowdin`
     if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'crowdin')
 
 jobs:
