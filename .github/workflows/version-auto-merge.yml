@@ -46,13 +46,3 @@ jobs:
         run: |
           gh pr create --base 1.20.1 --head 1.19.2 --title "Merge 1.19.2 into 1.20.1" --body "Auto merge after Crowdin update" --draft
           gh pr merge --auto
-
-      - name: Merge 1.20.4 into 1.20.1
-        run: |
-          gh pr create --base 1.20.4 --head 1.20.1 --title "Merge 1.20.1 into 1.20.4" --body "Auto merge after Crowdin update" --draft
-          gh pr merge --auto
-
-      - name: Merge 1.20.6 into 1.20.4
-        run: |
-          gh pr create --base 1.20.6 --head 1.20.4 --title "Merge 1.20.4 into 1.20.6" --body "Auto merge after Crowdin update" --draft
-          gh pr merge --auto
