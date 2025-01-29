@@ -49,7 +49,7 @@ public class ConflictSelectionScreen extends Screen {
 
     class ConflictSelectionList extends ObjectSelectionList<ConflictSelectionList.Entry>{
         public ConflictSelectionList(Minecraft minecraft) {
-            super(minecraft, ConflictSelectionScreen.this.width, ConflictSelectionScreen.this.height, 32, ConflictSelectionScreen.this.height - 65 + 4, 18);
+            super(minecraft, ConflictSelectionScreen.this.width, ConflictSelectionScreen.this.height - 65 + 4-32, 32, 18);
 
             for (Pair<String,Class<?>> classPair : OpenLink.CONFLICT_CLASS){
                 this.addEntry(new Entry(classPair.getFirst(),classPair.getSecond()));
@@ -72,8 +72,8 @@ public class ConflictSelectionScreen extends Screen {
             return super.getRowWidth() + 50;
         }
 
-        protected void renderBackground(GuiGraphics guiGraphics) {
-            ConflictSelectionScreen.this.renderBackground(guiGraphics);
+        protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+            ConflictSelectionScreen.this.renderBackground(guiGraphics, i, j, f);
         }
 
         public boolean isFocused() {

@@ -38,7 +38,7 @@ public class LoginScreen extends Screen {
         password = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 98, 200, 20, Utils.translatableText("text.openlink.password"));
         username.setValue(OpenLink.PREFERENCES.get("last_username",""));
         password.setValue(OpenLink.PREFERENCES.get("last_password",""));
-        remember=new Checkbox(this.width / 2 - 100,this.height/6+133,150,20, Utils.translatableText("text.openlink.rememberuserandpassword"),OpenLink.PREFERENCES.get("last_username",null)!=null&&OpenLink.PREFERENCES.get("last_password",null)!=null);
+        remember=Checkbox.builder(Utils.translatableText("text.openlink.rememberuserandpassword"), this.font).pos(this.width / 2 - 100,this.height/6+133).selected(OpenLink.PREFERENCES.get("last_username",null)!=null&&OpenLink.PREFERENCES.get("last_password",null)!=null).build();
         this.addRenderableWidget(username);
         this.addRenderableWidget(password);
         this.addRenderableWidget(remember);
@@ -93,7 +93,8 @@ public class LoginScreen extends Screen {
         }).bounds(this.width / 2 - 100, this.height / 6 + 178, 200, 20).build());
 
         //原版语言按钮
-        this.addRenderableWidget(new ImageButton(this.width / 2 - 130, this.height / 6 + 178, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Component.translatable("narrator.button.language")));
+        SpriteIconButton spriteiconbutton = this.addRenderableWidget(CommonButtons.language(20, (arg) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), true));
+        spriteiconbutton.setPosition(this.width / 2 - 130, this.height / 6 + 178);
 
         //注册
         this.addRenderableWidget(Button.builder(Utils.translatableText("text.openlink.no_account"), (button) -> browser.openBrowser()).bounds(this.width / 2 - 100, this.height / 6 + 158 , 200, 20).build());
@@ -101,12 +102,12 @@ public class LoginScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, i, j, f);
         loginTips.renderCentered(guiGraphics, this.width / 2, 15, 16, 0xffffff);
         guiGraphics.drawString(this.font, Utils.translatableText("text.openlink.username"), this.width / 2 - 100, this.height / 6 + 33, 0xffffff);
         guiGraphics.drawString(this.font, Utils.translatableText("text.openlink.password"), this.width / 2 - 100, this.height / 6 + 83, 0xffffff);
         guiGraphics.drawString(this.font, Utils.literalText(wrongmsg), this.width / 2 - 100, this.height / 6 + 123, 0xff0000);
-        super.render(guiGraphics, i, j, f);
+
     }
 
     @Override

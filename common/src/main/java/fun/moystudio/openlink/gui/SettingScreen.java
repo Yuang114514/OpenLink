@@ -1,7 +1,5 @@
 package fun.moystudio.openlink.gui;
 
-import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
@@ -206,12 +204,12 @@ public class SettingScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f){
-        this.renderBackground(guiGraphics);
+        renderBackground(guiGraphics,i,j,f);
         guiGraphics.blit(BACKGROUND_SETTING,0,0,0,0,this.width,this.height,this.width,this.height);
         guiGraphics.fill(5,60,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5,0x8F000000);
         title.renderCentered(guiGraphics,this.width/2,15);
         if(renderableTabWidgets!=null) renderableTabWidgets.forEach(widget -> widget.render(guiGraphics,i,j,f));
-        super.render(guiGraphics,i,j,f);
+        if(((IScreenAccessor)this).getRenderables()!=null) ((IScreenAccessor)this).getRenderables().forEach(widget -> widget.render(guiGraphics,i,j,f));
     }
 
     private void onTab() {
@@ -364,44 +362,31 @@ public class SettingScreen extends Screen {
     }
 
     public class LogObjectSelectionList extends ObjectSelectionList<LogObjectSelectionList.Entry>{
+        public int x0,y0,x1,y1;
         public LogObjectSelectionList(Minecraft minecraft, int width, int height, int x0, int y0, int x1, int y1, int itemHeight) {
-            super(minecraft, width, height, y0, y1, itemHeight);
+            super(minecraft, width, height, y0, itemHeight);
             this.setRenderBackground(false);
             this.setRenderHeader(false,0);
-            this.setRenderTopAndBottom(false);
-            this.y0 = y0;
-            this.y1 = y1;
-            this.x0 = x0;
-            this.x1 = x1;
+            this.setPosition(x0, y0);
+            this.setSize(width, height - y0);
             if (this.getSelected() != null) {
                 this.centerScrollOn(this.getSelected());
             }
-        }
-
-        @Override
-        public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-            enableScissor();
-            super.render(guiGraphics, i, j, f);
-            RenderSystem.disableScissor();
-        }
-
-        private void enableScissor() {
-            Window window = this.minecraft.getWindow();
-            int screenHeight = window.getScreenHeight();
-            int scissorX = (int) (x0 * window.getGuiScale());
-            int scissorY = (int) (screenHeight - (y1 * window.getGuiScale()));
-            int scissorWidth = (int) ((x1 - x0) * window.getGuiScale());
-            int scissorHeight = (int) ((y1 - y0) * window.getGuiScale());
-            RenderSystem.enableScissor(scissorX, scissorY, scissorWidth, scissorHeight);
+            this.x0=x0;
+            this.y0=y0;
+            this.x1=x1;
+            this.y1=y1;
         }
 
         public void changePos(int width, int height, int x0, int y0, int x1, int y1){
-            this.y0 = y0;
-            this.y1 = y1;
-            this.x0 = x0;
-            this.x1 = x1;
+            this.setPosition(x0, y0);
+            this.setSize(width, height - y0);
             this.width=width;
             this.height=height;
+            this.x0=x0;
+            this.y0=y0;
+            this.x1=x1;
+            this.y1=y1;
         }
 
         @Override
@@ -498,42 +483,29 @@ public class SettingScreen extends Screen {
     }
 
     public static class InfoObjectSelectionList extends ObjectSelectionList<InfoObjectSelectionList.Entry>{
+        public int x0,y0,x1,y1;
         public InfoObjectSelectionList(Minecraft minecraft, int width, int height, int x0, int y0, int x1, int y1, int itemHeight) {
-            super(minecraft, width, height, y0, y1, itemHeight);
+            super(minecraft, width, height, y0, itemHeight);
             this.setRenderBackground(false);
             this.setRenderHeader(false,0);
-            this.setRenderTopAndBottom(false);
             this.addEntry(new Entry(informationList));
-            this.y0 = y0;
-            this.y1 = y1;
-            this.x0 = x0;
-            this.x1 = x1;
-        }
-
-        @Override
-        public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-            enableScissor();
-            super.render(guiGraphics, i, j, f);
-            RenderSystem.disableScissor();
-        }
-
-        private void enableScissor() {
-            Window window = Minecraft.getInstance().getWindow();
-            int screenHeight = window.getScreenHeight();
-            int scissorX = (int) (x0 * window.getGuiScale());
-            int scissorY = (int) (screenHeight - (y1 * window.getGuiScale()));
-            int scissorWidth = (int) ((x1 - x0) * window.getGuiScale());
-            int scissorHeight = (int) ((y1 - y0) * window.getGuiScale());
-            RenderSystem.enableScissor(scissorX, scissorY, scissorWidth, scissorHeight);
+            this.setPosition(x0, y0);
+            this.setSize(width, height - y0);
+            this.x0=x0;
+            this.y0=y0;
+            this.x1=x1;
+            this.y1=y1;
         }
 
         public void changePos(int width, int height, int x0, int y0, int x1, int y1){
+            this.setPosition(x0, y0);
+            this.setSize(width, height - y0);
+            this.width=width;
+            this.height=height;
             this.y0 = y0;
             this.y1 = y1;
             this.x0 = x0;
             this.x1 = x1;
-            this.width=width;
-            this.height=height;
         }
 
         @Override

@@ -5,6 +5,7 @@ import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -12,10 +13,12 @@ import net.minecraft.util.Mth;
 import java.util.function.Supplier;
 
 public class SettingScreenButton extends Button {
-    public static final ResourceLocation SETTING_WIDGET_LOCATION=Utils.createResourceLocation("openlink","textures/gui/widgets_setting.png");
     public SettingScreenButton(int i, int j, int k, int l, Component component, OnPress onPress) {
         super(i, j, k, l, component, onPress, Supplier::get);
     }
+
+    public static final WidgetSprites SPRITES = new WidgetSprites(Utils.createResourceLocation("openlink", "widget/setting_screen_button"), Utils.createResourceLocation("openlink", "widget/setting_screen_button_disabled"), Utils.createResourceLocation("openlink", "widget/setting_screen_button_highlighted"));
+
     protected int packedFGColor = -1;
 
     @Override
@@ -24,9 +27,10 @@ public class SettingScreenButton extends Button {
         guiGraphics.setColor(1.0F, 1.0F, 1.0F, this.alpha);
         RenderSystem.enableBlend();
         RenderSystem.enableDepthTest();
-        guiGraphics.blitNineSliced(SETTING_WIDGET_LOCATION, this.getX(), this.getY(), this.getWidth(), this.getHeight(), 20, 4, 200, 20, 0, this.getTextureY());
+        guiGraphics.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), this.getX(), this.getY(), this.getWidth(), this.getHeight());
         guiGraphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        this.renderString(guiGraphics, minecraft.font, this.getFGColor() | Mth.ceil(this.alpha * 255.0F) << 24);
+        int i = this.getFGColor();
+        this.renderString(guiGraphics, minecraft.font, i | Mth.ceil(this.alpha * 255.0F) << 24);
     }
     public int getFGColor() {
         if (this.packedFGColor != -1) {
@@ -34,15 +38,5 @@ public class SettingScreenButton extends Button {
         } else {
             return this.active ? 16777215 : 10526880;
         }
-    }
-    private int getTextureY() {
-        int i = 1;
-        if (!this.active) {
-            i = 0;
-        } else if (this.isHoveredOrFocused()) {
-            i = 2;
-        }
-
-        return 46 + i * 20;
     }
 }

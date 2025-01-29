@@ -1,6 +1,6 @@
 modLoader = "javafml"
-# Change Forge Loader Version here(version migrate)
-loaderVersion = "[49,)"
+# Change NeoForge Loader Version here(version migrate)
+loaderVersion = "[2,)"
 issueTrackerURL = "https://github.com/StarCarefree/OpenLink/issues"
 license = "MIT"
 
@@ -15,17 +15,20 @@ Bring you a unique Minecraft Multiplayer playing experience OvO
 logoFile = "icon.png"
 
 [[dependencies.openlink]]
-modId = "forge"
-mandatory = true
+modId = "neoforge"
+type="required"
 # And here
-versionRange = "[49,)"
+versionRange = "[20,)"
 ordering = "NONE"
 side = "CLIENT"
 
 [[dependencies.openlink]]
 modId = "minecraft"
-mandatory = true
+type="required"
 # Change Minecraft Version here(version migrate)
 versionRange = "[1.20.4,)"
 ordering = "NONE"
 side = "CLIENT"
+
+[[mixins]]
+config="openlink.mixins.json"

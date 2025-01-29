@@ -3,7 +3,9 @@ package fun.moystudio.openlink.gui;
 import fun.moystudio.openlink.logic.Utils;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.CommonButtons;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.network.chat.Component;
@@ -17,6 +19,7 @@ public class ConfirmScreenWithLanguageButton extends ConfirmScreen {
     protected void addButtons(int i) {
         this.addExitButton(Button.builder(this.yesButton, (button) -> this.callback.accept(true)).bounds(this.width / 2 - 155, i, 150, 20).build());
         this.addExitButton(Button.builder(this.noButton, (button) -> this.callback.accept(false)).bounds(this.width / 2 - 155 + 160, i, 150, 20).build());
-        this.addRenderableWidget(new ImageButton(this.width / 2 - 185, i, 20, 20, 0, 106, 200, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
+        SpriteIconButton spriteiconbutton = this.addRenderableWidget(CommonButtons.language(20, (arg) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), true));
+        spriteiconbutton.setPosition(this.width / 2 - 185, i);
     }
 }

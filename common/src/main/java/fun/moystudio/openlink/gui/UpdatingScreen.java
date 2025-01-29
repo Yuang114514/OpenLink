@@ -40,8 +40,7 @@ public class UpdatingScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        this.renderBackground(guiGraphics);
-        text.renderCentered(guiGraphics,this.width/2,this.height/2,16,0xffffff);
         super.render(guiGraphics,i,j,f);
+        text.renderCentered(guiGraphics,this.width/2,this.height/2,16,0xffffff);
     }
 }

@@ -14,6 +14,8 @@ import java.util.List;
 public interface IScreenAccessor {
     @Accessor("children")
     List<GuiEventListener> getChildren();
+    @Accessor("renderables")
+    List<Renderable> getRenderables();
     @Invoker("addRenderableWidget")
     <T extends GuiEventListener & Renderable & NarratableEntry> T invokeAddRenderableWidget(T guiEventListener);
 }

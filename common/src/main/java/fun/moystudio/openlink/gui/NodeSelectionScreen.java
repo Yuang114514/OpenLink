@@ -50,7 +50,6 @@ public class NodeSelectionScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
         super.render(guiGraphics, i, j, f);
-        this.renderBackground(guiGraphics);
         if(selectionList!=null){
             selectionList.render(guiGraphics,i,j,f);
         }
@@ -60,7 +59,7 @@ public class NodeSelectionScreen extends Screen {
 
     class NodeSelectionList extends ObjectSelectionList<NodeSelectionList.Entry>{
         public NodeSelectionList(Minecraft minecraft) {
-            super(minecraft, NodeSelectionScreen.this.width, NodeSelectionScreen.this.height, 32, NodeSelectionScreen.this.height-65+4, 40);
+            super(minecraft, NodeSelectionScreen.this.width, NodeSelectionScreen.this.height-65+4-32, 32, 40);
             JsonNode nothing=new JsonNode();
             nothing.name=CommonComponents.GUI_BACK.getString();
             nothing.id=-1;
@@ -94,10 +93,8 @@ public class NodeSelectionScreen extends Screen {
         }
 
         public void changePos(int width, int height, int y0, int y1){
-            this.width=width;
-            this.height=height;
-            this.y0=y0;
-            this.y1=y1;
+            this.setY(y0);
+            this.setSize(width, y1 - y0);
         }
 
         @Override
@@ -113,11 +110,6 @@ public class NodeSelectionScreen extends Screen {
         @Override
         public int getRowWidth() {
             return super.getRowWidth() + 50;
-        }
-
-        @Override
-        public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-            super.render(guiGraphics, i, j, f);
         }
 
         public class Entry extends ObjectSelectionList.Entry<Entry>{

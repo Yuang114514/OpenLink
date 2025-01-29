@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 public class EventCallbacks {
-    private static final ResourceLocation OPENLINK_SETTING = Utils.createResourceLocation("openlink", "textures/gui/setting_button.png");
-    private static final ResourceLocation OPENLINK_SETTING_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
+    private static final ResourceLocation OPENLINK_SETTING = Utils.createResourceLocation("openlink", "widget/setting_button");
+    private static final ResourceLocation OPENLINK_SETTING_HOVERED = Utils.createResourceLocation("openlink", "widget/setting_button_hovered");
 
     public static void onScreenInit(Minecraft minecraft, Screen screen){
         if(screen instanceof ShareToLanScreen shareToLanScreen){
@@ -44,7 +44,7 @@ public class EventCallbacks {
         }
         if(screen instanceof TitleScreen){
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
-                    20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
+                    20, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, (button) -> minecraft.setScreen(new SettingScreen(null))));
         }
     }
     public static void onClientStop(){

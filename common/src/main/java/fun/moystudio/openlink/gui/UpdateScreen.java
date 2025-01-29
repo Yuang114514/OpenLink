@@ -3,10 +3,7 @@ package fun.moystudio.openlink.gui;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.MultiLineLabel;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
@@ -34,7 +31,8 @@ public class UpdateScreen extends Screen {
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
         //以下为原版语言按钮(修改了一下位置)
-        this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
+        SpriteIconButton spriteiconbutton = this.addRenderableWidget(CommonButtons.language(20, (arg) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), true));
+        spriteiconbutton.setPosition(this.width/4-70, this.height/5*4-10);
     }
 
     private Tooltip getTooltip(){
@@ -49,8 +47,7 @@ public class UpdateScreen extends Screen {
 
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        this.renderBackground(guiGraphics);
-        text.renderCentered(guiGraphics,this.width/2,this.height/10,16,0xffffff);
         super.render(guiGraphics,i,j,f);
+        text.renderCentered(guiGraphics,this.width/2,this.height/10,16,0xffffff);
     }
 }
