@@ -31,4 +31,4 @@ ordering = "NONE"
 side = "CLIENT"
 
 [[mixins]]
-config="openlink.mixins.json"
+config = "openlink.mixins.json"

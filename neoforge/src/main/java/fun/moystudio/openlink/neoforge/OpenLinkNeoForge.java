@@ -22,7 +22,7 @@ public final class OpenLinkNeoForge {
     }
 
     @SubscribeEvent
-    public static void onClientScreenInit(ScreenEvent.Init event){
+    public static void onClientScreenInit(ScreenEvent.Init.Post event){
         EventCallbacks.onScreenInit(event.getScreen().getMinecraft(), event.getScreen());
     }
 
