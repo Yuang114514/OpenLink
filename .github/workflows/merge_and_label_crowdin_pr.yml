@@ -1,7 +1,7 @@
 name: Auto Merge
-
-on: [pull_request, pull_request_target, workflow_dispatch]
-
+on:
+- pull_request_target
+- workflow_dispatch
 jobs:
   labeler:
     runs-on: ubuntu-latest
@@ -10,73 +10,18 @@ jobs:
       pull-requests: write
     steps:
       - uses: actions/labeler@v5
-
+    
   automerge:
     needs: labeler
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+        contents: write
+        pull-requests: write
     steps:
       - id: automerge
-        name: Automerge PR
-        uses: pascalgn/automerge-action@v0.16.3
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.3"
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
           MERGE_LABELS: "crowdin"
           UPDATE_LABELS: "crowdin"
-
-  sync_and_merge:
-    if: github.event.pull_request.merged == true && contains(github.event.pull_request.labels.*.name, 'crowdin')
-    needs: automerge
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
-      - name: Configure Git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Sync master to 1.19.2
-        run: |
-          git checkout 1.19.2
-          git pull origin 1.19.2
-          git merge origin/master --no-edit || echo "No changes to merge"
-          git push origin 1.19.2 || echo "Nothing new to push"
-
-      - name: Create PR from 1.19.2 to master
-        id: pr_1_19_2_to_master
-        run: |
-          PR_URL=$(gh pr create --title "Sync master to 1.19.2" --body "Auto merge sync" --base master --head 1.19.2 || echo "")
-          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
-
-      - name: Auto-merge PR from 1.19.2 to master
-        if: steps.pr_1_19_2_to_master.outputs.pr_url != ''
-        uses: pascalgn/automerge-action@v0.16.3
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Sync 1.19.2 to 1.20.1
-        run: |
-          git checkout 1.20.1
-          git pull origin 1.20.1
-          git merge origin/1.19.2 --no-edit || echo "No changes to merge"
-          git push origin 1.20.1 || echo "Nothing new to push"
-
-      - name: Create PR from 1.20.1 to 1.19.2
-        id: pr_1_20_1_to_1_19_2
-        run: |
-          PR_URL=$(gh pr create --title "Sync 1.19.2 to 1.20.1" --body "Auto merge sync" --base 1.19.2 --head 1.20.1 || echo "")
-          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
-
-      - name: Auto-merge PR from 1.20.1 to 1.19.2
-        if: steps.pr_1_20_1_to_1_19_2.outputs.pr_url != ''
-        uses: pascalgn/automerge-action@v0.16.3
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
