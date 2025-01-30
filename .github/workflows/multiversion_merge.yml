@@ -31,7 +31,6 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Auto-merge PR from 1.20.1 to 1.19.2
-        if: steps.pr_1_20_1_to_1_19_2.outputs.pr_url != ''
         uses: pascalgn/automerge-action@v0.16.3
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
