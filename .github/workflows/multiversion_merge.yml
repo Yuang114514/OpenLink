@@ -1,4 +1,4 @@
-name: Auto Merge
+name: Multiversion Merge
 
 on:
   - workflow_dispatch
