@@ -21,8 +21,7 @@ jobs:
 
       - name: Sync master to 1.19.2
         run: |
-          git pull origin 1.19.2
-          git checkout 1.19.2
+          git checkout -b 1.19.2
           git merge origin/master --no-edit || echo "No changes to merge"
           git push origin 1.19.2 || echo "Nothing new to push"
 
@@ -41,8 +40,7 @@ jobs:
 
       - name: Sync 1.19.2 to 1.20.1
         run: |
-          git pull origin 1.20.1
-          git checkout 1.20.1
+          git checkout -b 1.20.1
           git merge origin/1.19.2 --no-edit || echo "No changes to merge"
           git push origin 1.20.1 || echo "Nothing new to push"
 
