@@ -30,6 +30,8 @@ jobs:
         run: |
           PR_URL=$(gh pr create --title "Sync master to 1.19.2" --body "Auto merge sync" --base master --head 1.19.2 || echo "")
           echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Auto-merge PR from 1.19.2 to master
         if: steps.pr_1_19_2_to_master.outputs.pr_url != ''
@@ -49,6 +51,8 @@ jobs:
         run: |
           PR_URL=$(gh pr create --title "Sync 1.19.2 to 1.20.1" --body "Auto merge sync" --base 1.19.2 --head 1.20.1 || echo "")
           echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Auto-merge PR from 1.20.1 to 1.19.2
         if: steps.pr_1_20_1_to_1_19_2.outputs.pr_url != ''
