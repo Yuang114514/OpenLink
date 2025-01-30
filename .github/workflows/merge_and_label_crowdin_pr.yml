@@ -1,13 +1,10 @@
 name: Auto Merge
 
-on:
-  pull_request_target:
-    types: [closed]
-  workflow_dispatch:
+on: [pull_request, pull_request_target, workflow_dispatch]
 
 jobs:
   labeler:
-    runs-on: ubuntu-
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
