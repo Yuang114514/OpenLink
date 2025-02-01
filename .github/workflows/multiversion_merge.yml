@@ -1,7 +1,7 @@
 name: Multiversion Merge
-
 on:
   - workflow_dispatch
+
 
 jobs:
   sync_and_merge:
@@ -51,6 +51,34 @@ jobs:
           GH_TOKEN: ${{ github.token }}
 
       - name: Auto-merge PR from 1.20.4 to 1.20.1
+        uses: pascalgn/automerge-action@v0.16.3
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: "multiversion"
+
+      - name: Create PR from 1.21 to 1.20.4
+        id: pr_1_21_to_1_20_4
+        run: |
+          PR_URL=$(gh pr create --label "multiversion" --title "Sync 1.20.4 to 1.21" --body "Auto merge sync" --base 1.21 --head 1.20.4 || echo "")
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Auto-merge PR from 1.21 to 1.20.4
+        uses: pascalgn/automerge-action@v0.16.3
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          MERGE_LABELS: "multiversion"
+
+      - name: Create PR from 1.21.4 to 1.21
+        id: pr_1_21_4_to_1_21
+        run: |
+          PR_URL=$(gh pr create --label "multiversion" --title "Sync 1.21 to 1.21.4" --body "Auto merge sync" --base 1.21.4 --head 1.21 || echo "")
+          echo "pr_url=$PR_URL" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Auto-merge PR from 1.21.4 to 1.21
         uses: pascalgn/automerge-action@v0.16.3
         env:
           GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
