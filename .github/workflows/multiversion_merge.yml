@@ -1,11 +1,6 @@
 name: Multiversion Merge
 on:
-  pull_request:
-    types: [closed]
-    branches:
-      - master
-    labels:
-      - crowdin
+  - workflow_dispatch
 
 
 jobs:
