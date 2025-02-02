@@ -3,7 +3,7 @@
   "cycle.openlink.offlinemode": "Offline Mode",
   "cycle.openlink.onlinemode": "Online Mode",
   "gui.openlink.loginscreentitle": "Natayark account Login",
-  "gui.openlink.nodeselectionscreentitle": "Nodes Selection",
+  "gui.openlink.nodeselectionscreentitle": "Node Selection",
   "gui.openlink.settingscreentitle": "OpenLink Panel",
   "gui.openlink.updatefrpctitle": "§l§gA new frpc version was found!",
   "setting.openlink.information_show": "Sensitive information hiding",
