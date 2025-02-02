@@ -1,8 +1,8 @@
 name: Auto Merge and Sync Branches
 
 on:
-  pull_request_target: # 当有 PR target 事件触发时运行
-  workflow_dispatch:   # 可手动触发此工作流
+  pull_request_target:
+  workflow_dispatch:
 
 permissions:
   contents: write       # 确保拥有内容写入权限
