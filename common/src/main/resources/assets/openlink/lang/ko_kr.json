@@ -48,6 +48,6 @@
   "text.openlink.username": "사용자 이름 또는 이메일",
   "text.openlink.userproxieslimited": "§c§l최대 프록시 수에 도달했습니다.\n일부 프록시를 삭제해 주세요!",
   "text.openlink.usingfrp": "OpenFrp 프록시 사용",
-  "text.openlink.x_axis_label": "시간",
+  "text.openlink.x_axis_label": "시각",
   "text.openlink.y_axis_label": "트래픽(MiB)"
 }
