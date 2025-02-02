@@ -1,62 +1,75 @@
-name: Auto Merge Branches on Crowdin PR
+name: Auto Merge Crowdin Changes
 
 on:
   pull_request:
-    types: [closed]
-    branches: [master]
+    types:
+      - closed
 
 jobs:
-  merge-branches:
-    if: github.event.pull_request.merged && contains(github.event.pull_request.labels.*.name, 'crowdin')
+  auto-merge:
     runs-on: ubuntu-latest
+    if: github.event.pull_request.merged == true
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Debug Event
+        run: echo ${{ toJson(github.event) }}
 
-      - name: 配置 Git 用户
+      - name: Check label
+        id: check_label
         run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
+          LABELS=$(echo ${{ toJson(github.event.pull_request.labels) }} | jq -r '.[].name')
+          echo "Found Labels: $LABELS"
+          if echo "$LABELS" | grep -q 'crowdin'; then
+            echo "Crowdin label found"
+            echo "trigger_merge=true" >> $GITHUB_ENV
+          else
+            echo "No Crowdin label found"
+            echo "trigger_merge=false" >> $GITHUB_ENV
+          fi
 
-      # 第一步：将 master 合并到 1.19.2
-      - name: Merge master into 1.19.2
+      - name: Check trigger condition
+        if: env.trigger_merge == 'true'
+        run: echo "Triggering merge workflow"
+
+      # Step 4: Merge master -> 1.19.2
+      - name: Merge master to 1.19.2
+        if: env.trigger_merge == 'true'
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
           git checkout 1.19.2
-          git pull origin 1.19.2
-          git merge origin/master --no-ff -m "Merge master into 1.19.2 (automated)"
+          git merge --no-ff master -m "Auto-merge master into 1.19.2"
           git push origin 1.19.2
 
-      # 第二步：将 1.19.2 合并到 1.20.1
-      - name: Merge 1.19.2 into 1.20.1
+      # Step 5: Merge 1.19.2 -> 1.20.1
+      - name: Merge 1.19.2 to 1.20.1
+        if: env.trigger_merge == 'true'
         run: |
           git checkout 1.20.1
-          git pull origin 1.20.1
-          git merge origin/1.19.2 --no-ff -m "Merge 1.19.2 into 1.20.1 (automated)"
+          git merge --no-ff 1.19.2 -m "Auto-merge 1.19.2 into 1.20.1"
           git push origin 1.20.1
 
-      # 第三步：将 1.20.1 合并到 1.20.4
-      - name: Merge 1.20.1 into 1.20.4
+      # Step 6: Merge 1.20.1 -> 1.20.4
+      - name: Merge 1.20.1 to 1.20.4
+        if: env.trigger_merge == 'true'
         run: |
           git checkout 1.20.4
-          git pull origin 1.20.4
-          git merge origin/1.20.1 --no-ff -m "Merge 1.20.1 into 1.20.4 (automated)"
+          git merge --no-ff 1.20.1 -m "Auto-merge 1.20.1 into 1.20.4"
           git push origin 1.20.4
 
-      # 第四步：将 1.20.4 合并到 1.21
-      - name: Merge 1.20.4 into 1.21
+      # Step 7: Merge 1.20.4 -> 1.21
+      - name: Merge 1.20.4 to 1.21
+        if: env.trigger_merge == 'true'
         run: |
           git checkout 1.21
-          git pull origin 1.21
-          git merge origin/1.20.4 --no-ff -m "Merge 1.20.4 into 1.21 (automated)"
+          git merge --no-ff 1.20.4 -m "Auto-merge 1.20.4 into 1.21"
           git push origin 1.21
 
-      # 第五步：将 1.21 合并到 1.21.4
-      - name: Merge 1.21 into 1.21.4
+      # Step 8: Merge 1.21 -> 1.21.4
+      - name: Merge 1.21 to 1.21.4
+        if: env.trigger_merge == 'true'
         run: |
           git checkout 1.21.4
-          git pull origin 1.21.4
-          git merge origin/1.21 --no-ff -m "Merge 1.21 into 1.21.4 (automated)"
+          git merge --no-ff 1.21 -m "Auto-merge 1.21 into 1.21.4"
           git push origin 1.21.4
