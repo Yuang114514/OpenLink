@@ -18,7 +18,7 @@ jobs:
       - name: Assign Labels using Labeler
         uses: actions/labeler@v5
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.Crowdin_Merge }}
 
   automerge:
     needs: labeler
@@ -30,7 +30,7 @@ jobs:
       - name: Automerge PRs with specific label
         uses: pascalgn/automerge-action@v0.16.3
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.Crowdin_Merge }}
           MERGE_LABELS: "crowdin"
           UPDATE_LABELS: "crowdin"
 
