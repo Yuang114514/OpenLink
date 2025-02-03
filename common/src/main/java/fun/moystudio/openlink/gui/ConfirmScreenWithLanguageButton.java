@@ -7,7 +7,7 @@ import net.minecraft.client.gui.components.CommonButtons;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.gui.screens.LanguageSelectScreen;
+import net.minecraft.client.gui.screens.options.LanguageSelectScreen;
 import net.minecraft.network.chat.Component;
 
 public class ConfirmScreenWithLanguageButton extends ConfirmScreen {

@@ -1,5 +1,4 @@
 modLoader = "javafml"
-# Change NeoForge Loader Version here(version migrate)
 loaderVersion = "[2,)"
 issueTrackerURL = "https://github.com/StarCarefree/OpenLink/issues"
 license = "MIT"
@@ -17,8 +16,8 @@ logoFile = "icon.png"
 [[dependencies.openlink]]
 modId = "neoforge"
 type="required"
-# And here
-versionRange = "[20,)"
+# Just here
+versionRange = "[21,)"
 ordering = "NONE"
 side = "CLIENT"
 
@@ -26,7 +25,7 @@ side = "CLIENT"
 modId = "minecraft"
 type="required"
 # Change Minecraft Version here(version migrate)
-versionRange = "[1.20.4,)"
+versionRange = "[1.21,)"
 ordering = "NONE"
 side = "CLIENT"
 
