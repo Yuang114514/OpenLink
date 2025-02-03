@@ -1,59 +1,27 @@
-name: Auto Merge and Sync Branches
-
+name: automerge
 on:
-  pull_request:
-  workflow_dispatch:
-
-permissions:
-  contents: write
-  pull-requests: write
-
+- pull_request_target
+- workflow_dispatch
 jobs:
   labeler:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
     steps:
-      - name: Assign Labels using Labeler
-        uses: actions/labeler@v5
-        with:
-          repo-token: ${{ secrets.Crowdin_Merge }}
-
+      - uses: actions/labeler@v5
+    
   automerge:
     needs: labeler
     runs-on: ubuntu-latest
     permissions:
-      contents: write
-      pull-requests: write
+        contents: write
+        pull-requests: write
     steps:
-      - name: Automerge PRs with specific label
-        uses: pascalgn/automerge-action@v0.16.3
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.3"
         env:
-          GITHUB_TOKEN: ${{ secrets.Crowdin_Merge }}
+          GITHUB_TOKEN: "${{ secrets.Crowdin_Merge }}"
           MERGE_LABELS: "crowdin"
           UPDATE_LABELS: "crowdin"
-
-  sync-branches:
-    needs: automerge
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Sync branches sequentially
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          branches=("master" "1.19.2" "1.20.1" "1.20.4" "1.21" "1.21.4")
-          for ((i=0; i<${#branches[@]}-1; i++)); do
-            source_branch=${branches[i]}
-            target_branch=${branches[i+1]}
-            echo "Merging $source_branch into $target_branch ..."
-            git checkout $target_branch || git checkout -b $target_branch
-            git merge --no-ff $source_branch -m "Auto-merge $source_branch into $target_branch"
-            git push origin $target_branch || { echo "Failed to push $target_branch"; exit 1; }
-          done
