@@ -29,9 +29,9 @@ public class NewShareToLanScreen extends Screen {
     private final Screen lastScreen;
     private GameType gameMode;
 
-    private static final ResourceLocation SETTING = Utils.createResourceLocation("openlink", "widget/setting_button");
+    private static final ResourceLocation SETTING = Utils.createResourceLocation("openlink", "textures/gui/setting_button.png");
 
-    private static final ResourceLocation SETTING_HOVERED = Utils.createResourceLocation("openlink", "widget/setting_button_hovered");
+    private static final ResourceLocation SETTING_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
 
     EditBox editBox;
 
@@ -180,13 +180,14 @@ public class NewShareToLanScreen extends Screen {
         this.addRenderableWidget(nodeselection);
         this.addRenderableWidget(usingfrp);
         this.addRenderableWidget(new ImageButtonWithHoveredState(this.width / 2 + 5 + 150 + 10, this.height - 28,
-                20, 20, SETTING, SETTING_HOVERED, (button) -> this.minecraft.setScreen(new SettingScreen(this))));
+                20, 20,  SETTING, SETTING_HOVERED, (button) -> this.minecraft.setScreen(new SettingScreen(new NewShareToLanScreen(lastScreen)))));
     }
 
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        super.render(guiGraphics, i, j, f);
+        this.renderBackground(guiGraphics, i, j, f);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 50, 16777215);
         guiGraphics.drawCenteredString(this.font, INFO_TEXT, this.width / 2, 82, 16777215);
+        super.render(guiGraphics, i, j, f);
     }
 
     private Tooltip getToolTip(){
