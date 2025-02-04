@@ -1,5 +1,6 @@
 package fun.moystudio.openlink.gui;
 
+import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -39,10 +40,12 @@ public class UpdateScreen extends Screen {
 
     private Tooltip getTooltip(){
         List<String> strings=Arrays.asList(Utils.translatableText("text.openlink.nofrpcfile").getString().split("\n"));
-        MutableComponent component= (MutableComponent) Utils.EMPTY;
-        strings.forEach((String)-> component.append(Utils.literalText(String)));
-        if(Frpc.FRPC_VERSION.length()<6){
-            return Tooltip.create(component);
+        MutableComponent component=Utils.literalText("");
+        if(component.getSiblings().isEmpty()||component.getSiblings().get(0).equals(Utils.literalText("text.openlink.nofrpcfile"))){
+            strings.forEach((String)-> component.append(Utils.literalText(String)));
+            if(Frpc.FRPC_VERSION.length()<6){
+                return Tooltip.create(component);
+            }
         }
         return Tooltip.create(Utils.EMPTY);
     }
