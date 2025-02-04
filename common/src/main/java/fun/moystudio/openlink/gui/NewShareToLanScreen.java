@@ -180,7 +180,7 @@ public class NewShareToLanScreen extends Screen {
         this.addRenderableWidget(nodeselection);
         this.addRenderableWidget(usingfrp);
         this.addRenderableWidget(new ImageButtonWithHoveredState(this.width / 2 + 5 + 150 + 10, this.height - 28,
-                20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> this.minecraft.setScreen(new SettingScreen(this))));
+                20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> this.minecraft.setScreen(new SettingScreen(new NewShareToLanScreen(this.lastScreen)))));
     }
 
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
