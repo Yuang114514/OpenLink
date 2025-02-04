@@ -555,7 +555,6 @@ public class SettingScreen extends Screen {
                 if(component.getString().contains("§n")){
                     MutableComponent component1 = (MutableComponent) component;
                     component1.withStyle((style ->style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component1)).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,component1.getString().substring(component1.getString().lastIndexOf("§n")+2)))));
-                    System.out.println(component1.getString());
                     this.component=component1;
                 }
                 else {
