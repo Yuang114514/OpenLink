@@ -80,10 +80,10 @@ public class EventCallbacks {
                         SSLUtils.sslIgnored=false;
                         try {
                             Frpc.init();//安装/检查更新frpc版本
+                            Request.readSession();//读取以前的SessionID
                         } catch (Exception e) {
                             throw new RuntimeException(e);
                         }
-                        Request.readSession();//读取以前的SessionID
                     }
                     else{
                         OpenLink.LOGGER.error("Minecraft closed because of SSL.");
