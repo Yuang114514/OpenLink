@@ -12,6 +12,7 @@ import net.minecraft.client.gui.screens.LanguageSelectScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +35,19 @@ public class UpdateScreen extends Screen {
         text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.FRPC_VERSION.length()<6 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
+        this.addRenderableWidget(new Button(this.width/2-60, this.height/5*4-10, 120, 20, Utils.translatableText("text.openlink.openstoragedir"), button -> {
+            try{
+                if(Frpc.osName.equals("windows")){
+                    Runtime.getRuntime().exec(new String[]{"explorer", "/root,"+OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
+                } else if (Frpc.osName.equals("darwin")) {
+                    Runtime.getRuntime().exec(new String[]{"open", OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
+                } else {
+                    Runtime.getRuntime().exec(new String[]{"xdg-open", OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }));
         //以下为原版语言按钮(修改了一下位置)
         this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
     }

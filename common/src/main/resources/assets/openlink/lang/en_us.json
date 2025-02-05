@@ -31,7 +31,7 @@
   "text.openlink.node_available": "§a§lAvailable",
   "text.openlink.node_needrealname": "§6§lNeed real name",
   "text.openlink.node_unavailable": "§c§lUnavailable",
-  "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in game directory,\n§o§l§cplease download it.",
+  "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in storage directory,\n§o§l§cplease download it.",
   "text.openlink.notcompleted": "Username or password does not completed.",
   "text.openlink.now": "Now",
   "text.openlink.onlinemodebutton": "Auth Mode",
@@ -49,5 +49,6 @@
   "text.openlink.userproxieslimited": "§c§lYou have reached the maximum number of proxies.\nPlease delete some proxies!",
   "text.openlink.usingfrp": "Using OpenFrp proxy",
   "text.openlink.x_axis_label": "Time",
-  "text.openlink.y_axis_label": "Traffic(MiB)"
+  "text.openlink.y_axis_label": "Traffic(MiB)",
+  "text.openlink.openstoragedir": "Open storage folder"
 }
