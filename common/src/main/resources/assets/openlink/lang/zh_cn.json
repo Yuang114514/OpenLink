@@ -49,5 +49,6 @@
   "text.openlink.userproxieslimited": "§c§l您的OpenFrp账户已创建的隧道数达到允许的最大数目。\n请删除一个隧道后再次尝试！",
   "text.openlink.usingfrp": "使用 OpenFrp 内穿",
   "text.openlink.x_axis_label": "时间",
-  "text.openlink.y_axis_label": "流量(MiB)"
+  "text.openlink.y_axis_label": "流量(MiB)",
+  "text.openlink.openstoragedir": "打开存储文件夹"
 }
