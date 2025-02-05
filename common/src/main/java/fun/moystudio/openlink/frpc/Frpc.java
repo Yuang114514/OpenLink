@@ -42,25 +42,6 @@ public class Frpc {
 
     public static void init() throws Exception {
         Gson gson=new Gson();
-        if(!frpcVersionFile.exists()){
-            OpenLink.LOGGER.warn("frpc.json(frpc version file) does not exist, creating...");
-            frpcVersionFile.createNewFile();
-            try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
-                frpcVersionFileOutput.write("{\"version\":\"0\"}".getBytes());
-            }
-            OpenLink.LOGGER.info("Created frpc.json(frpc version file)!");
-        }
-        try(FileInputStream frpcVersionFileInput = new FileInputStream(frpcVersionFile)){
-            JsonFrpcVersion frpcVersion=gson.fromJson(new String(frpcVersionFileInput.readAllBytes(), StandardCharsets.UTF_8), JsonFrpcVersion.class);
-            if(frpcVersion.version==null){
-                try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
-                    frpcVersionFileOutput.write("{\"version\":\"0\"}".getBytes());
-                }
-                frpcVersion.version="0";
-            }
-            FRPC_VERSION=frpcVersion.version;
-        }
-
         String os_name=System.getProperty("os.name");
         osArch=System.getProperty("os.arch").toLowerCase();
         if(osArch.contains("i386")){
@@ -84,6 +65,29 @@ public class Frpc {
         }
         frpcExecutableFile=new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"frpc_"+osName+"_"+osArch+suffix);
         frpcArchiveFile=new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"frpc"+zsuffix);
+        if(!frpcVersionFile.exists()){
+            OpenLink.LOGGER.warn("frpc.json(frpc version file) does not exist, creating...");
+            frpcVersionFile.createNewFile();
+            try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
+                String version = "0";
+                if(frpcExecutableFile.exists()){
+                    String versiontmp = new String(Runtime.getRuntime().exec(new String[]{frpcExecutableFile.getAbsolutePath(),"-v"}).getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                    version = versiontmp.split("_")[1];
+                }
+                frpcVersionFileOutput.write(("{\"version\":\""+version+"\"}").getBytes());
+            }
+            OpenLink.LOGGER.info("Created frpc.json(frpc version file)!");
+        }
+        try(FileInputStream frpcVersionFileInput = new FileInputStream(frpcVersionFile)){
+            JsonFrpcVersion frpcVersion=gson.fromJson(new String(frpcVersionFileInput.readAllBytes(), StandardCharsets.UTF_8), JsonFrpcVersion.class);
+            if(frpcVersion.version==null){
+                try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
+                    frpcVersionFileOutput.write("{\"version\":\"0\"}".getBytes());
+                }
+                frpcVersion.version="0";
+            }
+            FRPC_VERSION=frpcVersion.version;
+        }
         if(checkUpdate()){
             OpenLink.LOGGER.info("The update screen will show after the main game screen loaded.");
         }
