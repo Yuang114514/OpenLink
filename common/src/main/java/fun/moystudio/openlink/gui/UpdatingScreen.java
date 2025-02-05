@@ -1,17 +1,10 @@
 package fun.moystudio.openlink.gui;
 
-<<<<<<< HEAD
-
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.GuiGraphics;
-=======
-import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
-import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.components.Button;
->>>>>>> origin/1.19.2
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import org.spongepowered.asm.mixin.Unique;
