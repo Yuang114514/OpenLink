@@ -32,6 +32,9 @@ public class UpdateScreen extends Screen {
         no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> this.onClose(), (button, poseStack, i, j) -> {
             if(Frpc.FRPC_VERSION.length()<6){
                 renderComponentTooltip(poseStack, list, i, j);
+            } else {
+                Frpc.hasUpdate = false;
+                this.minecraft.setScreen(null);
             }
         });
         if(Frpc.FRPC_VERSION.length()<6){
