@@ -23,8 +23,8 @@ body:
 - type: textarea
   id: "yml-3"
   attributes:
-    label: Loader and Version
-    placeholder: "For example: fabric-0.16.9, forge-45.3.0"
+    label: Loader Version and Minecraft Version
+    placeholder: "For example: fabric-0.16.9/1.20.1，forge-45.3.0/1.21.4"
   validations:
     required: true
 - type: textarea
