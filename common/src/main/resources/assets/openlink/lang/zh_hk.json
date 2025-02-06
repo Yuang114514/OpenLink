@@ -49,5 +49,6 @@
   "text.openlink.userproxieslimited": "§c§l你嘅OpenFrp帳號，已經超過咗隧道創建上限\n請刪除一個隧道後再嘗試！",
   "text.openlink.usingfrp": "使用 OpenFrp 轉發端號",
   "text.openlink.x_axis_label": "時間",
-  "text.openlink.y_axis_label": "流量（MB）"
+  "text.openlink.y_axis_label": "流量（MB）",
+  "text.openlink.openstoragedir": "打開存儲資料夾"
 }
