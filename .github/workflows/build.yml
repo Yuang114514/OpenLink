@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Setup Zulu JDK
         uses: actions/setup-java@v3
@@ -32,7 +34,7 @@ jobs:
           branches=("master" "1.19.2" "1.20.1" "1.20.4" "1.21" "1.21.4")
           
           for branch in "${branches[@]}"; do
-            git checkout -b "$branch"
+            git checkout $target_branch || git checkout -b $target_branch
             ./gradlew build
           done
 
