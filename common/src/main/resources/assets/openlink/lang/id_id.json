@@ -49,5 +49,6 @@
   "text.openlink.userproxieslimited": "§c§lAnda telah mencapai jumlah maksimum proxy.\nHarap hapus beberapa proxy!",
   "text.openlink.usingfrp": "Menggunakan proksi OpenFrp",
   "text.openlink.x_axis_label": "Waktu",
-  "text.openlink.y_axis_label": "Trafik(MiB)"
+  "text.openlink.y_axis_label": "Trafik(MiB)",
+  "text.openlink.openstoragedir": "Buka folder penyimpanan"
 }
