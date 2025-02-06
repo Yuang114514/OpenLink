@@ -81,10 +81,19 @@ public class Frpc {
         try(FileInputStream frpcVersionFileInput = new FileInputStream(frpcVersionFile)){
             JsonFrpcVersion frpcVersion=gson.fromJson(new String(frpcVersionFileInput.readAllBytes(), StandardCharsets.UTF_8), JsonFrpcVersion.class);
             if(frpcVersion.version==null){
+                if(frpcExecutableFile.exists()){
+                    String versiontmp = new String(Runtime.getRuntime().exec(new String[]{frpcExecutableFile.getAbsolutePath(),"-v"}).getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                    frpcVersion.version = versiontmp.split("_")[1];
+                }
                 try (FileOutputStream frpcVersionFileOutput = new FileOutputStream(frpcVersionFile)){
                     frpcVersionFileOutput.write("{\"version\":\"0\"}".getBytes());
                 }
                 frpcVersion.version="0";
+            } else if(frpcVersion.version.equals("0")){
+                if(frpcExecutableFile.exists()){
+                    String versiontmp = new String(Runtime.getRuntime().exec(new String[]{frpcExecutableFile.getAbsolutePath(),"-v"}).getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+                    frpcVersion.version = versiontmp.split("_")[1];
+                }
             }
             FRPC_VERSION=frpcVersion.version;
         }
@@ -94,14 +103,15 @@ public class Frpc {
     }
 
     public static void update() throws Exception {
-        boolean oofcd=downloadFrpcByUrl(Uris.frpcDownloadUri+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
-        if(!oofcd){
-            boolean zyghit=downloadFrpcByUrl(Uris.frpcDownloadUri1+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
-            if(!zyghit){
+        boolean zyghit=downloadFrpcByUrl(Uris.frpcDownloadUri1+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+        if(!zyghit){
+            boolean oofcd=downloadFrpcByUrl(Uris.frpcDownloadUri+folderName+"frpc_"+osName+"_"+osArch+zsuffix);
+            if(!oofcd){
                 OpenLink.LOGGER.error("Can not download frpc! Stopping...");
                 throw new RuntimeException("[OpenLink] Can not download frpc!");
             }
         }
+
         OpenLink.LOGGER.info("Extracting frpc archive file...");
         Extract.ExtractBySuffix(frpcArchiveFile.getAbsoluteFile(),zsuffix);
         OpenLink.LOGGER.info("Extracted frpc archive file successfully!");
@@ -155,7 +165,10 @@ public class Frpc {
             }
         },"Frpc download thread");
         thread.start();
-        thread.join();
+        thread.join(30*1000);
+        if(thread.isAlive()){
+            success.set(false);
+        }
         return success.get();
     }
 
