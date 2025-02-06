@@ -165,7 +165,10 @@ public class Frpc {
             }
         },"Frpc download thread");
         thread.start();
-        thread.join();
+        thread.join(30*1000);
+        if(thread.isAlive()){
+            success.set(false);
+        }
         return success.get();
     }
 
