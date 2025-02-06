@@ -49,5 +49,6 @@
   "text.openlink.userproxieslimited": "§c§l君已至代理之极数,请删数代理!",
   "text.openlink.usingfrp": "OpenFrp内穿用之",
   "text.openlink.x_axis_label": "时",
-  "text.openlink.y_axis_label": "流通之数(MiB)"
+  "text.openlink.y_axis_label": "流通之数(MiB)",
+  "text.openlink.openstoragedir": "开Frpc存储之位"
 }
