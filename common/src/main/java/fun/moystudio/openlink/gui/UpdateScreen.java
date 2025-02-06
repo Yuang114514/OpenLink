@@ -27,7 +27,7 @@ public class UpdateScreen extends Screen {
     protected void init(){
 
         yes=Button.builder(CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen())).bounds(this.width/4-40,this.height/5*4-10,80,20).build();
-        no=Button.builder(CommonComponents.GUI_NO,button -> this.onClose()).tooltip(getTooltip()).bounds(this.width/4*3-40,this.height/5*4-10,80,20).build();
+        no=Button.builder(CommonComponents.GUI_NO,button -> {Frpc.hasUpdate=false;this.onClose();}).tooltip(getTooltip()).bounds(this.width/4*3-40,this.height/5*4-10,80,20).build();
         if(Frpc.FRPC_VERSION.length()<6){
             no.active=false;
         }
@@ -46,7 +46,7 @@ public class UpdateScreen extends Screen {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }).bounds(this.width/2-60, this.height/5*4-10, 120, 20).build());
+        }).build());
         //以下为原版语言按钮(修改了一下位置)
         this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
     }
