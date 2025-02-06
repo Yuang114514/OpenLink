@@ -33,8 +33,8 @@ jobs:
           
           branches=("master" "1.19.2" "1.20.1" "1.20.4" "1.21" "1.21.4")
           
-          for branch in "${branches[@]}"; do
-            git checkout $target_branch || git checkout -b $target_branch
+          for ((i=0; i<${#branches[@]}; i++)); do
+            git checkout ${branches[i]} || git checkout -b ${branches[i]}
             ./gradlew build
           done
 
