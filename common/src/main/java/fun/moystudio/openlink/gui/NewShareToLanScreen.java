@@ -184,7 +184,6 @@ public class NewShareToLanScreen extends Screen {
     }
 
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
-        this.renderBackground(guiGraphics, i, j, f);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 50, 16777215);
         guiGraphics.drawCenteredString(this.font, INFO_TEXT, this.width / 2, 82, 16777215);
         super.render(guiGraphics, i, j, f);
