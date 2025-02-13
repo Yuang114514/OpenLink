@@ -51,6 +51,7 @@ public class Frpc {
             osName="windows";
         } else if (os_name.contains("OS X")) {
             osName="darwin";
+            osArch=osArch.equals("x86_64")?"amd64":"arm64";
         } else if (os_name.contains("Linux")||os_name.contains("Unix")) {
             osName="linux";
         } else if (os_name.contains("FreeBSD")){
