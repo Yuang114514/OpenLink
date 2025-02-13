@@ -29,9 +29,9 @@ public class NewShareToLanScreen extends Screen {
     private final Screen lastScreen;
     private GameType gameMode;
 
-    private static final ResourceLocation SETTING = Utils.createResourceLocation("openlink", "textures/gui/setting_button.png");
+    private static final ResourceLocation SETTING = Utils.createResourceLocation("openlink", "widget/setting_button");
 
-    private static final ResourceLocation SETTING_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
+    private static final ResourceLocation SETTING_HOVERED = Utils.createResourceLocation("openlink", "widget/setting_button");
 
     EditBox editBox;
 
