@@ -23,8 +23,8 @@ body:
 - type: textarea
   id: "yml-3"
   attributes:
-    label: 加载器及版本
-    placeholder: "例如：fabric-0.16.9，forge-45.3.0"
+    label: 加载器版本及游戏版本
+    placeholder: "例如：fabric-0.16.9/1.20.1，forge-45.3.0/1.21.4"
   validations:
     required: true
 - type: textarea
