@@ -51,5 +51,6 @@
   "text.openlink.x_axis_label": "Time",
   "text.openlink.y_axis_label": "Traffic(MiB)",
   "text.openlink.openstoragedir": "Open storage folder",
-  "text.openlink.fastlogin": "Fast Login"
+  "text.openlink.fastlogin": "Fast Login",
+  "text.openlink.fastloginconfirm": "Press any button below when you finished logging in."
 }

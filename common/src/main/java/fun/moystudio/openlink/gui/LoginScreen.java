@@ -38,28 +38,9 @@ public class LoginScreen extends Screen {
                 LoginGetCodeHttpServer codeHttpServer = new LoginGetCodeHttpServer();
                 codeHttpServer.start();
                 new WebBrowser(Uris.openidLoginUri+"oauth2/authorize?response_type=code&redirect_uri=http://launcher.openfrp.net:"+codeHttpServer.port+"/oauth_callback&client_id=openfrp").openBrowser();
-                while(codeHttpServer.code==null){
-                }
-                codeHttpServer.stop();
-                try {
-                    Request.POST(Uris.openFrpAPIUri.toString() + "oauth2/callback?code=" + codeHttpServer.code, Request.DEFAULT_HEADER, "{}");
-                } catch (Exception e) {
-                    wrongmsg = e.getMessage();
-                    e.printStackTrace();
-                    return;
-                }
-                //Authorization会在POST里写储存和放置到注册表的
-                if(remember.selected()){
-                    OpenLink.PREFERENCES.put("last_username",this.username.getValue());
-                    OpenLink.PREFERENCES.put("last_password",this.password.getValue());
-                }
-                else {
-                    OpenLink.PREFERENCES.remove("last_username");
-                    OpenLink.PREFERENCES.remove("last_password");
-                }
-                this.onClose();
             }, "Login thread").start();
             button.active=false;
+            this.minecraft.setScreen(new ConfirmScreenWithLanguageButton(confirmed -> this.onClose(), Utils.translatableText("text.openlink.fastlogin"), Utils.translatableText("text.openlink.fastloginconfirm")));
         }));
         username = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 58, 200, 20, Utils.translatableText("text.openlink.username"));
         password = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 98, 200, 20, Utils.translatableText("text.openlink.password"));
