@@ -33,7 +33,34 @@ public class LoginScreen extends Screen {
     @Override
     protected void init() {
         loginTips = MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.logintips"), this.width - 50);
-
+        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6, 200, 20, Utils.translatableText("text.openlink.fastlogin"), (button) ->{
+            new Thread(()->{
+                LoginGetCodeHttpServer codeHttpServer = new LoginGetCodeHttpServer();
+                codeHttpServer.start();
+                new WebBrowser(Uris.openidLoginUri+"oauth2/authorize?response_type=code&redirect_uri=http://launcher.openfrp.net:"+codeHttpServer.port+"/oauth_callback&client_id=openfrp").openBrowser();
+                while(codeHttpServer.code==null){
+                }
+                codeHttpServer.stop();
+                try {
+                    Request.POST(Uris.openFrpAPIUri.toString() + "oauth2/callback?code=" + codeHttpServer.code, Request.DEFAULT_HEADER, "{}");
+                } catch (Exception e) {
+                    wrongmsg = e.getMessage();
+                    e.printStackTrace();
+                    return;
+                }
+                //Authorization会在POST里写储存和放置到注册表的
+                if(remember.selected()){
+                    OpenLink.PREFERENCES.put("last_username",this.username.getValue());
+                    OpenLink.PREFERENCES.put("last_password",this.password.getValue());
+                }
+                else {
+                    OpenLink.PREFERENCES.remove("last_username");
+                    OpenLink.PREFERENCES.remove("last_password");
+                }
+                this.onClose();
+            }, "Login thread").start();
+            button.active=false;
+        }));
         username = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 58, 200, 20, Utils.translatableText("text.openlink.username"));
         password = new EditBox(this.font, this.width / 2 - 100, this.height / 6 + 98, 200, 20, Utils.translatableText("text.openlink.password"));
         username.setValue(OpenLink.PREFERENCES.get("last_username",""));
