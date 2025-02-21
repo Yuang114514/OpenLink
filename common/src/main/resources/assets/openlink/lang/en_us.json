@@ -32,12 +32,9 @@
   "text.openlink.node_needrealname": "§6§lNeed real name",
   "text.openlink.node_unavailable": "§c§lUnavailable",
   "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in storage directory,\n§o§l§cplease download it.",
-  "text.openlink.notcompleted": "Username or password does not completed.",
   "text.openlink.now": "Now",
   "text.openlink.onlinemodebutton": "Auth Mode",
-  "text.openlink.password": "Password",
   "text.openlink.proxycount": "Proxies: %s/%s",
-  "text.openlink.rememberuserandpassword": "Remember username and password",
   "text.openlink.remote_port": "Proxy remote port(Optional)",
   "text.openlink.remoteportnotfound": "§c§lCan not find any available remote port after 5 tries§o§i\n(Maybe you are not lucky today :>)",
   "text.openlink.secure": "Secure",
@@ -45,12 +42,12 @@
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 SSL ignoring may make your user and password INSECURE. \n§c§o§lPlease don't send IP to anyone YOU DON'T TRUST!",
   "text.openlink.updatefrpc": "§l§gA new frpc version was found! §r§g Latest version:§l§v %s §r§g, §gcurrent version:§l§v %s §r§g. §bWould you like to update?",
   "text.openlink.updatingfrpc": "§o§6Updating frpc...§s(It may takes a while)",
-  "text.openlink.username": "Username or e-mail",
   "text.openlink.userproxieslimited": "§c§lYou have reached the maximum number of proxies.\nPlease delete some proxies!",
   "text.openlink.usingfrp": "Using OpenFrp proxy",
   "text.openlink.x_axis_label": "Time",
   "text.openlink.y_axis_label": "Traffic(MiB)",
   "text.openlink.openstoragedir": "Open storage folder",
   "text.openlink.fastlogin": "Fast Login",
-  "text.openlink.fastloginconfirm": "Press any button below when you finished logging in."
+  "text.openlink.fastloginconfirm": "The login page is opened in your browser.(if not, you can paste the url to your browser from your clipboard) Press any button below when you finished logging in.",
+  "text.openlink.authorization": "Enter Authorization code"
 }

@@ -2,8 +2,6 @@ package fun.moystudio.openlink.network;
 
 import com.sun.net.httpserver.HttpServer;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.gui.LoginScreen;
-import net.minecraft.client.Minecraft;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -60,7 +58,7 @@ public class LoginGetCodeHttpServer {
                     }
                     if(this.code!=null){
                         try {
-                            Request.POST(Uris.openFrpAPIUri + "oauth2/callback?code=" + this.code, Request.DEFAULT_HEADER, "{}");
+                            Request.POST(Uris.openFrpAPIUri + "oauth2/callback?code=" + this.code + "&redirect_url=http://localhost:"+this.port, Request.DEFAULT_HEADER, "{}");
                         } catch (Exception e) {
                             e.printStackTrace();
                             throw new RuntimeException(e);
