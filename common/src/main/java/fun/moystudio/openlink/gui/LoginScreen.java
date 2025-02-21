@@ -49,7 +49,6 @@ public class LoginScreen extends Screen {
             Request.Authorization = authorization.getValue();
             try {
                 JsonResponseWithData<JsonUserInfo> response = Request.getUserInfo();
-                System.out.println(response.msg+response.flag);
                 if(response!=null&&response.flag){
                     this.onClose();
                 } else {
