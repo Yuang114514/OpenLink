@@ -49,5 +49,5 @@
   "text.openlink.openstoragedir": "Open storage folder",
   "text.openlink.fastlogin": "Fast Login",
   "text.openlink.fastloginconfirm": "The login page is opened in your browser.(if not, you can paste the url to your browser from your clipboard) Press any button below when you finished logging in.",
-  "text.openlink.authorization": "Enter Authorization code"
+  "text.openlink.authorization": "Enter Authorization code to login(you can get it from OpenFrp Panel)"
 }

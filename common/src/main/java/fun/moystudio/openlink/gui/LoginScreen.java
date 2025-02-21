@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.json.JsonResponseWithData;
+import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.WebBrowser;
 import fun.moystudio.openlink.network.*;
@@ -19,7 +20,7 @@ public class LoginScreen extends Screen {
     }
     Screen lastscreen;
     MultiLineLabel loginTips;
-    EditBox authorization=new EditBox(Minecraft.getInstance().font, this.width / 2 - 100, this.height / 6 * 3, 150, 20, Utils.translatableText("text.openlink.authorization"));
+    EditBox authorization=new EditBox(Minecraft.getInstance().font, this.width / 2 - 200, this.height / 6 * 3, 355, 20, Utils.translatableText("text.openlink.authorization"));
     WebBrowser browser=new WebBrowser(Uris.openidLoginUri.toString());
 
     @Override
@@ -40,13 +41,16 @@ public class LoginScreen extends Screen {
                 this.onClose();
             }
         }));
-        authorization.setX(this.width / 2 - 100);
+        authorization.setMaxLength(100);
+        authorization.setX(this.width / 2 - 200);
         authorization.y=this.height/2;
         this.addRenderableWidget(authorization);
-        this.addRenderableWidget(new Button(this.width / 2 + 60, this.height / 2, 40, 20, CommonComponents.GUI_DONE, button -> {
+        this.addRenderableWidget(new Button(this.width / 2 + 160, this.height / 2, 40, 20, CommonComponents.GUI_DONE, button -> {
             Request.Authorization = authorization.getValue();
             try {
-                if(Request.getUserInfo()!=null&&Request.getUserInfo().flag){
+                JsonResponseWithData<JsonUserInfo> response = Request.getUserInfo();
+                System.out.println(response.msg+response.flag);
+                if(response!=null&&response.flag){
                     this.onClose();
                 } else {
                     Request.Authorization = null;
