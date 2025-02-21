@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(UUIDUtil.class)
 public abstract class UUIDUtilMixin {
     @Inject(method = "createOfflinePlayerUUID", at = @At("HEAD"), cancellable = true)
-    private static void openLink$createOfflinePlayerUUID(String string, CallbackInfoReturnable<UUID> cir) {
+    private static void openLink$createOfflinePlayerUUIDMixin(String string, CallbackInfoReturnable<UUID> cir) {
         UUID uuid = UUIDFixer.hookEntry(string);
         if (uuid != null) {
             cir.setReturnValue(uuid);
