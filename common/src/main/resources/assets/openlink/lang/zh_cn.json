@@ -50,5 +50,8 @@
   "text.openlink.usingfrp": "使用 OpenFrp 内穿",
   "text.openlink.x_axis_label": "时间",
   "text.openlink.y_axis_label": "流量(MiB)",
-  "text.openlink.openstoragedir": "打开存储文件夹"
+  "text.openlink.openstoragedir": "打开存储文件夹",
+  "text.openlink.fastlogin": "快速登录",
+  "text.openlink.fastloginconfirm": "登录页面已在您的浏览器中打开。（如果没有，您可以从剪贴板粘贴到您的浏览器）当您完成登录后，点击下面的任何按钮。",
+  "text.openlink.authorization": "输入Authorization（您可从OpenFrp面板中获取）"
 }
