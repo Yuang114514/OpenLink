@@ -2,9 +2,6 @@ package fun.moystudio.openlink.gui;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mojang.datafixers.util.Pair;
-import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.json.JsonResponseWithCode;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.Utils;
@@ -15,8 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.*;
-import java.util.List;
-import java.util.Map;
 
 public class LoginScreen extends Screen {
     public LoginScreen(Screen last) {
@@ -31,7 +26,7 @@ public class LoginScreen extends Screen {
     @Override
     protected void init() {
         loginTips = MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.logintips"), this.width - 50);
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 * 2, 200, 20, Utils.translatableText("text.openlink.fastlogin"), (button) ->{
+        this.addRenderableWidget(Button.builder(Utils.translatableText("text.openlink.fastlogin"), (button) ->{
             Gson gson = new Gson();
             LoginGetCodeHttpServer codeHttpServer = new LoginGetCodeHttpServer();
             codeHttpServer.start();
@@ -45,12 +40,12 @@ public class LoginScreen extends Screen {
                 e.printStackTrace();
                 this.onClose();
             }
-        }));
+        }).bounds(this.width / 2 - 100, this.height / 6 * 2, 200, 20).build());
         authorization.setMaxLength(100);
         authorization.setX(this.width / 2 - 200);
-        authorization.y=this.height/2;
+        authorization.setY(this.height/2);
         this.addRenderableWidget(authorization);
-        this.addRenderableWidget(new Button(this.width / 2 + 160, this.height / 2, 40, 20, CommonComponents.GUI_DONE, button -> {
+        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
             Request.Authorization = authorization.getValue();
             try {
                 JsonResponseWithData<JsonUserInfo> response = Request.getUserInfo();
@@ -63,9 +58,9 @@ public class LoginScreen extends Screen {
                 Request.Authorization = null;
             }
             Request.writeSession();
-        }));
+        }).bounds(this.width / 2 + 160, this.height / 2, 40, 20).build());
         //注册
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 * 4 , 200, 20, Utils.translatableText("text.openlink.no_account"), (button) -> browser.openBrowser()));
+        this.addRenderableWidget(Button.builder(Utils.translatableText("text.openlink.no_account"), (button) -> browser.openBrowser()).bounds(this.width / 2 - 100, this.height / 6 * 4 , 200, 20).build());
     }
 
     @Override
