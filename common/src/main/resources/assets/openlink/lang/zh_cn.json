@@ -32,12 +32,9 @@
   "text.openlink.node_needrealname": "§6§l需要实名认证",
   "text.openlink.node_unavailable": "§c§l不可用",
   "text.openlink.nofrpcfile": "§3无法在游戏目录中找到任何可用的 frpc 核心，\n§o§l§c请下载frpc核心。",
-  "text.openlink.notcompleted": "用户名或邮箱或者密码未填写完成",
   "text.openlink.now": "现在",
   "text.openlink.onlinemodebutton": "验证模式",
-  "text.openlink.password": "密码",
   "text.openlink.proxycount": "隧道数: %s/%s",
-  "text.openlink.rememberuserandpassword": "记住用户名和密码",
   "text.openlink.remote_port": "远程端口（选填）",
   "text.openlink.remoteportnotfound": "§c§l在 5 次尝试后找不到任何可用的远程端口§o§i（也许你今天太不幸运了 :> ）",
   "text.openlink.secure": "安全",
@@ -45,10 +42,12 @@
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 忽略 SSL 可能会使您的内穿账号和密码不安全. \n§c§o§l请不要将 IP 发送给任何您不信任的人！",
   "text.openlink.updatefrpc": "§l§g发现一个新的frpc核心！§r§g最新核心版本：§l§u%s§r§g，当前核心版本：§l§u%s§r§g。§6你是否需要更新？",
   "text.openlink.updatingfrpc": "§o§s正在更新Frpc核心...§8(这可能会耗费少许时间)",
-  "text.openlink.username": "用户名或邮箱",
   "text.openlink.userproxieslimited": "§c§l您的OpenFrp账户已创建的隧道数达到允许的最大数目。\n请删除一个隧道后再次尝试！",
   "text.openlink.usingfrp": "使用 OpenFrp 内穿",
   "text.openlink.x_axis_label": "时间",
   "text.openlink.y_axis_label": "流量(MiB)",
-  "text.openlink.openstoragedir": "打开存储文件夹"
+  "text.openlink.openstoragedir": "打开存储文件夹",
+  "text.openlink.fastlogin": "快速登录",
+  "text.openlink.fastloginconfirm": "登录页面已在您的浏览器中打开。（如果没有，您可以从剪贴板粘贴到您的浏览器）当您完成登录后，点击下面的任何按钮。",
+  "text.openlink.authorization": "输入Authorization（您可从OpenFrp面板中获取）"
 }
