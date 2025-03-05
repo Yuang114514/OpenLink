@@ -25,9 +25,6 @@ public class UpdateScreen extends Screen {
 
         yes=Button.builder(CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen())).bounds(this.width/4-40,this.height/5*4-10,80,20).build();
         no=Button.builder(CommonComponents.GUI_NO,button -> {if(Frpc.FRPC_VERSION.length()<6)OpenLink.disabled=true;this.onClose();}).tooltip(getTooltip()).bounds(this.width/4*3-40,this.height/5*4-10,80,20).build();
-        if(Frpc.FRPC_VERSION.length()<6){
-            no.active=false;
-        }
         text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.FRPC_VERSION.length()<6 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
