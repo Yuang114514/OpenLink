@@ -97,6 +97,32 @@ public class Request {
 
     }
 
+    public static Pair<String,Map<String, List<String>>> GETWithHeader(String url, Map<String,List<String>> header) throws Exception{
+        URL postUrl=new URL(url);
+        HttpsURLConnection connection=(HttpsURLConnection) postUrl.openConnection();
+        connection.setRequestMethod("GET");
+        header.forEach(((s, strings) -> strings.forEach(s1 -> connection.addRequestProperty(s,s1))));
+        try(BufferedReader br=new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))){
+            StringBuilder re=new StringBuilder();
+            String line;
+            while((line=br.readLine())!=null){
+                re.append(line.trim());
+            }
+            return new Pair<>(re.toString(),connection.getHeaderFields());
+        }catch (Exception e){
+            if(connection.getResponseCode()>=400){
+                BufferedReader br=new BufferedReader(new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8));
+                StringBuilder re=new StringBuilder();
+                String line;
+                while((line=br.readLine())!=null){
+                    re.append(line.trim());
+                }
+                return new Pair<>(re.toString(),connection.getHeaderFields());
+            }
+            throw e;
+        }
+    }
+
     public static Map<String,List<String>> getHeaderWithCookieByResponse(Pair<String,Map<String, List<String>>> response,Map<String,List<String>> header){
         if(!response.getSecond().containsKey("Set-Cookie")){
             return header;

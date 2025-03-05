@@ -38,6 +38,7 @@ configurations {
 
 dependencies {
     forge "net.minecraftforge:forge:$rootProject.forge_version"
+    forgeRuntimeLibrary 'eu.neilalexander:jnacl:1.0.0'
 
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
