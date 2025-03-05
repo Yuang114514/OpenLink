@@ -23,7 +23,7 @@ public class LineChartWidget extends AbstractWidget {
 
 
     public LineChartWidget(Font font, int x1, int y1, int x2, int y2, Component labelX,Component labelY, List<Pair<String,Long>> dataPoints){
-        super(x1,y1,x2-x1+1,y2-y1+1,Utils.EMPTY);
+        super(x1,y1,x2-x1+1,y2-y1+1,Utils.emptyText());
         this.font=font;
         this.dataPoints=dataPoints;
         this.labelX=labelX;

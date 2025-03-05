@@ -60,7 +60,7 @@ public class UpdateScreen extends Screen {
                 return Tooltip.create(component);
             }
         }
-        return Tooltip.create(Utils.EMPTY);
+        return Tooltip.create(Utils.emptyText());
     }
 
     @Override
