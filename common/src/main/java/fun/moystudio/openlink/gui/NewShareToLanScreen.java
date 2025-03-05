@@ -190,15 +190,15 @@ public class NewShareToLanScreen extends Screen {
     }
 
     private Tooltip getToolTip(){
-        if(OpenLink.disabled) return Tooltip.create(Utils.EMPTY);
+        if(OpenLink.disabled) return Tooltip.create(Utils.emptyText());
         if(Request.Authorization==null){
-            MutableComponent component= (MutableComponent) Utils.EMPTY;
+            MutableComponent component=Utils.emptyText();
             String[] list1=Utils.translatableText("text.openlink.lanlogintips").getString().split("\n");
             for(String s:list1){
                 component.append(Utils.literalText(s));
             }
             return Tooltip.create(component);
         }
-        return Tooltip.create(Utils.EMPTY);
+        return Tooltip.create(Utils.emptyText());
     }
 }

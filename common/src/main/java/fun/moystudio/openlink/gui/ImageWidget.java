@@ -11,7 +11,7 @@ public class ImageWidget extends AbstractWidget {
     public ResourceLocation texture;
     private final int textureWidth,textureHeight,uOffset,vOffset;
     public ImageWidget(int x1, int y1, int uOffset1, int vOffset1, int width1, int height1, int textureWidth1, int textureHeight1, ResourceLocation rl){
-        super(x1,y1,width1,height1, Utils.EMPTY);
+        super(x1,y1,width1,height1, Utils.emptyText());
         uOffset=uOffset1;
         vOffset=vOffset1;
         textureWidth=textureWidth1;
