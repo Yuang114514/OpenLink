@@ -69,4 +69,10 @@ public class UpdateScreen extends Screen {
         text.renderCentered(guiGraphics,this.width/2,this.height/10,16,0xffffff);
         super.render(guiGraphics,i,j,f);
     }
+
+    @Override
+    public void onClose(){
+        Frpc.hasUpdate = false;
+        this.minecraft.setScreen(null);
+    }
 }
