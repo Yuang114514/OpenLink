@@ -82,7 +82,7 @@ public class EventCallbacks {
                             Frpc.init();//安装/检查更新frpc版本
                             Request.readSession();//读取以前的SessionID
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            e.printStackTrace();
                         }
                     }
                     else{
