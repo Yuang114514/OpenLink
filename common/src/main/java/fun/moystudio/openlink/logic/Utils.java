@@ -5,7 +5,9 @@ import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 
 public class Utils {
-    public static Component EMPTY=TextComponent.EMPTY;
+    public static MutableComponent emptyText() {
+        return TextComponent.EMPTY.copy();
+    }
     public static MutableComponent translatableText(String key, Object... objects) {
         return new TranslatableComponent(key,objects);
     }
