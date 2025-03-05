@@ -32,12 +32,9 @@
   "text.openlink.node_needrealname": "§6§lPerlu nama sebenar",
   "text.openlink.node_unavailable": "§c§lTidak tersedia",
   "text.openlink.nofrpcfile": "§3Tidak dapat mencari fail boleh laku frpc dalam direktori storan, §o§l§csila muat turunnya.",
-  "text.openlink.notcompleted": "Nama pengguna atau kata laluan tidak lengkap.",
   "text.openlink.now": "Sekarang",
   "text.openlink.onlinemodebutton": "Mod Pengesahan",
-  "text.openlink.password": "Kata Sandi",
   "text.openlink.proxycount": "Proksi: %s/%s",
-  "text.openlink.rememberuserandpassword": "Ingat nama pengguna dan kata laluan",
   "text.openlink.remote_port": "Port jauh proksi (Pilihan)",
   "text.openlink.remoteportnotfound": "§c§lTidak dapat mencari sebarang port jauh yang tersedia selepas 5 cubaan§o§i\n(Mungkin hari ini bukan hari bertuah anda :>)",
   "text.openlink.secure": "Selamat",
@@ -45,10 +42,12 @@
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 Mengabaikan SSL boleh membuatkan nama pengguna dan kata laluan anda TIDAK SELAMAT.\n§c§o§lSila jangan hantar IP kepada sesiapa YANG TIDAK ANDA PERCAYAI!",
   "text.openlink.updatefrpc": "§l§gVersi frpc baharu ditemui! §r§g Versi terkini:§l§v %s §r§g, §gversi semasa:§l§v %s §r§g. §bAdakah anda ingin mengemas kini?",
   "text.openlink.updatingfrpc": "§o§6Mengemas kini frpc...§s(Ini mungkin mengambil sedikit masa)",
-  "text.openlink.username": "Nama pengguna atau e-mel",
   "text.openlink.userproxieslimited": "§c§lAnda telah mencapai bilangan maksimum proksi.\nSila hapuskan beberapa proksi!",
   "text.openlink.usingfrp": "Menggunakan proksi OpenFrp",
   "text.openlink.x_axis_label": "Masa",
   "text.openlink.y_axis_label": "Trafik (MiB)",
-  "text.openlink.openstoragedir": "Buka folder storan"
+  "text.openlink.openstoragedir": "Buka folder storan",
+  "text.openlink.fastlogin": "Log Masuk Cepat",
+  "text.openlink.fastloginconfirm": "Halaman log masuk dibuka dalam penyemak imbas anda. (jika tidak, anda boleh menampal url ke penyemak imbas anda dari papan keratan anda) Tekan mana-mana butang di bawah apabila anda selesai log masuk.",
+  "text.openlink.authorization": "Masukkan kod Kebenaran untuk log masuk (anda boleh mendapatkannya dari Panel OpenFrp)"
 }

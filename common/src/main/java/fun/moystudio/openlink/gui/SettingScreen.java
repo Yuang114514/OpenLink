@@ -89,11 +89,11 @@ public class SettingScreen extends Screen {
         addRenderableWidget(buttonSetting);
         //Temp variables
         ResourceLocation lastlocationimage=!tabUser.isEmpty()?((ImageWidget)tabUser.get(0)).texture:Utils.createResourceLocation("openlink","textures/gui/default_avatar.png");
-        Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).getMessage(): Utils.EMPTY;
-        Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).getMessage(): Utils.EMPTY;
-        Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).getMessage(): Utils.EMPTY;
-        Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).getMessage(): Utils.EMPTY;
-        Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).getMessage(): Utils.EMPTY;
+        Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).getMessage(): Utils.emptyText();
+        Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).getMessage(): Utils.emptyText();
+        Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).getMessage(): Utils.emptyText();
+        Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).getMessage(): Utils.emptyText();
+        Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).getMessage(): Utils.emptyText();
         int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).getX():10;
         List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTraffic();
         LogObjectSelectionList lastlogselectionlist=!tabLog.isEmpty()?((LogObjectSelectionList)tabLog.get(0)):new LogObjectSelectionList(minecraft,this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5,40);
@@ -141,7 +141,7 @@ public class SettingScreen extends Screen {
         }));
         tabSetting.add(new ComponentWidget(this.font,this.width/2,this.height/2,0xffffff, Utils.translatableText("temp.openlink.tobedone"),true));
     }
-    
+
     public List<? extends GuiEventListener> getChildrenWithTabRenderables(){
         List<GuiEventListener> list=(((IScreenAccessor)this).getChildren());
         if(renderableTabWidgets!=null){
@@ -153,7 +153,7 @@ public class SettingScreen extends Screen {
         }
         return list;
     }
-    
+
     //MouseEventsOverrideBegin
     @Override
     public boolean mouseClicked(double d, double e, int i) {
@@ -279,10 +279,10 @@ public class SettingScreen extends Screen {
                     ComponentWidget nowproxy=(ComponentWidget)tabUser.get(5);
                     LineChartWidget nowtraffic=(LineChartWidget)tabUser.get(6);
                     nowuser.setMessage(Utils.translatableText("text.openlink.loading"));
-                    nowid.setMessage(Utils.EMPTY);
-                    nowemail.setMessage(Utils.EMPTY);
-                    nowgroup.setMessage(Utils.EMPTY);
-                    nowproxy.setMessage(Utils.EMPTY);
+                    nowid.setMessage(Utils.emptyText());
+                    nowemail.setMessage(Utils.emptyText());
+                    nowgroup.setMessage(Utils.emptyText());
+                    nowproxy.setMessage(Utils.emptyText());
                     tabUser.set(1,nowuser);
                     new Thread(() -> {
                         try {
@@ -566,7 +566,7 @@ public class SettingScreen extends Screen {
 
             @Override
             public @NotNull Component getNarration() {
-                MutableComponent res=(MutableComponent) Utils.EMPTY;
+                MutableComponent res=Utils.emptyText();
                 this.informations.forEach((info -> res.append(info.component)));
                 return res;
             }
