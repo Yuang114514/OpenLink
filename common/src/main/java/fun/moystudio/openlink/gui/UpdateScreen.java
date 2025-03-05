@@ -24,7 +24,7 @@ public class UpdateScreen extends Screen {
     protected void init(){
 
         yes=Button.builder(CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen())).bounds(this.width/4-40,this.height/5*4-10,80,20).build();
-        no=Button.builder(CommonComponents.GUI_NO,button -> {Frpc.hasUpdate=false;this.onClose();}).tooltip(getTooltip()).bounds(this.width/4*3-40,this.height/5*4-10,80,20).build();
+        no=Button.builder(CommonComponents.GUI_NO,button -> {if(Frpc.FRPC_VERSION.length()<6)OpenLink.disabled=true;this.onClose();}).tooltip(getTooltip()).bounds(this.width/4*3-40,this.height/5*4-10,80,20).build();
         if(Frpc.FRPC_VERSION.length()<6){
             no.active=false;
         }
@@ -65,5 +65,11 @@ public class UpdateScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
         super.render(guiGraphics,i,j,f);
         text.renderCentered(guiGraphics,this.width/2,this.height/10,16,0xffffff);
+    }
+
+    @Override
+    public void onClose(){
+        Frpc.hasUpdate = false;
+        this.minecraft.setScreen(null);
     }
 }
