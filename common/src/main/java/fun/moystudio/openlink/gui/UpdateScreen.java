@@ -29,17 +29,11 @@ public class UpdateScreen extends Screen {
         List<Component> list = new ArrayList<>();
         strings.forEach((String)-> list.add(Utils.literalText(String)));
         yes=new Button(this.width/4-40,this.height/5*4-10,80,20,CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen()));
-        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> this.onClose(), (button, poseStack, i, j) -> {
+        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {if(Frpc.FRPC_VERSION.length()<6)OpenLink.disabled=true;this.onClose();}, (button, poseStack, i, j) -> {
             if(Frpc.FRPC_VERSION.length()<6){
                 renderComponentTooltip(poseStack, list, i, j);
-            } else {
-                Frpc.hasUpdate = false;
-                this.minecraft.setScreen(null);
             }
         });
-        if(Frpc.FRPC_VERSION.length()<6){
-            no.active=false;
-        }
         text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.FRPC_VERSION.length()<6 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
@@ -65,5 +59,11 @@ public class UpdateScreen extends Screen {
         this.renderBackground(poseStack);
         text.renderCentered(poseStack,this.width/2,this.height/10,16,0xffffff);
         super.render(poseStack,i,j,f);
+    }
+
+    @Override
+    public void onClose(){
+        Frpc.hasUpdate = false;
+        this.minecraft.setScreen(null);
     }
 }
