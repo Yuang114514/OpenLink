@@ -47,14 +47,7 @@ public class UpdateScreen extends Screen {
     }
 
     private Tooltip getTooltip(){
-        List<String> strings=Arrays.asList(Utils.translatableText("text.openlink.nofrpcfile").getString().split("\n"));
-        MutableComponent component=Utils.literalText("");
-        if(component.getSiblings().isEmpty()||component.getSiblings().get(0).equals(Utils.literalText("text.openlink.nofrpcfile"))){
-            strings.forEach((String)-> component.append(Utils.literalText(String)));
-            if(Frpc.FRPC_VERSION.length()<6){
-                return Tooltip.create(component);
-            }
-        }
+        if(Frpc.FRPC_VERSION.length()<6) return Tooltip.create(Utils.translatableText("text.openlink.nofrpcfile"));
         return Tooltip.create(Utils.emptyText());
     }
 
