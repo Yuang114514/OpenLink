@@ -31,7 +31,7 @@
   "text.openlink.node_available": "§a§l可用",
   "text.openlink.node_needrealname": "§6§l需要实名认证",
   "text.openlink.node_unavailable": "§c§l不可用",
-  "text.openlink.nofrpcfile": "§3无法在游戏目录中找到任何可用的 frpc 核心，\n§o§l§c请下载frpc核心。",
+  "text.openlink.nofrpcfile": "§3无法在存储目录中找到 frpc 可执行文件，\n§o§l§c请下载它。\n§o§l§c（你可以跳过 frpc 下载，\n§o§l§c但所有代理功能将被禁用）",
   "text.openlink.now": "现在",
   "text.openlink.onlinemodebutton": "验证模式",
   "text.openlink.proxycount": "隧道数: %s/%s",
