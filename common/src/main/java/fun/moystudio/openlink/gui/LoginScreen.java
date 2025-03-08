@@ -79,7 +79,8 @@ public class LoginScreen extends Screen {
                                 System.out.println(cipherText.length);
                                 System.out.println(NaCl.asHex(cipherText));
                                 byte[] decrypted = new byte[cipherText.length-curve25519xsalsa20poly1305.crypto_secretbox_ZEROBYTES];
-                                curve25519xsalsa20poly1305.crypto_box_open(decrypted, cipherText, nonce, serverPublic, clientPrivate);
+                                int errorcode = curve25519xsalsa20poly1305.crypto_box_open(decrypted, cipherText, nonce, serverPublic, clientPrivate);
+                                System.out.println(errorcode);
                                 String authorization = new String(decrypted, StandardCharsets.UTF_8);
                                 System.out.println(NaCl.asHex(decrypted));
                                 button.active=true;
