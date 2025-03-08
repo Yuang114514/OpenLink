@@ -31,6 +31,7 @@ public class LoginScreen extends Screen {
         lastscreen=last;
     }
     private static final SecureRandom secureRandom = new SecureRandom();
+    ScheduledExecutorService scheduledExecutorService = null;
     Screen lastscreen;
     MultiLineLabel loginTips;
     EditBox authorization=new EditBox(Minecraft.getInstance().font, this.width / 2 - 200, this.height / 6 * 3, 355, 20, Utils.translatableText("text.openlink.authorization"));
@@ -52,9 +53,10 @@ public class LoginScreen extends Screen {
                 new WebBrowser(jsonLogin.data.authorization_url).openBrowser();
                 String requestUUID = jsonLogin.data.request_uuid;
                 button.active=false;
-                ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
+                scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
                 scheduledExecutorService.scheduleAtFixedRate(() -> {
                     if(timer>=300||!(this.minecraft.screen instanceof LoginScreen)){
+                        button.active=true;
                         timer=0;
                         scheduledExecutorService.shutdown();
                     }
@@ -64,13 +66,23 @@ public class LoginScreen extends Screen {
                             JsonResponseWithData<JsonQueryLogin> jsonQueryLogin = gson.fromJson(response1.getFirst(), new TypeToken<JsonResponseWithData<JsonQueryLogin>>(){}.getType());
                             if(jsonQueryLogin.data!=null){
                                 String stringServerPublic = response1.getSecond().containsKey("x-request-public-key")?response1.getSecond().get("x-request-public-key").get(0):response1.getSecond().get("X-Request-Public-Key").get(0);
-                                byte[] serverPublic = Base64.getDecoder().decode(stringServerPublic);
+                                byte[] serverPublic = Base64.getUrlDecoder().decode(stringServerPublic);
                                 byte[] message = Base64.getDecoder().decode(jsonQueryLogin.data.authorization_data);
-                                byte[] nonce = new byte[curve25519xsalsa20poly1305.crypto_secretbox_NONCEBYTES];
-                                secureRandom.nextBytes(nonce);
-                                byte[] decrypted = new NaCl(clientPrivate, serverPublic).decrypt(message, nonce);
-                                String authorization = NaCl.asHex(decrypted)/*new String(decrypted, StandardCharsets.UTF_8)*/;
-                                System.out.println(authorization);
+                                byte[] nonce = Arrays.copyOf(message, curve25519xsalsa20poly1305.crypto_secretbox_NONCEBYTES);
+                                byte[] cipherText = Arrays.copyOfRange(message, nonce.length, message.length);
+                                System.out.println(serverPublic.length);
+                                System.out.println(NaCl.asHex(serverPublic));
+                                System.out.println(message.length);
+                                System.out.println(NaCl.asHex(message));
+                                System.out.println(nonce.length);
+                                System.out.println(NaCl.asHex(nonce));
+                                System.out.println(cipherText.length);
+                                System.out.println(NaCl.asHex(cipherText));
+                                byte[] decrypted = new byte[cipherText.length-curve25519xsalsa20poly1305.crypto_secretbox_ZEROBYTES];
+                                curve25519xsalsa20poly1305.crypto_box_open(decrypted, cipherText, nonce, serverPublic, clientPrivate);
+                                String authorization = new String(decrypted, StandardCharsets.UTF_8);
+                                System.out.println(NaCl.asHex(decrypted));
+                                button.active=true;
                                 timer=0;
                                 scheduledExecutorService.shutdown();
                             }
@@ -137,6 +149,8 @@ public class LoginScreen extends Screen {
 
     @Override
     public void onClose(){
+        scheduledExecutorService.shutdown();
+        scheduledExecutorService=null;
         this.minecraft.setScreen(lastscreen);
     }
 }
