@@ -141,6 +141,10 @@ public class SettingScreen extends Screen {
             sensitiveInfoHiding = object;
             OpenLink.PREFERENCES.putBoolean("setting_sensitive_info_hiding", object);
         }));
+        tabSetting.add(new Button(this.width/2-75,65+70,150,20,Utils.translatableText("text.openlink.ofpanel"),button -> {
+            this.minecraft.keyboardHandler.setClipboard("https://console.openfrp.net/fastlogin?auth="+Request.Authorization);
+            new WebBrowser("https://console.openfrp.net/fastlogin?auth="+Request.Authorization).openBrowser();
+        }));
         tabSetting.add(new ComponentWidget(this.font,this.width/2,this.height/2,0xffffff, Utils.translatableText("temp.openlink.tobedone"),true));
     }
 
