@@ -46,10 +46,10 @@ public class LoginGetCodeHttpServer {
                     exchange.getResponseHeaders().set("Content-Type", "text/html;charset=UTF-8");
                     if (codeValue != null) {
                         this.code=codeValue;
-                        response = "<!DOCTYPE html><html><body><h1>已成功接收登录请求！您可关闭此页面。</h1><br><h1>Successfully received login request! You can close this page.</h1></body></html>";
+                        response = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"></head><body><h1>已成功接收登录请求！您可关闭此页面。</h1><br><h1>Successfully received login request! You can close this page.</h1></body></html>";
                         exchange.sendResponseHeaders(200, response.getBytes().length);
                     } else {
-                        response = "<!DOCTYPE html><html><body><h1>出现错误！</h1><br><h1>Error!</h1></body></html>";
+                        response = "<!DOCTYPE html><html><head><meta charset=\"utf-8\"></head><body><h1>出现错误！</h1><br><h1>Error!</h1></body></html>";
                         exchange.sendResponseHeaders(400, response.getBytes().length);
                     }
 
