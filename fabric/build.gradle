@@ -2,6 +2,16 @@ plugins {
     id 'com.github.johnrengelman.shadow'
 }
 
+repositories {
+    maven {
+        name = "Modrinth"
+        url = "https://api.modrinth.com/maven"
+        content {
+            includeGroup "maven.modrinth"
+        }
+    }
+}
+
 architectury {
     platformSetupLoomIde()
     fabric()
@@ -34,6 +44,7 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
     common(project(path: ':fabric-like', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':fabric-like', configuration: 'transformProductionFabric')
+    modRuntimeOnly "maven.modrinth:simple-voice-chat:fabric-1.18.2-2.5.28"
 }
 
 processResources {

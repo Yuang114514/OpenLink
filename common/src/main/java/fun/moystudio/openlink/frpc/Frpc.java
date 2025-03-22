@@ -11,6 +11,7 @@ import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
+import fun.moystudio.openlink.svc_support.SvcPlugin;
 import net.minecraft.client.Minecraft;
 
 import java.io.*;
@@ -38,7 +39,8 @@ public class Frpc {
     public static String latestVersion = "0";
     public static String FRPC_VERSION="0";
     public static Process runtimeProcess = null;
-    public static long nodeId=-1;
+    public static long nodeId=-1, runningSvcSupportProxyID=-1;
+    public static JsonUserProxy runningSvcProxy=null;
 
     public static void init() throws Exception {
         Gson gson=new Gson();
@@ -194,7 +196,7 @@ public class Frpc {
                 "OpenFrp"+"\n"
         ).getBytes(StandardCharsets.UTF_8));
         Request.getUserInfo();
-        runtimeProcess=new ProcessBuilder(frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)).redirectErrorStream(true).start();
+        runtimeProcess=new ProcessBuilder(frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)+(Frpc.runningSvcSupportProxyID!=-1?","+Frpc.runningSvcSupportProxyID:"")).redirectErrorStream(true).start();
         new Thread(()-> {
             try {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(runtimeProcess.getInputStream()))) {
@@ -222,179 +224,214 @@ public class Frpc {
         if(runtimeProcess!=null){
             runtimeProcess.destroy();
             runtimeProcess=null;
+            runningSvcSupportProxyID=-1;
+            runningSvcProxy=null;
         }
     }
-    public static boolean openFrp(int i, String val){
-        new Thread(()->{
-            Gson gson=new Gson();
+    public static boolean openFrp(int i, String val) {
+        new Thread(() -> {
+            Gson gson = new Gson();
             try {
-                if(SSLUtils.sslIgnored){
+                if (SSLUtils.sslIgnored) {
                     //SSL警告
                     Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.sslwarning"));
                 }
                 Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.creatingproxy"));
-                Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-                JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
+                Pair<String, Map<String, List<String>>> response = Request.POST(Uris.openFrpAPIUri + "frp/api/getUserProxies", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{}");
+                JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>() {
+                }.getType());
                 //OpenLink隧道命名规则：openlink_mc_[本地端口号]
                 for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
                     if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
                         try {
                             Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
                             Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
-                            OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
+                            OpenLink.LOGGER.info("Deleted proxy: " + jsonUserProxy.proxyName);
                         } catch (Exception e) {
                             break;
                         }
                     }
                 }//删除以前用过的隧道
                 Thread.sleep(1000);
-                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-                userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-                JsonResponseWithData<JsonUserInfo> userinfo=Request.getUserInfo();
-                if(userinfo.data.proxies==userProxies.data.total){
+                response = Request.POST(Uris.openFrpAPIUri + "frp/api/getUserProxies", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{}");
+                userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>() {
+                }.getType());
+                JsonResponseWithData<JsonUserInfo> userinfo = Request.getUserInfo();
+                if (userinfo.data.proxies == userProxies.data.total) {
                     throw new Exception(Utils.translatableText("text.openlink.userproxieslimited").getString());
                 }
-                JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
-                JsonNode node=null;
-                for (JsonNode node1:nodelist.data.list){
-                    if(node1.id==nodeId){
-                        node=node1;
+                JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist = Request.getNodeList();
+                JsonNode node = null;
+                for (JsonNode node1 : nodelist.data.list) {
+                    if (node1.id == nodeId) {
+                        node = node1;
                         break;
                     }
                 }
-                if(node==null){
+                if (node == null) {
                     OpenLink.LOGGER.info("Selecting node...");
-                    List<JsonNode> canUseNodes=new ArrayList<>();
-                    for(JsonNode now:nodelist.data.list){
-                        int groupnumber1=5,usergroupnumber;
-                        if(now.group.contains("svip")){
-                            groupnumber1=3;
+                    List<JsonNode> canUseNodes = new ArrayList<>();
+                    for (JsonNode now : nodelist.data.list) {
+                        int groupnumber1 = 5, usergroupnumber;
+                        if (now.group.contains("svip")) {
+                            groupnumber1 = 3;
                         }
-                        if(now.group.contains("vip")){
-                            groupnumber1=2;
+                        if (now.group.contains("vip")) {
+                            groupnumber1 = 2;
                         }
-                        if(now.group.contains("normal")){
-                            groupnumber1=1;
+                        if (now.group.contains("normal")) {
+                            groupnumber1 = 1;
                         }
-                        if(userinfo.data.group.contains("svip")){
-                            usergroupnumber=3;
-                        }else if(userinfo.data.group.contains("vip")){
-                            usergroupnumber=2;
-                        }else{
-                            usergroupnumber=1;
+                        if (userinfo.data.group.contains("svip")) {
+                            usergroupnumber = 3;
+                        } else if (userinfo.data.group.contains("vip")) {
+                            usergroupnumber = 2;
+                        } else {
+                            usergroupnumber = 1;
                         }
-                        if(groupnumber1>usergroupnumber||!now.protocolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
+                        if (groupnumber1 > usergroupnumber || !now.protocolSupport.tcp || now.status != 200 || now.fullyLoaded || (now.needRealname && !userinfo.data.realname)) {
+                            continue;
+                        }
+                        if (OpenLink.SVC_SUPPORT&&!now.protocolSupport.udp) {
                             continue;
                         }
                         canUseNodes.add(now);
                     }
-                    if(canUseNodes.isEmpty()){
+                    if (canUseNodes.isEmpty()) {
                         throw new Exception("Unable to use any node???");
                     }
                     canUseNodes.sort(((o1, o2) -> {
-                        if(OpenLink.PREFER_CLASSIFY!=-1&&o1.classify!=o2.classify&&(o1.classify== OpenLink.PREFER_CLASSIFY)!=(o2.classify==OpenLink.PREFER_CLASSIFY))
-                            return o1.classify==OpenLink.PREFER_CLASSIFY?-1:1;
-                        if(!o1.group.equals(o2.group)){
-                            int first=5,second=5;
-                            if(o1.group.contains("svip")){
-                                first=3;
+                        if (OpenLink.PREFER_CLASSIFY != -1 && o1.classify != o2.classify && (o1.classify == OpenLink.PREFER_CLASSIFY) != (o2.classify == OpenLink.PREFER_CLASSIFY))
+                            return o1.classify == OpenLink.PREFER_CLASSIFY ? -1 : 1;
+                        if (!o1.group.equals(o2.group)) {
+                            int first = 5, second = 5;
+                            if (o1.group.contains("svip")) {
+                                first = 3;
                             }
-                            if(o1.group.contains("vip")){
-                                first=2;
+                            if (o1.group.contains("vip")) {
+                                first = 2;
                             }
-                            if(o1.group.contains("normal")){
-                                first=1;
+                            if (o1.group.contains("normal")) {
+                                first = 1;
                             }
-                            if(o2.group.contains("svip")){
-                                second=3;
+                            if (o2.group.contains("svip")) {
+                                second = 3;
                             }
-                            if(o2.group.contains("vip")) {
-                                second=2;
+                            if (o2.group.contains("vip")) {
+                                second = 2;
                             }
-                            if(o2.group.contains("normal")){
-                                second=1;
+                            if (o2.group.contains("normal")) {
+                                second = 1;
                             }
-                            return first>second?-1:1;
+                            return first > second ? -1 : 1;
                         }
-                        if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)<1e-5)
-                            return o2.bandwidth*o2.bandwidthMagnification>o1.bandwidth*o1.bandwidthMagnification?1:-1;
-                        if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)
-                            return o1.needRealname?-1:1;
+                        if (Math.abs(o1.bandwidth * o1.bandwidthMagnification - o2.bandwidth * o2.bandwidthMagnification) < 1e-5)
+                            return o2.bandwidth * o2.bandwidthMagnification > o1.bandwidth * o1.bandwidthMagnification ? 1 : -1;
+                        if (userinfo.data.realname && o1.needRealname != o2.needRealname)
+                            return o1.needRealname ? -1 : 1;
                         return 0;
                     }));
-                    node=canUseNodes.get(0);//选取最优节点
+                    node = canUseNodes.get(0);//选取最优节点
                 }
-                OpenLink.LOGGER.info("Selected node: id:"+node.id+" allow_port:"+node.allowPort+" group:"+node.group);
-                JsonNewProxy newProxy=new JsonNewProxy();
-                newProxy.name="openlink_mc_"+i;
-                newProxy.local_port=String.valueOf(i);
-                newProxy.node_id=node.id;
-                Random random=new Random();
-                int start,end;
-                if(node.allowPort==null||node.allowPort.isBlank()){
-                    start=30000;
-                    end=60000;
+                OpenLink.LOGGER.info("Selected node: id:" + node.id + " allow_port:" + node.allowPort + " group:" + node.group);
+                JsonNewProxy newProxy = new JsonNewProxy();
+                newProxy.name = "openlink_mc_" + i;
+                newProxy.local_port = String.valueOf(i);
+                newProxy.node_id = node.id;
+                JsonNewProxy newProxySvc = new JsonNewProxy();
+                newProxySvc.name = "openlink_mc_svc_" + i;
+                newProxySvc.local_port = String.valueOf(i);
+                newProxySvc.node_id = node.id;
+                newProxySvc.type = "udp";
+                Random random = new Random();
+                int start, end;
+                if (node.allowPort == null || node.allowPort.isBlank()) {
+                    start = 30000;
+                    end = 60000;
+                } else {
+                    start = Integer.parseInt(node.allowPort.substring(1, 6));
+                    end = Integer.parseInt(node.allowPort.substring(7, 12));
                 }
-                else{
-                    start=Integer.parseInt(node.allowPort.substring(1,6));
-                    end=Integer.parseInt(node.allowPort.substring(7,12));
-                }
-                boolean found=false;
+                boolean found = false;
                 for (int j = 1; j <= 5; j++) {
                     newProxy.remote_port = random.nextInt(end - start + 1) + start;
-                    if(val !=null&&!val.isBlank()&&j==1){
-                        newProxy.remote_port=Integer.parseInt(val);
+                    if (val != null && !val.isBlank() && j == 1) {
+                        newProxy.remote_port = Integer.parseInt(val);
                     }
-                    response=Request.POST(Uris.openFrpAPIUri+ "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
-                    OpenLink.LOGGER.info("Try "+j+": remote_port:"+newProxy.remote_port+" flag:"+gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag+" msg:"+gson.fromJson(response.getFirst(), JsonResponseWithData.class).msg);
-                    if(gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag){
-                        found=true;
+                    newProxySvc.remote_port=newProxy.remote_port;
+                    response = Request.POST(Uris.openFrpAPIUri + "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
+                    OpenLink.LOGGER.info("Try " + j + ": remote_port:" + newProxy.remote_port + " flag:" + gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag + " msg:" + gson.fromJson(response.getFirst(), JsonResponseWithData.class).msg);
+                    Pair<String, Map<String, List<String>>> response2 = Request.POST(Uris.openFrpAPIUri+"frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxySvc));
+                    OpenLink.LOGGER.info("Try on svc support flag:" + gson.fromJson(response2.getFirst(), JsonResponseWithData.class).flag + " msg:" + gson.fromJson(response2.getFirst(), JsonResponseWithData.class).msg);
+                    if (gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag&&gson.fromJson(response2.getFirst(), JsonResponseWithData.class).flag) {
+                        found = true;
                         break;
+                    }
+                    response = Request.POST(Uris.openFrpAPIUri + "frp/api/getUserProxies", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{}");
+                    userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>() {
+                    }.getType());
+                    for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
+                        if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
+                            try {
+                                Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
+                                Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
+                                OpenLink.LOGGER.info("Deleted proxy: " + jsonUserProxy.proxyName);
+                            } catch (Exception e) {
+                                break;
+                            }
+                        }
                     }
                 }//创建隧道
-                if(!found) throw new Exception(Utils.translatableText("text.openlink.remoteportnotfound").getString());
-                LanConfig.cfg.last_port_value=String.valueOf(newProxy.remote_port).equals(val)?val:"";
-                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-                userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-                JsonUserProxy runningproxy=null;
-                for(JsonUserProxy jsonUserProxy:userProxies.data.list){
-                    if(jsonUserProxy.proxyName.equals("openlink_mc_"+i)){
-                        runningproxy=jsonUserProxy;
-                        break;
+                if (!found) throw new Exception(Utils.translatableText("text.openlink.remoteportnotfound").getString());
+                LanConfig.cfg.last_port_value = String.valueOf(newProxy.remote_port).equals(val) ? val : "";
+                response = Request.POST(Uris.openFrpAPIUri + "frp/api/getUserProxies", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{}");
+                userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>() {
+                }.getType());
+                JsonUserProxy runningproxy = null;
+                JsonUserProxy runningsvcproxy = null;
+                for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
+                    if (jsonUserProxy.proxyName.equals("openlink_mc_" + i)) {
+                        runningproxy = jsonUserProxy;
+                    }
+                    if (jsonUserProxy.proxyName.equals("openlink_mc_svc_" + i)) {
+                        runningsvcproxy = jsonUserProxy;
                     }
                 }
-                if(runningproxy==null) throw new Exception("Can not find the proxy???");
+                if (runningproxy == null || (runningsvcproxy == null&&OpenLink.SVC_SUPPORT)) throw new Exception("Can not find the proxy???");
                 //启动Frpc
                 runFrpc(runningproxy.id);
                 //check
                 Thread.sleep(5000);
-                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-                userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-                runningproxy=null;
-                for(JsonUserProxy jsonUserProxy:userProxies.data.list){
-                    if(jsonUserProxy.proxyName.equals("openlink_mc_"+i)){
-                        runningproxy=jsonUserProxy;
-                        break;
+                response = Request.POST(Uris.openFrpAPIUri + "frp/api/getUserProxies", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{}");
+                userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>() {
+                }.getType());
+                runningproxy = null;
+                for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
+                    if (jsonUserProxy.proxyName.equals("openlink_mc_" + i)) {
+                        runningproxy = jsonUserProxy;
+                    }
+                    if (jsonUserProxy.proxyName.equals("openlink_mc_svc_" + i)) {
+                        runningsvcproxy = jsonUserProxy;
                     }
                 }
-                if(runningproxy==null) throw new Exception("Can not find the proxy???");
+                if (runningproxy == null) throw new Exception("Can not find the proxy???");
                 JsonUserProxy finalRunningproxy = runningproxy;
+                runningSvcProxy=runningsvcproxy;
                 Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(finalRunningproxy.connectAddress));
-                List<String> list=new ArrayList<>(List.of(OpenLink.PREFERENCES.get("traffic_storage", "").split(";")));
-                while(list.size()>=MAX_TRAFFIC_STORAGE){
+                List<String> list = new ArrayList<>(List.of(OpenLink.PREFERENCES.get("traffic_storage", "").split(";")));
+                while (list.size() >= MAX_TRAFFIC_STORAGE) {
                     list.remove(0);
                 }
-                list.add(String.format(Locale.getDefault(),"%tD %tT",new Date(),new Date())+","+userinfo.data.traffic);
+                list.add(String.format(Locale.getDefault(), "%tD %tT", new Date(), new Date()) + "," + userinfo.data.traffic);
                 OpenLink.PREFERENCES.put("traffic_storage", String.join(";", list));
-                nodeId=-1;
+                nodeId = -1;
             } catch (Exception e) {
                 e.printStackTrace();
-                Minecraft.getInstance().gui.getChat().addMessage(Utils.literalText("§4[OpenLink] "+e.getClass().getName()+":"+e.getMessage()));
+                Minecraft.getInstance().gui.getChat().addMessage(Utils.literalText("§4[OpenLink] " + e.getClass().getName() + ":" + e.getMessage()));
                 Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyRestartText());
             }
-        },"Proxy startup thread").start();
+        }, "Proxy startup thread").start();
 
         return true;
     }
-
 }

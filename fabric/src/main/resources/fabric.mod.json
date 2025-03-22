@@ -22,6 +22,9 @@
     ],
     "client": [
       "fun.moystudio.openlink.fabric.client.OpenLinkFabricClient"
+    ],
+    "voicechat": [
+      "fun.moystudio.openlink.svc_support.SvcPlugin"
     ]
   },
   "mixins": [

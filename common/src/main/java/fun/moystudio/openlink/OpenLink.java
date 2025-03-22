@@ -31,7 +31,7 @@ public final class OpenLink {
     public static final String CONFIG_DIR = "config" + File.separator + MOD_ID + File.separator;
     public static Preferences PREFERENCES;
     public static String EXECUTABLE_FILE_STORAGE_PATH;
-    public static boolean disabled=false;
+    public static boolean disabled=false,SVC_SUPPORT=false;
     public static String VERSION,LOADER, LOADER_VERSION;
     public static List<Pair<String,Class<?>>> CONFLICT_CLASS = new ArrayList<>();
     public static int PREFER_CLASSIFY;

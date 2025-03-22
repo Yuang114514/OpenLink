@@ -18,6 +18,9 @@
     "entrypoints": {
       "init": [
         "fun.moystudio.openlink.quilt.OpenLinkQuilt"
+      ],
+      "voicechat": [
+        "fun.moystudio.openlink.svc_support.SvcPlugin"
       ]
     },
     "depends": [
