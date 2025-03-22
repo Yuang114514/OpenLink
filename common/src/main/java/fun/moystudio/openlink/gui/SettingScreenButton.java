@@ -19,21 +19,20 @@ public class SettingScreenButton extends Button {
     protected int packedFGColor = -1;
 
     @Override
-    public void renderButton(PoseStack arg, int k, int l, float f) {
+    public void renderButton(PoseStack poseStack, int i, int j, float f) {
         Minecraft minecraft = Minecraft.getInstance();
         Font font = minecraft.font;
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, SETTING_WIDGET_LOCATION);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        int i = this.getYImage(this.isHoveredOrFocused());
+        minecraft.getTextureManager().bind(SETTING_WIDGET_LOCATION);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, this.alpha);
+        int k = this.getYImage(this.isHovered());
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.enableDepthTest();
-        this.blit(arg, this.x, this.y, 0, 46 + i * 20, this.width / 2, this.height);
-        this.blit(arg, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-        this.renderBg(arg, minecraft, k, l);
-        int j = this.getFGColor();
-        drawCenteredString(arg, font, this.getMessage(), this.x + (this.width/2), this.y + (this.height-8)/2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        this.blit(poseStack, this.x, this.y, 0, 46 + k * 20, this.width / 2, this.height);
+        this.blit(poseStack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + k * 20, this.width / 2, this.height);
+        this.renderBg(poseStack, minecraft, i, j);
+        int l = this.active ? 16777215 : 10526880;
+        drawCenteredString(poseStack, font, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, l | Mth.ceil(this.alpha * 255.0F) << 24);
     }
     public int getFGColor() {
         if (this.packedFGColor != -1) {

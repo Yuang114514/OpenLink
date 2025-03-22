@@ -270,8 +270,8 @@ public class SettingScreen extends Screen {
     @Override
     public void render(PoseStack poseStack,int i,int j,float f){
         this.renderBackground(poseStack);
-        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
-        RenderSystem.setShaderTexture(0,BACKGROUND_SETTING);
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+        this.minecraft.getTextureManager().bind(BACKGROUND_SETTING);
         blit(poseStack,0,0,0,0,this.width,this.height,this.width,this.height);
         fill(poseStack,5,60,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,0x8F000000);
         title.renderCentered(poseStack,this.width/2,15);
@@ -538,12 +538,6 @@ public class SettingScreen extends Screen {
                 return false;
             }
 
-
-            @Override
-            public @NotNull Component getNarration() {
-                return Utils.translatableText("narrator.select", this.provider+" "+this.startTime+" "+this.levelName);
-            }
-
             private void select() {
                 SettingScreen.LogObjectSelectionList.this.setSelected(this);
             }
@@ -645,13 +639,6 @@ public class SettingScreen extends Screen {
 
             public Entry(List<Information> informations) {
                 this.informations=informations;
-            }
-
-            @Override
-            public @NotNull Component getNarration() {
-                MutableComponent res=(MutableComponent) Utils.emptyText();
-                this.informations.forEach((info -> res.append(info.component)));
-                return res;
             }
 
             @Override
