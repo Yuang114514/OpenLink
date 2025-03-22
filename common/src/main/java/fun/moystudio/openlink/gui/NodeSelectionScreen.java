@@ -10,8 +10,6 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -124,11 +122,6 @@ public class NodeSelectionScreen extends Screen {
             JsonNode node;
             public Entry(JsonNode node){
                 this.node=node;
-            }
-
-            @Override
-            public @NotNull Component getNarration() {
-                return Utils.translatableText("narrator.select",this.node.name);
             }
 
             public boolean mouseClicked(double d, double e, int i) {

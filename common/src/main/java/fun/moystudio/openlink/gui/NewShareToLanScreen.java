@@ -9,7 +9,6 @@ import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.UUIDFixer;
 import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
@@ -122,9 +121,9 @@ public class NewShareToLanScreen extends Screen {
     }
 
     protected void init() {
-        this.addRenderableWidget(CycleButton.builder(GameType::getShortDisplayName).withValues(GameType.SURVIVAL, GameType.SPECTATOR, GameType.CREATIVE, GameType.ADVENTURE).withInitialValue(this.gameMode).create(this.width / 2 - 155, 100, 150, 20, GAME_MODE_LABEL, (cycleButton, gameType) -> this.gameMode = gameType));
-        this.addRenderableWidget(CycleButton.onOffBuilder(LanConfig.cfg.allow_commands).create(this.width / 2 + 5, 100, 150, 20, ALLOW_COMMANDS_LABEL, (cycleButton, boolean_) -> LanConfig.cfg.allow_commands = boolean_));
-        this.addRenderableWidget(new Button(this.width / 2 - 155, this.height - 28, 150, 20, Utils.translatableText("lanServer.start"), (button1) -> {
+        this.addButton(CycleButton.builder(GameType::getDisplayName).withValues(GameType.SURVIVAL, GameType.SPECTATOR, GameType.CREATIVE, GameType.ADVENTURE).withInitialValue(this.gameMode).create(this.width / 2 - 155, 100, 150, 20, GAME_MODE_LABEL, (cycleButton, gameType) -> this.gameMode = gameType));
+        this.addButton(CycleButton.onOffBuilder(LanConfig.cfg.allow_commands).create(this.width / 2 + 5, 100, 150, 20, ALLOW_COMMANDS_LABEL, (cycleButton, boolean_) -> LanConfig.cfg.allow_commands = boolean_));
+        this.addButton(new Button(this.width / 2 - 155, this.height - 28, 150, 20, Utils.translatableText("lanServer.start"), (button1) -> {
             if(!this.couldShare)return;
             this.minecraft.setScreen(null);
             int i = editBox2.getValue().isBlank()?HttpUtil.getAvailablePort():Integer.parseInt(editBox2.getValue());
@@ -163,22 +162,22 @@ public class NewShareToLanScreen extends Screen {
                 renderComponentTooltip(poseStack,list,i,j);
             }
         })));
-        this.addRenderableWidget(new Button(this.width / 2 + 5, this.height - 28, 150, 20, CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)));
+        this.addButton(new Button(this.width / 2 + 5, this.height - 28, 150, 20, CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)));
         editBox2=new EditBox(this.font,this.width/2-(OpenLink.disabled||!LanConfig.cfg.use_frp?75:155),OpenLink.disabled?160:190,150,20,Utils.translatableText("text.openlink.local_port"));
         editBox2.setSuggestion(Utils.translatableText("text.openlink.local_port").getString());
-        this.addRenderableWidget(editBox2);
+        this.addWidget(editBox2);
         onlinemode=CycleButton.builder((OnlineModeTabs o)-> o.component)
                 .withValues(OnlineModeTabs.values())
                 .withInitialValue(LanConfig.getAuthMode())
                 .create(this.width / 2 - 155, 130, 150, 20, Utils.translatableText("text.openlink.onlinemodebutton"),   (button, o)->LanConfig.setAuthMode(o));
         allowpvp=CycleButton.onOffBuilder(LanConfig.cfg.allow_pvp).create(this.width / 2 + 5, 130, 150, 20, Utils.translatableText("mco.configure.world.pvp"),(cycleButton, object) -> LanConfig.cfg.allow_pvp=object);
-        this.addRenderableWidget(onlinemode);
-        this.addRenderableWidget(allowpvp);
+        this.addButton(onlinemode);
+        this.addButton(allowpvp);
         if(OpenLink.disabled) return;
         editBox=new EditBox(this.font,this.width / 2 + 5, 190, 150, 20, Utils.translatableText("text.openlink.remote_port"));
         editBox.setSuggestion(Utils.translatableText("text.openlink.remote_port").getString());
         editBox.setValue(LanConfig.cfg.last_port_value);
-        this.addRenderableWidget(editBox);
+        this.addWidget(editBox);
         nodeselection=new Button(this.width/2+5,160,150,20,Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(new NodeSelectionScreen(this)));
         nodeselection.active=LanConfig.cfg.use_frp;
         usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, Utils.translatableText("text.openlink.usingfrp"),((cycleButton, bool) -> {
@@ -187,9 +186,9 @@ public class NewShareToLanScreen extends Screen {
             nodeselection.active=bool;
             editBox2.x=this.width/2-(OpenLink.disabled||!bool?75:155);
         }));
-        this.addRenderableWidget(nodeselection);
-        this.addRenderableWidget(usingfrp);
-        this.addRenderableWidget(new ImageButtonWithHoveredState(this.width / 2 + 5 + 150 + 10, this.height - 28,
+        this.addButton(nodeselection);
+        this.addButton(usingfrp);
+        this.addButton(new ImageButtonWithHoveredState(this.width / 2 + 5 + 150 + 10, this.height - 28,
                 20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> this.minecraft.setScreen(new SettingScreen(new NewShareToLanScreen(this.lastScreen)))));
     }
 

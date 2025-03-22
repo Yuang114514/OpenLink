@@ -88,10 +88,10 @@ public class SettingScreen extends Screen {
         buttonLog=new SettingScreenButton(5+i,40,i,20,SettingTabs.LOG.component,(button -> tab=SettingTabs.LOG));
         buttonInfo=new SettingScreenButton(5+i*2,40,i,20,SettingTabs.INFO.component,(button -> tab=SettingTabs.INFO));
         buttonSetting=new SettingScreenButton(5+i*3,40,i,20,SettingTabs.SETTING.component,(button -> tab=SettingTabs.SETTING));
-        addRenderableWidget(buttonLog);
-        addRenderableWidget(buttonInfo);
-        addRenderableWidget(buttonUser);
-        addRenderableWidget(buttonSetting);
+        addButton(buttonLog);
+        addButton(buttonInfo);
+        addButton(buttonUser);
+        addButton(buttonSetting);
         //Temp variables
         ResourceLocation lastlocationimage=!tabUser.isEmpty()?((ImageWidget)tabUser.get(0)).texture:Utils.createResourceLocation("openlink","textures/gui/default_avatar.png");
         Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).component: Utils.emptyText();
@@ -126,7 +126,7 @@ public class SettingScreen extends Screen {
                     this.width-20, 60+this.height-75-15,
                     Utils.translatableText("text.openlink.x_axis_label"), Utils.translatableText("text.openlink.y_axis_label"), lastdatapoints,
                     (dataXY, poseStack, i1, j1)-> renderComponentTooltip(poseStack,
-                            Arrays.stream(new Component[]{Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
+                            new ArrayList<>(List.of(Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB"))),
                             i1,j1)));
         tabUser.add(new Button(10,65+j+5+40,j,20,Utils.translatableText("text.openlink.logout"),button -> {
             Request.Authorization=null;
@@ -159,7 +159,8 @@ public class SettingScreen extends Screen {
         List<GuiEventListener> list=(((IScreenAccessor)this).getChildren());
         if(renderableTabWidgets!=null){
             renderableTabWidgets.forEach(widget -> {
-                if (widget instanceof GuiEventListener guiEventListener) {
+                if (widget instanceof GuiEventListener) {
+                    GuiEventListener guiEventListener = (GuiEventListener)widget;
                     list.add(guiEventListener);
                 }
             });
@@ -171,7 +172,8 @@ public class SettingScreen extends Screen {
     public boolean mouseClicked(double d, double e, int i) {
         if(renderableTabWidgets!=null){
             for(Widget widget:renderableTabWidgets){
-                if (widget instanceof GuiEventListener guiEventListener) {
+                if (widget instanceof GuiEventListener) {
+                    GuiEventListener guiEventListener = (GuiEventListener)widget;
                     if (guiEventListener.mouseClicked(d, e, i)) {
                         this.setFocused(guiEventListener);
                         if (i == 0) {
@@ -205,36 +207,18 @@ public class SettingScreen extends Screen {
             }
 
             ListIterator<? extends GuiEventListener> listIterator = list.listIterator(j);
-            BooleanSupplier var10000;
-            if (bl) {
-                Objects.requireNonNull(listIterator);
-                var10000 = listIterator::hasNext;
-            } else {
-                Objects.requireNonNull(listIterator);
-                var10000 = listIterator::hasPrevious;
-            }
-
-            BooleanSupplier booleanSupplier = var10000;
-            Supplier var11;
-            if (bl) {
-                Objects.requireNonNull(listIterator);
-                var11 = listIterator::next;
-            } else {
-                Objects.requireNonNull(listIterator);
-                var11 = listIterator::previous;
-            }
-
-            Supplier<? extends GuiEventListener> supplier = var11;
+            BooleanSupplier booleanSupplier = bl ? listIterator::hasNext : listIterator::hasPrevious;
+            Supplier<? extends GuiEventListener> supplier = bl ? listIterator::next : listIterator::previous;
 
             while(booleanSupplier.getAsBoolean()) {
-                GuiEventListener guiEventListener2 = supplier.get();
+                GuiEventListener guiEventListener2 = (GuiEventListener)supplier.get();
                 if (guiEventListener2.changeFocus(bl)) {
                     this.setFocused(guiEventListener2);
                     return true;
                 }
             }
 
-            this.setFocused(null);
+            this.setFocused((GuiEventListener)null);
             return false;
         }
     }
@@ -243,7 +227,8 @@ public class SettingScreen extends Screen {
     public void mouseMoved(double d, double e) {
         if(renderableTabWidgets!=null){
             renderableTabWidgets.forEach(widget -> {
-                if(widget instanceof GuiEventListener guiEventListener){
+                if(widget instanceof GuiEventListener){
+                    GuiEventListener guiEventListener = (GuiEventListener)widget;
                     guiEventListener.mouseMoved(d,e);
                 }
             });
@@ -256,7 +241,8 @@ public class SettingScreen extends Screen {
         Optional<GuiEventListener> toReturn=super.getChildAt(d,e);
         if(toReturn.isEmpty()&&renderableTabWidgets!=null){
             for(Widget widget:renderableTabWidgets){
-                if (widget instanceof GuiEventListener guiEventListener) {
+                if (widget instanceof GuiEventListener) {
+                    GuiEventListener guiEventListener = (GuiEventListener)widget;
                     if (guiEventListener.isMouseOver(d, e)) {
                         return Optional.of(guiEventListener);
                     }
@@ -282,7 +268,7 @@ public class SettingScreen extends Screen {
     private void onTab() {
         boolean first=lasttab!=tab;
         switch(tab){
-            case LOG -> {
+            case LOG: {
                 buttonLog.active=false;
                 buttonInfo.active=true;
                 buttonUser.active=true;
@@ -318,16 +304,18 @@ public class SettingScreen extends Screen {
 
                 }
                 renderableTabWidgets=tabLog;
+                break;
             }
-            case SETTING -> {
+            case SETTING: {
                 buttonLog.active=true;
                 buttonInfo.active=true;
                 buttonUser.active=true;
                 buttonSetting.active=false;
 
                 renderableTabWidgets=tabSetting;
+                break;
             }
-            case USER -> {
+            case USER: {
                 buttonLog.active=true;
                 buttonInfo.active=true;
                 buttonUser.active=false;
@@ -389,14 +377,16 @@ public class SettingScreen extends Screen {
                     }, "Request thread").start();
                 }
                 renderableTabWidgets=tabUser;
+                break;
             }
-            case INFO -> {
+            case INFO: {
                 buttonLog.active=true;
                 buttonInfo.active=false;
                 buttonUser.active=true;
                 buttonSetting.active=true;
 
                 renderableTabWidgets=tabInfo;
+                break;
             }
         }
     }

@@ -32,7 +32,7 @@ public class UUIDFixer {
         try {
             String UUIDJson = IOUtils.toString(new URL(url), Charset.defaultCharset());
             if (!UUIDJson.isEmpty()) {
-                JsonObject root = JsonParser.parseString(UUIDJson).getAsJsonObject();
+                JsonObject root = new JsonParser().parse(UUIDJson).getAsJsonObject();
                 String playerName2 = root.getAsJsonPrimitive("name").getAsString();
                 String uuidString = root.getAsJsonPrimitive("id").getAsString();
                 long uuidMSB = Long.parseLong(uuidString.substring(0, 8), 16);

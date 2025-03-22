@@ -27,7 +27,7 @@ public class ConflictSelectionScreen extends Screen {
         text=MultiLineLabel.create(this.font, this.title, this.width-50);
         conflictSelectionList=new ConflictSelectionList(this.minecraft);
         this.addWidget(conflictSelectionList);
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height - 38, 200, 20, CommonComponents.GUI_DONE, (button) -> {
+        this.addButton(new Button(this.width / 2 - 100, this.height - 38, 200, 20, CommonComponents.GUI_DONE, (button) -> {
             ConflictSelectionList.Entry entry = this.conflictSelectionList.getSelected();
             if (entry != null) {
                 try {
@@ -90,11 +90,6 @@ public class ConflictSelectionScreen extends Screen {
 
             public String modid;
             public Class<?> clazz;
-
-            @Override
-            public @NotNull Component getNarration() {
-                return Utils.translatableText("narrator.select",this.modid);
-            }
 
             public boolean mouseClicked(double d, double e, int i) {
                 if (i == 0) {

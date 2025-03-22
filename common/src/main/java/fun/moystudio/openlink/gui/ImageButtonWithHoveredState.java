@@ -2,6 +2,7 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -28,18 +29,19 @@ public class ImageButtonWithHoveredState extends ImageButton {
 
     @Override
     public void renderButton(PoseStack poseStack, int i, int j, float f) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, this.resourceLocation);
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.getTextureManager().bind(this.resourceLocation);
         int k = this.yTexStart;
-        if (this.isHoveredOrFocused()) {
+        if (this.isHovered()) {
             k += this.yDiffTex;
-            RenderSystem.setShaderTexture(0, this.resourceLocationHovered);
+            minecraft.getTextureManager().bind(this.resourceLocationHovered);
         }
 
         RenderSystem.enableDepthTest();
         blit(poseStack, this.x, this.y, (float)this.xTexStart, (float)k, this.width, this.height, this.textureWidth, this.textureHeight);
-        if (this.isHovered) {
+        if (this.isHovered()) {
             this.renderToolTip(poseStack, i, j);
         }
+
     }
 }

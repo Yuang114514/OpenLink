@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "fun.moystudio.openlink.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_11",
   "minVersion": "0.8",
   "client": [
     "IDynamicTextureAccessor",

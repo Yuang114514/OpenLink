@@ -20,7 +20,7 @@ public class UpdatingScreen extends Screen {
     @Override
     protected void init() {
         text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatingfrpc"),this.width-50);
-        this.addRenderableWidget(new Button(this.width/2-60, this.height/5*4-10, 120, 20, Utils.translatableText("text.openlink.openstoragedir"), button -> {
+        this.addButton(new Button(this.width/2-60, this.height/5*4-10, 120, 20, Utils.translatableText("text.openlink.openstoragedir"), button -> {
             try{
                 if(Frpc.osName.equals("windows")){
                     Runtime.getRuntime().exec(new String[]{"explorer", "/root,"+ OpenLink.EXECUTABLE_FILE_STORAGE_PATH});

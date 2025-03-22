@@ -26,7 +26,7 @@ public class LoginScreen extends Screen {
     @Override
     protected void init() {
         loginTips = MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.logintips"), this.width - 50);
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 * 2, 200, 20, Utils.translatableText("text.openlink.fastlogin"), (button) ->{
+        this.addButton(new Button(this.width / 2 - 100, this.height / 6 * 2, 200, 20, Utils.translatableText("text.openlink.fastlogin"), (button) ->{
             Gson gson = new Gson();
             LoginGetCodeHttpServer codeHttpServer = new LoginGetCodeHttpServer();
             codeHttpServer.start();
@@ -44,8 +44,8 @@ public class LoginScreen extends Screen {
         authorization.setMaxLength(100);
         authorization.setX(this.width / 2 - 200);
         authorization.y=this.height/2;
-        this.addRenderableWidget(authorization);
-        this.addRenderableWidget(new Button(this.width / 2 + 160, this.height / 2, 40, 20, CommonComponents.GUI_DONE, button -> {
+        this.addWidget(authorization);
+        this.addButton(new Button(this.width / 2 + 160, this.height / 2, 40, 20, CommonComponents.GUI_DONE, button -> {
             Request.Authorization = authorization.getValue();
             try {
                 JsonResponseWithData<JsonUserInfo> response = Request.getUserInfo();
@@ -60,7 +60,7 @@ public class LoginScreen extends Screen {
             Request.writeSession();
         }));
         //注册
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 * 4 , 200, 20, Utils.translatableText("text.openlink.no_account"), (button) -> browser.openBrowser()));
+        this.addButton(new Button(this.width / 2 - 100, this.height / 6 * 4 , 200, 20, Utils.translatableText("text.openlink.no_account"), (button) -> browser.openBrowser()));
     }
 
     @Override

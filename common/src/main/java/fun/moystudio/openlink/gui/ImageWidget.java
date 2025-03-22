@@ -2,6 +2,7 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -24,8 +25,8 @@ public class ImageWidget implements Widget, GuiEventListener {
     }
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
-        RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
-        RenderSystem.setShaderTexture(0,texture);
+        RenderSystem.color4f(1.0F,1.0F,1.0F,1.0F);
+        Minecraft.getInstance().getTextureManager().bind(texture);
         GuiComponent.blit(poseStack,x,y,uOffset,vOffset,width,height,textureWidth,textureHeight);
     }
 }

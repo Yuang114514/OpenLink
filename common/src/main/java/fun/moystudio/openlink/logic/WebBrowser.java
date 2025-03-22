@@ -15,14 +15,18 @@ public class WebBrowser {
         if(!browserOpened) {
             try {
                 switch (Frpc.osName) {
-                    case "windows" ->
-                            browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
-                    case "darwin" -> {//百科搜的macOS没用过
+                    case "windows": {
+                        browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
+                        break;
+                    }
+                    case "darwin": {//百科搜的macOS没用过
                         Class<?> fileMgr = Class.forName("com.apple.eio.FileManager");
                         Method openURL = fileMgr.getDeclaredMethod("openURL", String.class);
                         openURL.invoke(null, url);
+                        break;
                     }
-                    case "linux", "freebsd" -> {
+                    case "linux":
+                    case "freebsd": {
                         String[] browsers = {"firefox", "opera", "konqueror", "epiphany", "mozilla", "netscape"};//Linux常用浏览器
 
                         String browser = null;
@@ -38,8 +42,9 @@ public class WebBrowser {
                             throw new RuntimeException("[OpenLink] " + errorMessage);
                         }
                         browserProcess = Runtime.getRuntime().exec(browser + " " + url);
+                        break;
                     }
-                    default -> {
+                    default: {
                         String errorMessage = "Unsupported operating system: " + Frpc.osName + ". Please use Windows, macOS, or Linux.";
                         OpenLink.LOGGER.error(errorMessage);
                         throw new RuntimeException("[OpenLink] " + errorMessage);

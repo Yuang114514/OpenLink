@@ -4,10 +4,9 @@ import com.mojang.brigadier.CommandDispatcher;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraftforge.client.event.RegisterClientCommandsEvent;
-import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.ModList;
@@ -22,16 +21,16 @@ import net.minecraftforge.versions.forge.ForgeVersion;
 public final class OpenLinkForge {
     public OpenLinkForge() throws Exception {
         // Run our common setup.
-        OpenLink.init(ModList.get().getModFileById(OpenLink.MOD_ID).versionString(),"Forge", ForgeVersion.getVersion());
+        OpenLink.init(ModList.get().getModContainerById(OpenLink.MOD_ID).get().getModInfo().getVersion().getQualifier(),"Forge", ForgeVersion.getVersion());
     }
 
     @SubscribeEvent
-    public static void onClientScreenInit(ScreenEvent.InitScreenEvent event){
-        EventCallbacks.onScreenInit(event.getScreen().getMinecraft(), event.getScreen());
+    public static void onClientScreenInit(GuiScreenEvent.InitGuiEvent event){
+        EventCallbacks.onScreenInit(event.getGui().getMinecraft(), event.getGui());
     }
 
     @SubscribeEvent
-    public static void onClientCommandRegistering(RegisterClientCommandsEvent event){
+    public static void onClientCommandRegistering(RegisterCommandsEvent event){
         event.getDispatcher().register(Commands.literal("proxyrestart")
                 .executes(context -> Frpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
     }
