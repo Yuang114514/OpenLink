@@ -119,3 +119,6 @@ run/
 
 # Merging script
 /merge.ps1
+
+# Building script
+/build.ps1
