@@ -44,7 +44,7 @@ public class LoginScreen extends Screen {
         authorization.setMaxLength(100);
         authorization.setX(this.width / 2 - 200);
         authorization.y=this.height/2;
-        this.addWidget(authorization);
+        this.addButton(authorization);
         this.addButton(new Button(this.width / 2 + 160, this.height / 2, 40, 20, CommonComponents.GUI_DONE, button -> {
             Request.Authorization = authorization.getValue();
             try {

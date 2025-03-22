@@ -165,7 +165,7 @@ public class NewShareToLanScreen extends Screen {
         this.addButton(new Button(this.width / 2 + 5, this.height - 28, 150, 20, CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)));
         editBox2=new EditBox(this.font,this.width/2-(OpenLink.disabled||!LanConfig.cfg.use_frp?75:155),OpenLink.disabled?160:190,150,20,Utils.translatableText("text.openlink.local_port"));
         editBox2.setSuggestion(Utils.translatableText("text.openlink.local_port").getString());
-        this.addWidget(editBox2);
+        this.addButton(editBox2);
         onlinemode=CycleButton.builder((OnlineModeTabs o)-> o.component)
                 .withValues(OnlineModeTabs.values())
                 .withInitialValue(LanConfig.getAuthMode())
@@ -177,7 +177,7 @@ public class NewShareToLanScreen extends Screen {
         editBox=new EditBox(this.font,this.width / 2 + 5, 190, 150, 20, Utils.translatableText("text.openlink.remote_port"));
         editBox.setSuggestion(Utils.translatableText("text.openlink.remote_port").getString());
         editBox.setValue(LanConfig.cfg.last_port_value);
-        this.addWidget(editBox);
+        this.addButton(editBox);
         nodeselection=new Button(this.width/2+5,160,150,20,Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(new NodeSelectionScreen(this)));
         nodeselection.active=LanConfig.cfg.use_frp;
         usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, Utils.translatableText("text.openlink.usingfrp"),((cycleButton, bool) -> {

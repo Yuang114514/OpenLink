@@ -33,7 +33,7 @@ public class NodeSelectionScreen extends Screen {
             selectionList=new NodeSelectionList(this.minecraft);
         }
         selectionList.changePos(this.width, this.height, 32, this.height-65+4);
-        this.addWidget(done=new Button(this.width / 2 - 100, this.height - 38, 200, 20, CommonComponents.GUI_DONE, (button) -> {
+        this.addButton(done=new Button(this.width / 2 - 100, this.height - 38, 200, 20, CommonComponents.GUI_DONE, (button) -> {
             if(selectionList==null||selectionList.getSelected()==null||selectionList.getSelected().node.id==-1){
                 Frpc.nodeId=-1;
                 this.minecraft.setScreen(lastscreen);
