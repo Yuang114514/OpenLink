@@ -1,6 +1,7 @@
 package fun.moystudio.openlink.svc_support;
 
 import de.maxhenkel.voicechat.api.*;
+import de.maxhenkel.voicechat.api.events.Event;
 import de.maxhenkel.voicechat.api.events.EventRegistration;
 import de.maxhenkel.voicechat.api.events.VoiceHostEvent;
 import de.maxhenkel.voicechat.api.events.VoicechatServerStartedEvent;
@@ -24,16 +25,19 @@ public class SvcPlugin implements VoicechatPlugin {
             OpenLink.LOGGER.info("Simple Voice Chat Support Plugin initialized!");
         }
     }
-//    @Override
-//    public void registerEvents(EventRegistration registration) {
+    @Override
+    public void registerEvents(EventRegistration registration) {
+//        registration.registerEvent(Event.class);
 //        registration.registerEvent(VoiceHostEvent.class, event -> {
-//            while (!OpenLink.disabled){
-//                if(Frpc.runningSvcProxy!=null||Minecraft.getInstance().level==null){
-//                    break;
+//            try{
+//                while (!OpenLink.disabled){
+//                    if(Frpc.runningSvcProxy!=null||Minecraft.getInstance().level==null){
+//                        throw new Exception("");
+//                    }
 //                }
-//            }
-//            OpenLink.LOGGER.info(Frpc.runningSvcProxy.connectAddress);
-//            event.setVoiceHost(LanConfig.cfg.use_frp?Frpc.runningSvcProxy.connectAddress:event.getVoiceHost());
+//            } catch (Exception ignored){};
+//
+//            event.setVoiceHost(LanConfig.cfg.use_frp&&Frpc.runningSvcProxy!=null?Frpc.runningSvcProxy.connectAddress:event.getVoiceHost());
 //        });
-//    }
+    }
 }
