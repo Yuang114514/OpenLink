@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Player.class)
 public abstract class PlayerMixin {
     @Inject(method = "createPlayerUUID(Lcom/mojang/authlib/GameProfile;)Ljava/util/UUID;", at = @At("HEAD"), cancellable = true)
-    private static void openLink$createOfflinePlayerUUID(GameProfile gameProfile, CallbackInfoReturnable<UUID> ci) {
+    private static void openLink$createOfflinePlayerUUIDMixin(GameProfile gameProfile, CallbackInfoReturnable<UUID> ci) {
         UUID uuid = UUIDFixer.hookEntry(gameProfile.getName());
         if (uuid != null) {
             ci.setReturnValue(uuid);
