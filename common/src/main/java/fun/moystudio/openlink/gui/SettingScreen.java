@@ -534,14 +534,6 @@ public class SettingScreen extends Screen {
             public Component component;
             public Information(Component component,boolean inChart){
                 this.inChart=inChart;
-                if(component.getString().contains("§n")){
-                    MutableComponent component1 = (MutableComponent) component;
-                    component1.withStyle((style ->style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, component1)).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL,component1.getString().substring(component1.getString().lastIndexOf("§n")+2)))));
-                    this.component=component1;
-                }
-                else {
-                    this.component=component;
-                }
             }
             public void render(GuiGraphics guiGraphics, int x, int y, int width){
                 if(inChart){
@@ -551,10 +543,11 @@ public class SettingScreen extends Screen {
             }
             @Override
             public boolean mouseClicked(double d, double e, int i) {
-                if(this.component.getStyle().getClickEvent()!=null&&this.component.getStyle().getClickEvent().getAction().equals(ClickEvent.Action.OPEN_URL)){
+                if(this.component.getString().contains("§n")){
                     new WebBrowser(Uris.advertiseUri.toString()).openBrowser();
+                    return true;
                 }
-                return this.component.getStyle().getClickEvent()!=null;
+                return false;
             }
 
             @Override
@@ -586,7 +579,6 @@ public class SettingScreen extends Screen {
                 for(int i1=0;i1<this.informations.size();i1++){
                     this.informations.get(i1).render(guiGraphics,x,y+i1*(Minecraft.getInstance().font.lineHeight+5),entryWidth);
                 }
-
             }
 
             @Override
