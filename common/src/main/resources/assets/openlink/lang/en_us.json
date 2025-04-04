@@ -31,7 +31,7 @@
   "text.openlink.node_available": "§a§lAvailable",
   "text.openlink.node_needrealname": "§6§lNeed real name",
   "text.openlink.node_unavailable": "§c§lUnavailable",
-  "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in storage directory,\n§o§l§cplease download it.",
+  "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in storage directory,\n§o§l§cplease download it.\n§o§l§c(you can skip the frpc downloading but\n §o§l§call the proxy feature will be disabled)",
   "text.openlink.now": "Now",
   "text.openlink.onlinemodebutton": "Auth Mode",
   "text.openlink.proxycount": "Proxies: %s/%s",
@@ -49,5 +49,6 @@
   "text.openlink.openstoragedir": "Open storage folder",
   "text.openlink.fastlogin": "Fast Login",
   "text.openlink.fastloginconfirm": "The login page is opened in your browser.(if not, you can paste the url to your browser from your clipboard) Press any button below when you finished logging in.",
-  "text.openlink.authorization": "Enter Authorization code to login(you can get it from OpenFrp Panel)"
+  "text.openlink.authorization": "Enter Authorization code to login(you can get it from OpenFrp Panel)",
+  "text.openlink.ofpanel": "Web OpenFrp Panel"
 }

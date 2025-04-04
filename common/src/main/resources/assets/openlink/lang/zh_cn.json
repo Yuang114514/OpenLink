@@ -31,7 +31,7 @@
   "text.openlink.node_available": "§a§l可用",
   "text.openlink.node_needrealname": "§6§l需要实名认证",
   "text.openlink.node_unavailable": "§c§l不可用",
-  "text.openlink.nofrpcfile": "§3无法在游戏目录中找到任何可用的 frpc 核心，\n§o§l§c请下载frpc核心。",
+  "text.openlink.nofrpcfile": "§3无法在存储目录中找到 frpc 可执行文件，\n§o§l§c请下载它。\n§o§l§c（你可以跳过 frpc 下载，\n§o§l§c但所有代理功能将被禁用）",
   "text.openlink.now": "现在",
   "text.openlink.onlinemodebutton": "验证模式",
   "text.openlink.proxycount": "隧道数: %s/%s",
@@ -49,5 +49,6 @@
   "text.openlink.openstoragedir": "打开存储文件夹",
   "text.openlink.fastlogin": "快速登录",
   "text.openlink.fastloginconfirm": "登录页面已在您的浏览器中打开。（如果没有，您可以从剪贴板粘贴到您的浏览器）当您完成登录后，点击下面的任何按钮。",
-  "text.openlink.authorization": "输入Authorization（您可从OpenFrp面板中获取）"
+  "text.openlink.authorization": "输入Authorization（您可从OpenFrp面板中获取）",
+  "text.openlink.ofpanel": "网页OpenFrp面板"
 }
