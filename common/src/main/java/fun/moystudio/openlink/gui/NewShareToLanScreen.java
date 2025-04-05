@@ -187,6 +187,11 @@ public class NewShareToLanScreen extends Screen {
         super.render(guiGraphics, i, j, f);
         guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 50, 16777215);
         guiGraphics.drawCenteredString(this.font, INFO_TEXT, this.width / 2, 82, 16777215);
+<<<<<<< HEAD
+=======
+        //TODO:添加OF提示（见OF开发者群）
+        super.render(guiGraphics, i, j, f);
+>>>>>>> origin/1.20.1
     }
 
     private Tooltip getToolTip(){
