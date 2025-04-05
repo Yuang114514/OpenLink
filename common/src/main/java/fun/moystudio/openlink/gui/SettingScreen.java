@@ -600,6 +600,7 @@ public class SettingScreen extends Screen {
             public Component component;
             public Information(Component component,boolean inChart){
                 this.inChart=inChart;
+                this.component=component;
             }
             public void render(PoseStack poseStack, int x, int y, int width){
                 if(inChart){
