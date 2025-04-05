@@ -64,10 +64,18 @@ public class LoginScreen extends Screen {
     }
 
     @Override
+<<<<<<< HEAD
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
         this.renderBackground(guiGraphics);
         loginTips.renderCentered(guiGraphics, this.width / 2, 15, 16, 0xffffff);
         super.render(guiGraphics, i, j, f);
+=======
+    public void render(PoseStack poseStack, int i, int j, float f) {
+        this.renderBackground(poseStack);
+        loginTips.renderCentered(poseStack, this.width / 2, 15, 16, 0xffffff);
+        //TODO:添加OF提示（见OF开发者群）
+        super.render(poseStack, i, j, f);
+>>>>>>> origin/1.19.2
     }
 
     @Override
