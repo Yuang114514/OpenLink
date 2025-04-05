@@ -66,6 +66,7 @@ public class LoginScreen extends Screen {
     @Override
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
         super.render(guiGraphics, i, j, f);
+        //TODO:添加OF提示（见OF开发者群）
         loginTips.renderCentered(guiGraphics, this.width / 2, 15, 16, 0xffffff);
     }
 

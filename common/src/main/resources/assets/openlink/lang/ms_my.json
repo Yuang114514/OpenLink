@@ -31,7 +31,7 @@
   "text.openlink.node_available": "§a§lTersedia",
   "text.openlink.node_needrealname": "§6§lPerlu nama sebenar",
   "text.openlink.node_unavailable": "§c§lTidak tersedia",
-  "text.openlink.nofrpcfile": "§3Tidak dapat mencari fail boleh laku frpc dalam direktori storan, §o§l§csila muat turunnya.",
+  "text.openlink.nofrpcfile": "§3Tidak dapat mencari fail boleh laku frpc dalam direktori storan,\n§o§l§csila muat turunnya.\n§o§l§c(anda boleh melangkau muat turun frpc tetapi\n §o§l§panggil ciri proksi akan dilumpuhkan)",
   "text.openlink.now": "Sekarang",
   "text.openlink.onlinemodebutton": "Mod Pengesahan",
   "text.openlink.proxycount": "Proksi: %s/%s",
@@ -49,5 +49,6 @@
   "text.openlink.openstoragedir": "Buka folder storan",
   "text.openlink.fastlogin": "Log Masuk Cepat",
   "text.openlink.fastloginconfirm": "Halaman log masuk dibuka dalam penyemak imbas anda. (jika tidak, anda boleh menampal url ke penyemak imbas anda dari papan keratan anda) Tekan mana-mana butang di bawah apabila anda selesai log masuk.",
-  "text.openlink.authorization": "Masukkan kod Kebenaran untuk log masuk (anda boleh mendapatkannya dari Panel OpenFrp)"
+  "text.openlink.authorization": "Masukkan kod Kebenaran untuk log masuk (anda boleh mendapatkannya dari Panel OpenFrp)",
+  "text.openlink.ofpanel": "Panel OpenFrp web"
 }
