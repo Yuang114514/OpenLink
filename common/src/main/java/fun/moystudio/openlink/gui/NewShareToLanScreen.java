@@ -196,6 +196,7 @@ public class NewShareToLanScreen extends Screen {
         this.renderBackground(poseStack);
         drawCenteredString(poseStack, this.font, this.title, this.width / 2, 50, 16777215);
         drawCenteredString(poseStack, this.font, INFO_TEXT, this.width / 2, 82, 16777215);
+        //TODO:添加OF提示（见OF开发者群）
         super.render(poseStack, i, j, f);
     }
 }
