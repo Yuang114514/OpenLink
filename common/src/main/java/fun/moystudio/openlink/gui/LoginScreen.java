@@ -136,6 +136,7 @@ public class LoginScreen extends Screen {
     public void render(PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);
         loginTips.renderCentered(poseStack, this.width / 2, 15, 16, 0xffffff);
+        //TODO:添加OF提示（见OF开发者群）
         super.render(poseStack, i, j, f);
     }
 
