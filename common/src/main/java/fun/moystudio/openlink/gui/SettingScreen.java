@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
@@ -41,7 +41,7 @@ import java.util.function.Supplier;
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
         super(Utils.translatableText("gui.openlink.settingscreentitle"));
-        informationList=getInformationList(Frpc.FRPC_VERSION,OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
+        informationList=getInformationList(OldFrpc.FRPC_VERSION,OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
         lastscreen=last;
     }
     MultiLineLabel title;
@@ -520,9 +520,9 @@ public class SettingScreen extends Screen {
                 if (i==0) {
                     if(SettingScreen.LogObjectSelectionList.this.getSelected()==this){
                         try {
-                            if (Frpc.osName.equals("windows")) {
+                            if (OldFrpc.osName.equals("windows")) {
                                 Runtime.getRuntime().exec(new String[]{"cmd", "/c", "start", this.filePath});
-                            } else if (Frpc.osName.equals("darwin")) {
+                            } else if (OldFrpc.osName.equals("darwin")) {
                                 Runtime.getRuntime().exec(new String[]{"open", this.filePath});
                             } else {
                                 Runtime.getRuntime().exec(this.filePath);

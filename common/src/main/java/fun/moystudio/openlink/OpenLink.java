@@ -2,7 +2,7 @@ package fun.moystudio.openlink;
 
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.json.JsonIP;
 import fun.moystudio.openlink.logic.LanConfig;
@@ -59,7 +59,7 @@ public final class OpenLink {
         logdir.mkdirs();
         //跳过ssl功能
         try{
-            Frpc.init();//安装/检查更新frpc版本
+            OldFrpc.init();//安装/检查更新frpc版本
             Request.readSession();//读取以前的SessionID
         } catch (SSLHandshakeException e) {
             e.printStackTrace();

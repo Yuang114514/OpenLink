@@ -2,7 +2,7 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
 import fun.moystudio.openlink.logic.Utils;
@@ -146,7 +146,7 @@ public class NewShareToLanScreen extends Screen {
             if(!LanConfig.cfg.use_frp){
                 return;
             }
-            Frpc.openFrp(i,editBox.getValue());
+            OldFrpc.openFrp(i,editBox.getValue());
             try {
                 LanConfig.writeConfig();
             } catch (Exception e) {

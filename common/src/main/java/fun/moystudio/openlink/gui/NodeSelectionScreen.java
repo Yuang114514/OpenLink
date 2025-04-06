@@ -1,7 +1,7 @@
 package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.json.JsonNode;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.network.Request;
@@ -37,11 +37,11 @@ public class NodeSelectionScreen extends Screen {
         selectionList.changePos(this.width, this.height, 32, this.height-65+4);
         this.addWidget(done=new Button(this.width / 2 - 100, this.height - 38, 200, 20, CommonComponents.GUI_DONE, (button) -> {
             if(selectionList==null||selectionList.getSelected()==null||selectionList.getSelected().node.id==-1){
-                Frpc.nodeId=-1;
+                OldFrpc.nodeId=-1;
                 this.minecraft.setScreen(lastscreen);
                 return;
             }
-            Frpc.nodeId=selectionList.getSelected().node.id;
+            OldFrpc.nodeId=selectionList.getSelected().node.id;
             this.minecraft.setScreen(lastscreen);
         }));
         this.addWidget(selectionList);
@@ -76,7 +76,7 @@ public class NodeSelectionScreen extends Screen {
                     for(JsonNode node:nodes){
                         Entry entry1=new Entry(node);
                         this.addEntry(entry1);
-                        if(node.id==Frpc.nodeId){
+                        if(node.id== OldFrpc.nodeId){
                             this.setSelected(entry1);
                             this.centerScrollOn(entry1);
                         }

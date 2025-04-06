@@ -1,6 +1,6 @@
 package fun.moystudio.openlink.logic;
 
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 
@@ -30,7 +30,7 @@ public class Extract {
                             dir.mkdir();
                         } else {
                             FileOutputStream fileOutputStream=new FileOutputStream(path);
-                            byte[] buffer=new byte[Frpc.MAX_BUFFER_SIZE];
+                            byte[] buffer=new byte[OldFrpc.MAX_BUFFER_SIZE];
                             int length;
                             while((length=zipInputStream.read(buffer))>0){
                                 fileOutputStream.write(buffer,0,length);
@@ -62,7 +62,7 @@ public class Extract {
                             dir.mkdir();
                         } else {
                             FileOutputStream fileOutputStream=new FileOutputStream(path);
-                            byte[] buffer=new byte[Frpc.MAX_BUFFER_SIZE];
+                            byte[] buffer=new byte[OldFrpc.MAX_BUFFER_SIZE];
                             int length;
                             while((length=tarInputStream.read(buffer))>0){
                                 fileOutputStream.write(buffer,0,length);

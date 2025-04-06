@@ -1,10 +1,8 @@
 package fun.moystudio.openlink.forge;
 
-import com.mojang.brigadier.CommandDispatcher;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import net.minecraft.client.Minecraft;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraftforge.client.event.RegisterClientCommandsEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -33,7 +31,7 @@ public final class OpenLinkForge {
     @SubscribeEvent
     public static void onClientCommandRegistering(RegisterClientCommandsEvent event){
         event.getDispatcher().register(Commands.literal("proxyrestart")
-                .executes(context -> Frpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
+                .executes(context -> OldFrpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
     }
 
     @SubscribeEvent

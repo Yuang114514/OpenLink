@@ -1,6 +1,6 @@
 package fun.moystudio.openlink.logic;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import java.lang.reflect.Method;
 
 public class WebBrowser {
@@ -14,7 +14,7 @@ public class WebBrowser {
     public void openBrowser(){
         if(!browserOpened) {
             try {
-                switch (Frpc.osName) {
+                switch (OldFrpc.osName) {
                     case "windows" ->
                             browserProcess = Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);//Windows自带的链接打开方式
                     case "darwin" -> {//百科搜的macOS没用过
@@ -40,7 +40,7 @@ public class WebBrowser {
                         browserProcess = Runtime.getRuntime().exec(browser + " " + url);
                     }
                     default -> {
-                        String errorMessage = "Unsupported operating system: " + Frpc.osName + ". Please use Windows, macOS, or Linux.";
+                        String errorMessage = "Unsupported operating system: " + OldFrpc.osName + ". Please use Windows, macOS, or Linux.";
                         OpenLink.LOGGER.error(errorMessage);
                         throw new RuntimeException("[OpenLink] " + errorMessage);
                     }

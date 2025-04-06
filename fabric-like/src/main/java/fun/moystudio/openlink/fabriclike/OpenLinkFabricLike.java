@@ -1,7 +1,7 @@
 package fun.moystudio.openlink.fabriclike;
 
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -15,7 +15,7 @@ public final class OpenLinkFabricLike {
         OpenLink.init(version,loader,loader_version);
         ClientCommandManager.DISPATCHER.register(ClientCommandManager
                         .literal("proxyrestart")
-                        .executes(context -> Frpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
+                        .executes(context -> OldFrpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight)->{
             EventCallbacks.onScreenInit(client,screen);
         });

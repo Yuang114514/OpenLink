@@ -2,7 +2,7 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ImageButton;
@@ -29,19 +29,19 @@ public class UpdateScreen extends Screen {
         List<Component> list = new ArrayList<>();
         strings.forEach((String)-> list.add(Utils.literalText(String)));
         yes=new Button(this.width/4-40,this.height/5*4-10,80,20,CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen()));
-        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {if(Frpc.FRPC_VERSION.length()<6)OpenLink.disabled=true;this.onClose();}, (button, poseStack, i, j) -> {
-            if(Frpc.FRPC_VERSION.length()<6){
+        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {if(OldFrpc.FRPC_VERSION.length()<6)OpenLink.disabled=true;this.onClose();}, (button, poseStack, i, j) -> {
+            if(OldFrpc.FRPC_VERSION.length()<6){
                 renderComponentTooltip(poseStack, list, i, j);
             }
         });
-        text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatefrpc", Frpc.latestVersion, Frpc.FRPC_VERSION.length()<6 ? "does not exist" : Frpc.FRPC_VERSION),this.width-50);
+        text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatefrpc", OldFrpc.latestVersion, OldFrpc.FRPC_VERSION.length()<6 ? "does not exist" : OldFrpc.FRPC_VERSION),this.width-50);
         this.addRenderableWidget(yes);
         this.addRenderableWidget(no);
         this.addRenderableWidget(new Button(this.width/2-60, this.height/5*4-10, 120, 20, Utils.translatableText("text.openlink.openstoragedir"), button -> {
             try{
-                if(Frpc.osName.equals("windows")){
+                if(OldFrpc.osName.equals("windows")){
                     Runtime.getRuntime().exec(new String[]{"explorer", "/root,"+OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
-                } else if (Frpc.osName.equals("darwin")) {
+                } else if (OldFrpc.osName.equals("darwin")) {
                     Runtime.getRuntime().exec(new String[]{"open", OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
                 } else {
                     Runtime.getRuntime().exec(new String[]{"xdg-open", OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
@@ -63,7 +63,7 @@ public class UpdateScreen extends Screen {
 
     @Override
     public void onClose(){
-        Frpc.hasUpdate = false;
+        OldFrpc.hasUpdate = false;
         this.minecraft.setScreen(null);
     }
 }

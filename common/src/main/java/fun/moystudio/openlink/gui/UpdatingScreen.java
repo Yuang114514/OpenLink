@@ -2,7 +2,7 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
@@ -22,9 +22,9 @@ public class UpdatingScreen extends Screen {
         text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatingfrpc"),this.width-50);
         this.addRenderableWidget(new Button(this.width/2-60, this.height/5*4-10, 120, 20, Utils.translatableText("text.openlink.openstoragedir"), button -> {
             try{
-                if(Frpc.osName.equals("windows")){
+                if(OldFrpc.osName.equals("windows")){
                     Runtime.getRuntime().exec(new String[]{"explorer", "/root,"+ OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
-                } else if (Frpc.osName.equals("darwin")) {
+                } else if (OldFrpc.osName.equals("darwin")) {
                     Runtime.getRuntime().exec(new String[]{"open", OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
                 } else {
                     Runtime.getRuntime().exec(new String[]{"xdg-open", OpenLink.EXECUTABLE_FILE_STORAGE_PATH});
@@ -43,7 +43,7 @@ public class UpdatingScreen extends Screen {
         if(tickCount==5){
             new Thread(()->{
                 try {
-                    Frpc.update();
+                    OldFrpc.update();
                     updated=true;
                 } catch (Exception e){
                     throw new RuntimeException(e);
