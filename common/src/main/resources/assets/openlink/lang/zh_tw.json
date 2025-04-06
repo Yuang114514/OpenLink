@@ -32,12 +32,9 @@
   "text.openlink.node_needrealname": "§6§l需要實名",
   "text.openlink.node_unavailable": "§c§l不可用",
   "text.openlink.nofrpcfile": "§3在遊戲目錄中找不到任何可用的 frpc 核心，\n§o§l§c請下載frpc核心。",
-  "text.openlink.notcompleted": "使用者名或郵箱或者密碼未填寫完成",
   "text.openlink.now": "現在",
   "text.openlink.onlinemodebutton": "驗證模式",
-  "text.openlink.password": "密碼",
   "text.openlink.proxycount": "隧道數: %s/%s",
-  "text.openlink.rememberuserandpassword": "記住使用者名稱和密碼",
   "text.openlink.remote_port": "隧道遠端連接埠（可選）",
   "text.openlink.remoteportnotfound": "§c§l嘗試 5 次後找不到任何可用的遠端連接埠§o§i\n（也許你今天運氣不佳 :]）",
   "text.openlink.secure": "安全",
@@ -45,10 +42,13 @@
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 忽略 SSL 可能會使您的使用者和密碼不安全.\n§c§o§l請不要將 IP 發送給您不信任的任何人！",
   "text.openlink.updatefrpc": "發現一個新的Frpc核心！ 最新核心版本更新時間： %s，當前核心版本更新時間 ： %s ，你是否需要更新？",
   "text.openlink.updatingfrpc": "正在更新Frpc核心中... （這可能會耗費少許時間）",
-  "text.openlink.username": "使用者名稱或電子郵箱",
   "text.openlink.userproxieslimited": "§c§l您的OpenFrp帳戶已達到最大代理隧道數量。\n請刪除一些代理隧道！",
   "text.openlink.usingfrp": "使用 OpenFrp 代理",
   "text.openlink.x_axis_label": "時間",
   "text.openlink.y_axis_label": "流量（MiB）",
-  "text.openlink.openstoragedir": "打開存儲資料夾"
+  "text.openlink.openstoragedir": "打開存儲資料夾",
+  "text.openlink.fastlogin": "快速登錄",
+  "text.openlink.fastloginconfirm": "登入頁面已在您的瀏覽器中打開。\n （如果沒有，您可以從剪貼板粘貼到您的瀏覽器）當您完成登入後，點擊下麵的任何按鈕。",
+  "text.openlink.authorization": "鍵入 Authorization號碼以登錄（您可從OpenFrp面板獲取）",
+  "text.openlink.ofpanel": "OpenFrp網頁面板"
 }
