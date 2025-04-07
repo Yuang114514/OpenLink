@@ -9,17 +9,17 @@ import org.jetbrains.annotations.Nullable;
 public interface Frpc {
     /**
      * Get the url of the frpc file if there is an update.
-     * @return Returns the full url(with http:// or https://) of the new frpc file. If there is not an update, return {@code null}.
+     * @return the full url(with http:// or https://) of the new frpc file. If there is not an update, return {@code null}.
      */
     String getUpdateFileUrl();
     /**
      * Check for the frpc update.
-     * @return Returns {@code true} if there is a frpc update.
+     * @return whether there is a frpc update.
      */
     boolean checkUpdate();
     /**
      * Create the frpc process.
-     * @return Returns the frpc process.
+     * @return the frpc process.
      */
     Process createFrpcProcess();
 
