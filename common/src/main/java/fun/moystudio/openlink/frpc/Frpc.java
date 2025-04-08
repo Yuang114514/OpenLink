@@ -12,20 +12,12 @@ public interface Frpc {
     /**
      * Return {@code false} by default.<br>
      * We recommend you not to override the download logic. OpenLink will automatically download frpc file and extract(if you return {@code true} in the method {@link #isArchive()}).<br>
-     * If you really want to override the download logic, return {@code true} and implement {@link #downloadFrpcLogicOverride(Path)}.
-     * @return whether you override the download logic.
-     */
-    default boolean isDownloadLogicOverridden() {
-        return false;
-    };
-    /**
-     * Do nothing by default.<br>
-     * We recommend you not to override the download logic. OpenLink will automatically download frpc file and extract(if you return {@code true} in the method {@link #isArchive()}).<br>
-     * If you really want to override the download logic, implement this method.
+     * If you really want to override the download logic, implement this method and return {@code true}.
      * @param frpcDownloadDir the download directory of the frpc executable file.
      * @implNote you have to download frpc to {@code frpcDownloadDir} and .
      */
-    default void downloadFrpcLogicOverride(Path frpcDownloadDir) {
+    default boolean downloadFrpcLogicOverride(Path frpcDownloadDir) {
+        return false;
     }
     /**
      * Return {@code false} by default.
@@ -43,15 +35,18 @@ public interface Frpc {
         return null;
     };
     /**
-     * Check for the frpc update.
      * @return whether there is a frpc update.
      */
-    boolean checkUpdate();
+    boolean isOutdated();
+
     /**
      * Create the frpc process.
+     * @param frpcExecutableFilePath the path of the frpc executable file.
+     * @param localPort the lan server port.
+     * @param remotePort the remote port user decided to use(maybe {@code null} or blank).
      * @return the frpc process.
      */
-    Process createFrpcProcess(Path frpcExecutableFilePath);
+    Process createFrpcProcess(Path frpcExecutableFilePath, int localPort, @Nullable String remotePort);
 
     /**
      * Create the remote proxy(tunnel).

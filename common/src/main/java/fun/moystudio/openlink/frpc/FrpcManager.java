@@ -6,11 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FrpcManager {
     Map<String, Pair<String, Class<? extends Frpc>>> frpcImplClasses = new HashMap<>();
