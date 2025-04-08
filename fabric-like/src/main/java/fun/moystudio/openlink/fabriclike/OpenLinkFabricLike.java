@@ -9,10 +9,13 @@ import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.client.Minecraft;
 
+import java.util.List;
+import java.util.function.Supplier;
+
 public final class OpenLinkFabricLike {
-    public static void init(String version,String loader,String loader_version) throws Exception {
+    public static void init(String version, String loader, String loader_version, Supplier<List<String>> getAllModPrefix) throws Exception {
         // Run our common setup.
-        OpenLink.init(version,loader,loader_version);
+        OpenLink.init(version,loader,loader_version,getAllModPrefix);
         ClientCommandManager.DISPATCHER.register(ClientCommandManager
                         .literal("proxyrestart")
                         .executes(context -> OldFrpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));

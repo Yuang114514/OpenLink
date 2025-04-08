@@ -5,7 +5,11 @@ import net.fabricmc.api.ModInitializer;
 
 import fun.moystudio.openlink.fabriclike.OpenLinkFabricLike;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class OpenLinkFabric implements ModInitializer {
     @Override
@@ -16,7 +20,13 @@ public final class OpenLinkFabric implements ModInitializer {
 
         // Run the Fabric-like setup.
         try {
-            OpenLinkFabricLike.init(FabricLoader.getInstance().getModContainer(OpenLink.MOD_ID).get().getMetadata().getVersion().getFriendlyString(),"Fabric", FabricLoaderImpl.VERSION);
+            OpenLinkFabricLike.init(FabricLoader.getInstance().getModContainer(OpenLink.MOD_ID).get().getMetadata().getVersion().getFriendlyString(),"Fabric", FabricLoaderImpl.VERSION, () -> {
+                List<String> res = new ArrayList<>();
+                FabricLoader.getInstance().getEntrypoints("main", Object.class).forEach(entrypoint -> {
+                    res.add(entrypoint.getClass().getPackageName());
+                });
+                return res;
+            });
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

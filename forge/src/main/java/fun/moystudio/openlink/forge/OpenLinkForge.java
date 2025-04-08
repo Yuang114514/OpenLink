@@ -15,12 +15,24 @@ import net.minecraftforge.fml.common.Mod;
 import fun.moystudio.openlink.OpenLink;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mod.EventBusSubscriber
 @Mod(OpenLink.MOD_ID)
 public final class OpenLinkForge {
     public OpenLinkForge() throws Exception {
         // Run our common setup.
-        OpenLink.init(ModList.get().getModFileById(OpenLink.MOD_ID).versionString(),"Forge", ForgeVersion.getVersion());
+        OpenLink.init(ModList.get().getModFileById(OpenLink.MOD_ID).versionString(),"Forge", ForgeVersion.getVersion(), () -> {
+            List<String> res = new ArrayList<>();
+            ModList.get().getMods().forEach(mod -> {
+                try {
+                    res.add(ModList.get().getModContainerById(mod.getModId()).get().getMod().getClass().getPackageName());
+                } catch (Exception ignored) {
+                }
+            });
+            return res;
+        });
     }
 
     @SubscribeEvent

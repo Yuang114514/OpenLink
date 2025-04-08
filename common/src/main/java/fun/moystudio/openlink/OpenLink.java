@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
 
@@ -35,6 +36,7 @@ public final class OpenLink {
     public static String VERSION,LOADER, LOADER_VERSION;
     public static List<Pair<String,Class<?>>> CONFLICT_CLASS = new ArrayList<>();
     public static int PREFER_CLASSIFY;
+    public static Supplier<List<String>> GET_ALL_MOD_PREFIX;
     private static final List<Pair<String,String>> CONFLICT_CLASS_NAME=Arrays.asList(//Do NOT use Class object here!!!!!!!(By Terry_MC)
             Pair.of("mcwifipnp","io.github.satxm.mcwifipnp.ShareToLanScreenNew"),
             Pair.of("lanserverproperties","rikka.lanserverproperties.ModifyLanScreen"),
@@ -42,7 +44,7 @@ public final class OpenLink {
     );
 
 
-    public static void init(String version,String loader,String loader_version) throws Exception {
+    public static void init(String version, String loader, String loader_version, Supplier<List<String>> getAllModPrefix) throws Exception {
         VERSION=version;
         LOADER=loader;
         LOADER_VERSION=loader_version;
@@ -51,6 +53,7 @@ public final class OpenLink {
         LOGGER.info("OpenLink Storage Path: "+EXECUTABLE_FILE_STORAGE_PATH);
         PREFERENCES=Preferences.userNodeForPackage(OpenLink.class);
         PREFER_CLASSIFY = getPreferClassify();
+        GET_ALL_MOD_PREFIX = getAllModPrefix;
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);
