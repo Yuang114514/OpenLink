@@ -114,7 +114,7 @@ public class OldFrpc {
         }
 
         OpenLink.LOGGER.info("Extracting frpc archive file...");
-        Extract.ExtractBySuffix(frpcArchiveFile.getAbsoluteFile(),zsuffix);
+        Extract.ExtractBySuffix(frpcArchiveFile.getAbsoluteFile());
         OpenLink.LOGGER.info("Extracted frpc archive file successfully!");
         frpcArchiveFile.delete();
         OpenLink.LOGGER.info("Deleted frpc archive file!");
