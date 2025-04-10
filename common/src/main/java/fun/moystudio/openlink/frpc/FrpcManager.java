@@ -24,6 +24,7 @@ public class FrpcManager {
     private final Map<String, Pair<String, ? extends Frpc>> frpcImplInstances = new HashMap<>();
     private final Map<String, Path> frpcExecutableFiles = new HashMap<>();
     private String currentFrpcId = null;
+    private Process frpcProcess = null;
     private final static Logger LOGGER = LogManager.getLogger("OpenLink/FrpcManager");
     private static FrpcManager INSTANCE = null;
     public static FrpcManager getInstance() {
@@ -74,7 +75,7 @@ public class FrpcManager {
         return this.currentFrpcId;
     }
 
-    public Frpc getCurrentFrpcInstance() {//TODO: use this method to write frp tunnel create and start frpc logic
+    public Frpc getCurrentFrpcInstance() {
         return this.frpcImplInstances.get(currentFrpcId).getSecond();
     }
 
@@ -205,4 +206,18 @@ public class FrpcManager {
         return res[0];
     }
 
+    public void stop() {
+        this.getCurrentFrpcInstance().stopFrpcProcess(this.frpcProcess);
+        this.frpcProcess = null;
+    }
+
+    public void start(int i, String val) {
+        Frpc frpc = this.getCurrentFrpcInstance();
+        frpc.createProxy(i, val);
+        if(frpcExecutableFiles.containsKey(this.currentFrpcId)) {
+            this.frpcProcess = frpc.createFrpcProcess(this.frpcExecutableFiles.get(this.currentFrpcId), i, val);
+        } else {
+            LOGGER.error("Cannot start frpc: cannot find the frpc executable file.");
+        }
+    }
 }

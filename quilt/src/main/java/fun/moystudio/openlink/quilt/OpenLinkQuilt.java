@@ -18,7 +18,7 @@ public final class OpenLinkQuilt implements ModInitializer {
         try {
             OpenLinkFabricLike.init(QuiltLoader.getModContainer(OpenLink.MOD_ID).get().metadata().version().raw(),"Quilt", QuiltLoaderImpl.VERSION, () -> {
                 List<String> res = new ArrayList<>();
-                QuiltLoader.getEntrypoints("main", Object.class).forEach(entrypoint -> {
+                QuiltLoader.getEntrypoints("init", Object.class).forEach(entrypoint -> {
                     res.add(entrypoint.getClass().getPackageName());
                 });
                 return res;

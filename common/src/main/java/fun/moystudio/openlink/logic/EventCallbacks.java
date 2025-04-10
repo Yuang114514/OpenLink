@@ -4,7 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.OldFrpc;
+import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.gui.*;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonTotalAndList;
@@ -43,13 +43,13 @@ public class EventCallbacks {
             }
         }
         if(screen instanceof TitleScreen){
-            OldFrpc.stopFrpc();
+            FrpcManager.getInstance().stop();
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
                     20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
         }
     }
     public static void onClientStop(){
-        OldFrpc.stopFrpc();
+        FrpcManager.getInstance().stop();
     }
     public static void onLevelClear(){
         ConflictSelectionScreen.canOpen=null;
@@ -80,7 +80,7 @@ public class EventCallbacks {
                     if(confirmed){
                         SSLUtils.sslIgnored=false;
                         try {
-                            OldFrpc.init();//安装/检查更新frpc版本
+                            OldFrpc.init();//安装/检查更新frpc版本 TODO: no more OldFrpc
                             Request.readSession();//读取以前的SessionID
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -93,11 +93,13 @@ public class EventCallbacks {
                     minecraft.setScreen(null);
                 }, Utils.literalText("SSL Handshake Error"), Utils.translatableText("text.openlink.sslignored")));
             }
-            if (OldFrpc.hasUpdate) {
+            if (OldFrpc.hasUpdate) {//TODO: no more OldFrpc
                 minecraft.setScreen(new UpdateScreen());
             }
-            OldFrpc.stopFrpc();
+            FrpcManager.getInstance().stop();
         }
     }
 
+    public static void onAllModLoadingFinish() {
+    }
 }

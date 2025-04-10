@@ -70,6 +70,15 @@ public interface Frpc {
      */
     String getFrpcVersion(Path frpcExecutableFilePath);
     /**
+     * Stop the frpc process.
+     * @param frpcProcess the process of the frpc executable file.
+     */
+    default void stopFrpcProcess(@Nullable Process frpcProcess) {
+        if(frpcProcess!=null){
+            frpcProcess.destroy();
+        }
+    }
+    /**
      * YOU HAVE TO IMPLEMENT THIS METHOD!
      * Get the instance of your Frpc implementation.
      * @return the instance of your Frpc implementation
@@ -78,4 +87,5 @@ public interface Frpc {
     static Frpc getInstance() {
         return null;
     }
+
 }
