@@ -38,7 +38,12 @@ public class FrpcManager {
         for (String prefix : modPrefixes) {
             this.frpcImplInstances.putAll(getFrpcImplInstanceByPrefix(prefix));
         }
-        //TODO: 扫描每个frpc目录下的可执行文件，放到frpcExecutableFiles里面
+        for (String id : this.frpcImplInstances.keySet()) {
+            Path path = this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id));
+            if(path!=null){
+                frpcExecutableFiles.put(id, path);
+            }
+        }
     }
 
     public Map<String, Pair<String, ? extends Frpc>> getFrpcImplInstanceByPrefix(String prefix){
@@ -99,13 +104,19 @@ public class FrpcManager {
                 Frpc instance = this.frpcImplInstances.get(id).getSecond();
                 boolean overridden = instance.downloadFrpcLogicOverride(this.getFrpcStoragePathById(id));
                 if(overridden) {
-                    //TODO: find the executable file when override the downloading logic
-                    LOGGER.info("Downloaded {}'s frpc executable file(download logic is overridden).",this.frpcImplInstances.get(id).getFirst());
+                    Path path = this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id));
+                    if(path == null) {
+                        LOGGER.error("Cannot use the downloading logic override of {}: cannot find the frpc executable file in storage directory.", this.frpcImplInstances.get(id).getFirst());
+                        continue;
+                    }
+                    frpcExecutableFiles.put(id, path);
+                    LOGGER.info("Downloaded {}'s frpc executable file(download logic is overridden).", this.frpcImplInstances.get(id).getFirst());
                     continue;
                 }
                 Path executableFile = this.downloadFrpcById(id);
                 if(executableFile == null) {
                     LOGGER.error("Frpc '{}' cannot be downloaded.", this.frpcImplInstances.get(id).getFirst());
+                    continue;
                 }
                 frpcExecutableFiles.put(id,executableFile);
                 LOGGER.info("Downloaded {}'s frpc executable file automatically.",this.frpcImplInstances.get(id).getFirst());
@@ -167,6 +178,8 @@ public class FrpcManager {
     public Path getFrpcStoragePathById(String id) {//TODO: use this method to create a screen
         if(this.frpcImplInstances.containsKey(id)){
             Path override = this.frpcImplInstances.get(id).getSecond().frpcDirPathOverride(Path.of(OpenLink.EXECUTABLE_FILE_STORAGE_PATH + id));
+            if(override!=null) override.toFile().mkdirs();
+            else Path.of(OpenLink.EXECUTABLE_FILE_STORAGE_PATH + id).toFile().mkdirs();
             return override!=null?override:Path.of(OpenLink.EXECUTABLE_FILE_STORAGE_PATH + id);
         }
         LOGGER.error("Cannot get frpc storage path by id '{}': this frpc implementation is not loaded.", id);
