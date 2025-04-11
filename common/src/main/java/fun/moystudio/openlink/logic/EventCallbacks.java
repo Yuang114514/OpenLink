@@ -77,6 +77,8 @@ public class EventCallbacks {
     }
 
     public static void onAllModLoadingFinish() {
-        FrpcManager.getInstance().init();
+        new Thread(() -> {
+            FrpcManager.getInstance().init();
+        },"FrpcManager initializer").start();
     }
 }
