@@ -344,7 +344,7 @@ public class SettingScreen extends Screen {
                 buttonInfo.active=true;
                 buttonUser.active=false;
                 buttonSetting.active=true;
-                if(OpenFrpFrpcImpl.Authorization==null){
+                if(!FrpcManager.getInstance().getCurrentFrpcInstance().isLoggedIn()){
                     renderableTabWidgets=tabLogin_User;
                     return;
                 }

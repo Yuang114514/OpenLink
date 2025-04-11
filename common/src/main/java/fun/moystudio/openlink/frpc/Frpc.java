@@ -113,7 +113,6 @@ public interface Frpc {
     default Screen getLoginScreen(@Nullable Screen lastScreen) {
         return null;
     }
-
     /**
      * Get the ResourceLocation(or Identifier) of the icon of your frp service.
      * @return the ResourceLocation(or Identifier) of the icon of your frp service.
@@ -122,5 +121,12 @@ public interface Frpc {
     default ResourceLocation getIcon() {
         return null;
     }
-
+    /**
+     * Return {@code true} by default.<br>
+     * @return whether user is logged in.
+     * @implNote If your frp service do not have to log in, do not implement this method.
+     */
+    default boolean isLoggedIn() {
+        return true;
+    }
 }

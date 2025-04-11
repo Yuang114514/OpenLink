@@ -311,6 +311,11 @@ public class OpenFrpFrpcImpl implements Frpc{
         return new LoginScreen(lastScreen);
     }
 
+    @Override
+    public boolean isLoggedIn() {
+        return Authorization!=null;
+    }
+
     public static void writeSession() {
         OpenLink.PREFERENCES.put("authorization", Objects.requireNonNullElse(Authorization, "null"));
     }
