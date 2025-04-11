@@ -531,7 +531,7 @@ public class SettingScreen extends Screen {
             public boolean mouseClicked(double d, double e, int i) {
                 if (i==0) {
                     if(SettingScreen.LogObjectSelectionList.this.getSelected()==this){
-                        Util.getPlatform().openFile(new File(filePath));
+                        Util.getPlatform().openFile(new File(this.filePath));
                         return true;
                     }
                     this.select();
