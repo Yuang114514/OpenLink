@@ -3,6 +3,8 @@ package fun.moystudio.openlink.frpc;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.logic.Extract;
+import fun.moystudio.openlink.logic.Utils;
+import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
@@ -35,6 +37,7 @@ public class FrpcManager {
     }
 
     public void init() {//TODO: use this method to init
+        this.currentFrpcId = OpenLink.PREFERENCES.get("frpc_id", "openfrp");
         List<String> modPrefixes = OpenLink.GET_ALL_MOD_PREFIX.get();
         for (String prefix : modPrefixes) {
             this.frpcImplInstances.putAll(getFrpcImplInstanceByPrefix(prefix));
@@ -47,7 +50,7 @@ public class FrpcManager {
         }
     }
 
-    public Map<String, Pair<String, ? extends Frpc>> getFrpcImplInstanceByPrefix(String prefix){
+    private Map<String, Pair<String, ? extends Frpc>> getFrpcImplInstanceByPrefix(String prefix){
         Set<Class<?>> classes = new Reflections(prefix).getTypesAnnotatedWith(OpenLinkFrpcImpl.class);
         Map<String, Pair<String, ? extends Frpc>> res = new HashMap<>();
         for(Class<?> clazz:classes){
@@ -86,6 +89,7 @@ public class FrpcManager {
     public void setCurrentFrpcId(String id) {//TODO: use this method to create a screen
         if(this.frpcImplInstances.containsKey(id)){
             this.currentFrpcId = id;
+            OpenLink.PREFERENCES.put("frpc_id",id);
         } else {
             LOGGER.error("Cannot set the current frpc id to {}: this frpc implementation is not loaded.", id);
         }
@@ -94,7 +98,7 @@ public class FrpcManager {
     public List<Pair<Pair<String, String>, Pair<String,Boolean>>> getFrpcImplDetailList(){//TODO: use this method to create a screen
         List<Pair<Pair<String, String>, Pair<String,Boolean>>> list = new ArrayList<>();
         this.frpcImplInstances.forEach((id, nameAndInstance) -> {
-            list.add(Pair.of(Pair.of(id, nameAndInstance.getFirst()), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated())));
+            list.add(Pair.of(Pair.of(id, nameAndInstance.getFirst()), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id))))));
         });
         return list;
     }
@@ -103,7 +107,7 @@ public class FrpcManager {
         for (String id : ids) {
             if(frpcImplInstances.containsKey(id)) {
                 Frpc instance = this.frpcImplInstances.get(id).getSecond();
-                boolean overridden = instance.downloadFrpcLogicOverride(this.getFrpcStoragePathById(id));
+                boolean overridden = instance.downloadFrpc(this.getFrpcStoragePathById(id));
                 if(overridden) {
                     Path path = this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id));
                     if(path == null) {
@@ -187,7 +191,7 @@ public class FrpcManager {
         return null;
     }
 
-    private Path getFrpcExecutableFileByDirectory(Path dir) {
+    public Path getFrpcExecutableFileByDirectory(Path dir) {
         final Path[] res = {null};
         try {
             Files.walkFileTree(dir, new SimpleFileVisitor<>(){
@@ -211,13 +215,25 @@ public class FrpcManager {
         this.frpcProcess = null;
     }
 
-    public void start(int i, String val) {
+    public boolean start(int i, String val) {
         Frpc frpc = this.getCurrentFrpcInstance();
-        frpc.createProxy(i, val);
-        if(frpcExecutableFiles.containsKey(this.currentFrpcId)) {
-            this.frpcProcess = frpc.createFrpcProcess(this.frpcExecutableFiles.get(this.currentFrpcId), i, val);
-        } else {
-            LOGGER.error("Cannot start frpc: cannot find the frpc executable file.");
+        String ip;
+        try{
+            ip = frpc.createProxy(i, val);
+            if(frpcExecutableFiles.containsKey(this.currentFrpcId)) {
+                this.frpcProcess = frpc.createFrpcProcess(this.frpcExecutableFiles.get(this.currentFrpcId), i, val);
+            } else {
+                LOGGER.error("Cannot start frpc: cannot find the frpc executable file.");
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Minecraft.getInstance().gui.getChat().addMessage(Utils.literalText("§4[OpenLink] "+e.getClass().getName()+":"+e.getMessage()));
+            Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyRestartText());
+            return false;
         }
+
+        Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(ip));
+        return true;
     }
 }

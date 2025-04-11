@@ -5,7 +5,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.OldFrpc;
+import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
@@ -14,6 +14,7 @@ import fun.moystudio.openlink.logic.WebBrowser;
 import fun.moystudio.openlink.mixin.IScreenAccessor;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.*;
@@ -41,7 +42,7 @@ import java.util.function.Supplier;
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
         super(Utils.translatableText("gui.openlink.settingscreentitle"));
-        informationList=getInformationList(OldFrpc.FRPC_VERSION,OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
+        informationList=getInformationList(FrpcManager.getInstance().getCurrentFrpcInstance().getFrpcVersion(FrpcManager.getInstance().getFrpcExecutableFileByDirectory(FrpcManager.getInstance().getFrpcStoragePathById(FrpcManager.getInstance().getCurrentFrpcId()))),OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
         lastscreen=last;
     }
     MultiLineLabel title;
@@ -519,17 +520,7 @@ public class SettingScreen extends Screen {
             public boolean mouseClicked(double d, double e, int i) {
                 if (i==0) {
                     if(SettingScreen.LogObjectSelectionList.this.getSelected()==this){
-                        try {
-                            if (OldFrpc.osName.equals("windows")) {
-                                Runtime.getRuntime().exec(new String[]{"cmd", "/c", "start", this.filePath});
-                            } else if (OldFrpc.osName.equals("darwin")) {
-                                Runtime.getRuntime().exec(new String[]{"open", this.filePath});
-                            } else {
-                                Runtime.getRuntime().exec(this.filePath);
-                            }
-                        } catch (Exception ex){
-                            ex.printStackTrace();
-                        }
+                        Util.getPlatform().openFile(new File(filePath));
                         return true;
                     }
                     this.select();

@@ -54,22 +54,7 @@ public class EventCallbacks {
     public static void onLevelClear(){
         ConflictSelectionScreen.canOpen=null;
         if(OpenLink.disabled) return;
-        try{
-            Pair<String, Map<String, List<String>>> response= Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
-            Gson gson=new Gson();
-            JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-            for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
-                if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
-                    try {
-                        Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
-                        Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
-                        OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
-                    } catch (Exception e) {
-                        break;
-                    }
-                }
-            }//删除隧道
-        } catch (Exception ignored){}
+        FrpcManager.getInstance().stop();
     }
 
     public static void onClientTick(Minecraft minecraft){

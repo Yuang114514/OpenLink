@@ -13,11 +13,12 @@ public interface Frpc {
     /**
      * Return {@code false} by default.<br>
      * We recommend you not to override the download logic. OpenLink will automatically download frpc file and extract(if you return {@code true} in the method {@link #isArchive()}).<br>
-     * If you really want to override the download logic, implement this method and return {@code true}.
+     * If you really want to override the download logic, implement this method and return {@code true}.<br>
+     * If you just want to do something before the frpc downloading, implement this method and return {@code false}
      * @param frpcDownloadDir the download directory of the frpc executable file.
-     * @implNote You have to download frpc to {@code frpcDownloadDir} and make sure there is a frpc executable file if you do not implement {@link #frpcDirPathOverride(Path)}(OpenLink will scan the directory to find an executable file).
+     * @implNote If you return {@code true} in this method, you have to download frpc to {@code frpcDownloadDir} and make sure there is a frpc executable file if you do not implement {@link #frpcDirPathOverride(Path)}(OpenLink will scan the directory to find an executable file).
      */
-    default boolean downloadFrpcLogicOverride(Path frpcDownloadDir) {
+    default boolean downloadFrpc(Path frpcDownloadDir) {
         return false;
     }
     /**
@@ -46,8 +47,9 @@ public interface Frpc {
     }
     /**
      * @return whether there is a frpc update.
+     * @param frpcExecutableFilePath the path of the frpc executable file.
      */
-    boolean isOutdated();
+    boolean isOutdated(@Nullable Path frpcExecutableFilePath);
     /**
      * Create the frpc process.
      * @param frpcExecutableFilePath the path of the frpc executable file.
@@ -55,14 +57,15 @@ public interface Frpc {
      * @param remotePort the remote port user decided to use(maybe {@code null} or blank).
      * @return the frpc process.
      */
-    Process createFrpcProcess(Path frpcExecutableFilePath, int localPort, @Nullable String remotePort);
+    Process createFrpcProcess(Path frpcExecutableFilePath, int localPort, @Nullable String remotePort) throws Exception;
     /**
      * Create the remote proxy(tunnel).
      * @param localPort the lan server port.
      * @param remotePort the remote port user decided to use(maybe {@code null} or blank).
-     * @implNote You can ignore {@code remotePort} when you cannot use that port to create the remote proxy.
+     * @return the remote ip of the remote proxy for players to join.
+     * @implNote You can ignore {@code remotePort} when you cannot use that port to create the remote proxy. You should only create the frpc tunnel in this method. DO NOT START FRPC IN THIS METHOD!
      */
-    void createProxy(int localPort, @Nullable String remotePort);
+    String createProxy(int localPort, @Nullable String remotePort) throws Exception;
     /**
      * Get the frpc version.
      * @param frpcExecutableFilePath the path of the frpc executable file.
@@ -79,7 +82,7 @@ public interface Frpc {
         }
     }
     /**
-     * YOU HAVE TO IMPLEMENT THIS METHOD!
+     * YOU HAVE TO CREATE THIS METHOD!
      * Get the instance of your Frpc implementation.
      * @return the instance of your Frpc implementation
      * @implNote there has to be only one instance of your Frpc implementation.
