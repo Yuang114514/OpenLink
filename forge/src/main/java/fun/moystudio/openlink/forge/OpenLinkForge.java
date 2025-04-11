@@ -13,6 +13,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import fun.moystudio.openlink.OpenLink;
+import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.versions.forge.ForgeVersion;
 
 import java.util.ArrayList;
@@ -36,12 +37,12 @@ public final class OpenLinkForge {
     }
 
     @SubscribeEvent
-    public static void onClientScreenInit(ScreenEvent.InitScreenEvent event){
+    public static void onClientScreenInit(ScreenEvent.InitScreenEvent event) {
         EventCallbacks.onScreenInit(event.getScreen().getMinecraft(), event.getScreen());
     }
 
     @SubscribeEvent
-    public static void onClientCommandRegistering(RegisterClientCommandsEvent event){
+    public static void onClientCommandRegistering(RegisterClientCommandsEvent event) {
         event.getDispatcher().register(Commands.literal("proxyrestart")
                 .executes(context -> FrpcManager.getInstance().start(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
     }
@@ -52,7 +53,12 @@ public final class OpenLinkForge {
     }
 
     @SubscribeEvent
-    public static void onClientTick(TickEvent.ClientTickEvent event){
+    public static void onClientTick(TickEvent.ClientTickEvent event) {
         EventCallbacks.onClientTick(Minecraft.getInstance());
+    }
+
+    @SubscribeEvent
+    public static void onFinishLoading(FMLLoadCompleteEvent event) {
+        EventCallbacks.onAllModLoadingFinish();
     }
 }

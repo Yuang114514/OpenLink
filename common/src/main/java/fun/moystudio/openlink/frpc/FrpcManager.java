@@ -38,7 +38,7 @@ public class FrpcManager {
         return INSTANCE;
     }
 
-    public void init() {//TODO: use this method to init
+    public void init() {
         this.currentFrpcId = OpenLink.PREFERENCES.get("frpc_id", "openfrp");
         List<String> modPrefixes = OpenLink.GET_ALL_MOD_PREFIX.get();
         for (String prefix : modPrefixes) {
