@@ -10,16 +10,18 @@ import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.reflections.Reflections;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FrpcManager {
@@ -221,7 +223,43 @@ public class FrpcManager {
         try{
             ip = frpc.createProxy(i, val);
             if(frpcExecutableFiles.containsKey(this.currentFrpcId)) {
+                LocalTime localTime = LocalTime.now();
+                LocalDate localDate = LocalDate.now();
+                File logFile=new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"logs"+File.separator+
+                        localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"_"+
+                        localTime.getHour()+"."+localTime.getMinute()+"."+localTime.getSecond()+"_"+
+                        Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+".log");
+                logFile.createNewFile();
+                LOGGER.info("Frpc Log File Path:"+logFile);
+                new FileOutputStream(logFile).write((Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+"\n"+
+                        localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"\n"+
+                        localTime.format(DateTimeFormatter.ofPattern("hh:mm:ss"))+"\n"+
+                        i+"\n"+
+                        this.getCurrentFrpcName()+"\n"
+                ).getBytes(StandardCharsets.UTF_8));
                 this.frpcProcess = frpc.createFrpcProcess(this.frpcExecutableFiles.get(this.currentFrpcId), i, val);
+                new Thread(()-> {
+                    try {
+                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(frpcProcess.getInputStream()))) {
+                            String line;
+                            FileOutputStream fo=new FileOutputStream(logFile,true);
+                            while ((line = reader.readLine()) != null) {
+                                fo.write("\n".getBytes(StandardCharsets.UTF_8));
+                                String[] parts = line.split("\u001B\\[");
+                                for(String part:parts) {
+                                    if(part.isEmpty()) {
+                                        continue;
+                                    }
+                                    String text = part.substring(part.indexOf("m") + 1);
+                                    fo.write(text.getBytes(StandardCharsets.UTF_8));
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                },"Frpc logger").start();
+
             } else {
                 LOGGER.error("Cannot start frpc: cannot find the frpc executable file.");
                 return false;
@@ -232,7 +270,6 @@ public class FrpcManager {
             Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyRestartText());
             return false;
         }
-
         Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(ip));
         return true;
     }
