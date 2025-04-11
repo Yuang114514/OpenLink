@@ -14,6 +14,7 @@ import fun.moystudio.openlink.logic.WebBrowser;
 import fun.moystudio.openlink.mixin.IScreenAccessor;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.*;
@@ -509,17 +510,7 @@ public class SettingScreen extends Screen {
             public boolean mouseClicked(double d, double e, int i) {
                 if (i==0) {
                     if(SettingScreen.LogObjectSelectionList.this.getSelected()==this){
-                        try {
-                            if (Frpc.osName.equals("windows")) {
-                                Runtime.getRuntime().exec(new String[]{"cmd", "/c", "start", this.filePath});
-                            } else if (Frpc.osName.equals("darwin")) {
-                                Runtime.getRuntime().exec(new String[]{"open", this.filePath});
-                            } else {
-                                Runtime.getRuntime().exec(this.filePath);
-                            }
-                        } catch (Exception ex){
-                            ex.printStackTrace();
-                        }
+                        Util.getPlatform().openFile(new File(this.filePath));
                         return true;
                     }
                     this.select();
