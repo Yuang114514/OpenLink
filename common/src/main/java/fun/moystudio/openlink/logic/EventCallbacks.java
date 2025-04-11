@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
+import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.gui.*;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonTotalAndList;
@@ -66,7 +67,7 @@ public class EventCallbacks {
                         SSLUtils.sslIgnored=false;
                         try {
                             OldFrpc.init();//安装/检查更新frpc版本 TODO: no more OldFrpc
-                            Request.readSession();//读取以前的SessionID
+                            OpenFrpFrpcImpl.readSession();//读取以前的SessionID
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

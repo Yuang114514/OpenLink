@@ -6,13 +6,13 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
+import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.SettingTabs;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.WebBrowser;
 import fun.moystudio.openlink.mixin.IScreenAccessor;
-import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -130,8 +130,8 @@ public class SettingScreen extends Screen {
                             Arrays.stream(new Component[]{Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
                             i1,j1)));
         tabUser.add(new Button(10,65+j+5+40,j,20,Utils.translatableText("text.openlink.logout"),button -> {
-            Request.Authorization=null;
-            Request.writeSession();
+            OpenFrpFrpcImpl.Authorization=null;
+            OpenFrpFrpcImpl.writeSession();
             this.minecraft.setScreen(new SettingScreen(lastscreen));
         }));
         //UserInfo的Login分屏
@@ -149,8 +149,8 @@ public class SettingScreen extends Screen {
             OpenLink.PREFERENCES.putBoolean("setting_sensitive_info_hiding", object);
         }));
         tabSetting.add(new Button(this.width/2-75,65+70,150,20,Utils.translatableText("text.openlink.ofpanel"),button -> {
-            this.minecraft.keyboardHandler.setClipboard("https://console.openfrp.net/fastlogin?auth="+Request.Authorization);
-            new WebBrowser("https://console.openfrp.net/fastlogin?auth="+Request.Authorization).openBrowser();
+            this.minecraft.keyboardHandler.setClipboard("https://console.openfrp.net/fastlogin?auth="+OpenFrpFrpcImpl.Authorization);
+            new WebBrowser("https://console.openfrp.net/fastlogin?auth="+OpenFrpFrpcImpl.Authorization).openBrowser();
         }));
         tabSetting.add(new ComponentWidget(this.font,this.width/2,this.height/2,0xffffff, Utils.translatableText("temp.openlink.tobedone"),true));
     }
@@ -333,7 +333,7 @@ public class SettingScreen extends Screen {
                 buttonInfo.active=true;
                 buttonUser.active=false;
                 buttonSetting.active=true;
-                if(Request.Authorization==null){
+                if(OpenFrpFrpcImpl.Authorization==null){
                     renderableTabWidgets=tabLogin_User;
                     return;
                 }
@@ -353,10 +353,10 @@ public class SettingScreen extends Screen {
                     tabUser.set(1,nowuser);
                     new Thread(() -> {
                         try {
-                            userInfo = Request.getUserInfo();
+                            userInfo = OpenFrpFrpcImpl.getUserInfo();
                             if(userInfo==null||!userInfo.flag){
-                                Request.Authorization=null;
-                                Request.writeSession();
+                                OpenFrpFrpcImpl.Authorization=null;
+                                OpenFrpFrpcImpl.writeSession();
                                 throw new Exception("[OpenLink] Session expired!");
                             }
                         } catch (Exception e) {

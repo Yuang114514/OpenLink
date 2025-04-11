@@ -127,7 +127,7 @@ public class OldFrpc {
 
     public static boolean checkUpdate() throws Exception {
         Gson gson=new Gson();
-        JsonResponseWithData<JsonDownloadFile> frpcVersion=gson.fromJson(Request.GET(Uris.openFrpAPIUri+"commonQuery/get?key=software",Request.DEFAULT_HEADER),new TypeToken<JsonResponseWithData<JsonDownloadFile>>(){}.getType());
+        JsonResponseWithData<JsonDownloadFile> frpcVersion=gson.fromJson(Request.GET(Uris.openFrpAPIUri+"commonQuery/get?key=software",Request.DEFAULT_HEADER).getFirst(),new TypeToken<JsonResponseWithData<JsonDownloadFile>>(){}.getType());
         latestVersion=frpcVersion.data.latest_ver;
         folderName=frpcVersion.data.latest_full+"/";
 
@@ -193,7 +193,7 @@ public class OldFrpc {
                 proxyid+"\n"+
                 "OpenFrp"+"\n"
         ).getBytes(StandardCharsets.UTF_8));
-        Request.getUserInfo();
+        OpenFrpFrpcImpl.getUserInfo();
         runtimeProcess=new ProcessBuilder(frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)).redirectErrorStream(true).start();
         new Thread(()-> {
             try {
@@ -233,14 +233,14 @@ public class OldFrpc {
                     Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.sslwarning"));
                 }
                 Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.creatingproxy"));
-                Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization),"{}");
                 JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 //OpenLink隧道命名规则：openlink_mc_[本地端口号]
                 for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
                     if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
                         try {
-                            Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
-                            Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), "{\"proxy_id\":" + jsonUserProxy.id + "}");
+                            Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), "{\"proxy_id\":" + jsonUserProxy.id + "}");
+                            Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), "{\"proxy_id\":" + jsonUserProxy.id + "}");
                             OpenLink.LOGGER.info("Deleted proxy: "+jsonUserProxy.proxyName);
                         } catch (Exception e) {
                             break;
@@ -248,9 +248,9 @@ public class OldFrpc {
                     }
                 }//删除以前用过的隧道
                 Thread.sleep(1000);
-                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization),"{}");
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-                JsonResponseWithData<JsonUserInfo> userinfo=Request.getUserInfo();
+                JsonResponseWithData<JsonUserInfo> userinfo=OpenFrpFrpcImpl.getUserInfo();
                 if(userinfo.data.proxies==userProxies.data.total){
                     throw new Exception(Utils.translatableText("text.openlink.userproxieslimited").getString());
                 }
@@ -345,7 +345,7 @@ public class OldFrpc {
                     if(val !=null&&!val.isBlank()&&j==1){
                         newProxy.remote_port=Integer.parseInt(val);
                     }
-                    response=Request.POST(Uris.openFrpAPIUri+ "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER), gson.toJson(newProxy));
+                    response=Request.POST(Uris.openFrpAPIUri+ "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), gson.toJson(newProxy));
                     OpenLink.LOGGER.info("Try "+j+": remote_port:"+newProxy.remote_port+" flag:"+gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag+" msg:"+gson.fromJson(response.getFirst(), JsonResponseWithData.class).msg);
                     if(gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag){
                         found=true;
@@ -354,7 +354,7 @@ public class OldFrpc {
                 }//创建隧道
                 if(!found) throw new Exception(Utils.translatableText("text.openlink.remoteportnotfound").getString());
                 LanConfig.cfg.last_port_value=String.valueOf(newProxy.remote_port).equals(val)?val:"";
-                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization),"{}");
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 JsonUserProxy runningproxy=null;
                 for(JsonUserProxy jsonUserProxy:userProxies.data.list){
@@ -368,7 +368,7 @@ public class OldFrpc {
                 runFrpc(runningproxy.id);
                 //check
                 Thread.sleep(5000);
-                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER),"{}");
+                response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization),"{}");
                 userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
                 runningproxy=null;
                 for(JsonUserProxy jsonUserProxy:userProxies.data.list){

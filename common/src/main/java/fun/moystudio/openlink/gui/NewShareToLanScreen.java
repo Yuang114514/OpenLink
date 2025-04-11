@@ -3,11 +3,11 @@ package fun.moystudio.openlink.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.OldFrpc;
+import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.UUIDFixer;
-import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -81,7 +81,7 @@ public class NewShareToLanScreen extends Screen {
         if(OpenLink.disabled) return;
         String val = editBox.getValue();
         editBox.setVisible(LanConfig.cfg.use_frp);
-        if(Request.Authorization==null){
+        if(OpenFrpFrpcImpl.Authorization==null){
             LanConfig.cfg.use_frp=false;
             editBox.setValue("");
             usingfrp.setValue(false);
@@ -154,7 +154,7 @@ public class NewShareToLanScreen extends Screen {
             }
         },((button1, poseStack, i, j) -> {
             if(OpenLink.disabled) return;
-            if(Request.Authorization==null){
+            if(OpenFrpFrpcImpl.Authorization==null){
                 List<Component> list=new ArrayList<>();
                 String[] list1= Utils.translatableText("text.openlink.lanlogintips").getString().split("\n");
                 for(String s:list1){

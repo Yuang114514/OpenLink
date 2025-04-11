@@ -72,7 +72,7 @@ public class NodeSelectionScreen extends Screen {
             new Thread(()->{
                 List<JsonNode> nodes;
                 try {
-                    nodes=Request.getNodeList().data.list;
+                    nodes=OpenFrpFrpcImpl.getNodeList().data.list;
                     for(JsonNode node:nodes){
                         Entry entry1=new Entry(node);
                         this.addEntry(entry1);

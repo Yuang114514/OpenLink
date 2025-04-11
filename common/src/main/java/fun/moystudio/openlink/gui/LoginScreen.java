@@ -3,6 +3,7 @@ package fun.moystudio.openlink.gui;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
+import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.Utils;
@@ -35,7 +36,7 @@ public class LoginScreen extends Screen {
                 new WebBrowser(response.data).openBrowser();
                 this.minecraft.keyboardHandler.setClipboard(response.data);
                 button.active=false;
-                this.minecraft.setScreen(new ConfirmScreenWithLanguageButton(confirmed -> {if(Request.Authorization!=null){this.onClose();}}, Utils.translatableText("text.openlink.fastlogin"), Utils.translatableText("text.openlink.fastloginconfirm")));
+                this.minecraft.setScreen(new ConfirmScreenWithLanguageButton(confirmed -> {if(OpenFrpFrpcImpl.Authorization!=null){this.onClose();}}, Utils.translatableText("text.openlink.fastlogin"), Utils.translatableText("text.openlink.fastloginconfirm")));
             } catch (Exception e) {
                 e.printStackTrace();
                 this.onClose();
@@ -46,18 +47,18 @@ public class LoginScreen extends Screen {
         authorization.y=this.height/2;
         this.addRenderableWidget(authorization);
         this.addRenderableWidget(new Button(this.width / 2 + 160, this.height / 2, 40, 20, CommonComponents.GUI_DONE, button -> {
-            Request.Authorization = authorization.getValue();
+            OpenFrpFrpcImpl.Authorization = authorization.getValue();
             try {
-                JsonResponseWithData<JsonUserInfo> response = Request.getUserInfo();
+                JsonResponseWithData<JsonUserInfo> response = OpenFrpFrpcImpl.getUserInfo();
                 if(response!=null&&response.flag){
                     this.onClose();
                 } else {
-                    Request.Authorization = null;
+                    OpenFrpFrpcImpl.Authorization = null;
                 }
             } catch (Exception e) {
-                Request.Authorization = null;
+                OpenFrpFrpcImpl.Authorization = null;
             }
-            Request.writeSession();
+            OpenFrpFrpcImpl.writeSession();
         }));
         //注册
         this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 * 4 , 200, 20, Utils.translatableText("text.openlink.no_account"), (button) -> browser.openBrowser()));
