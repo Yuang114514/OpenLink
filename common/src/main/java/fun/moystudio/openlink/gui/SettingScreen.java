@@ -20,7 +20,8 @@ import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
@@ -135,8 +136,18 @@ public class SettingScreen extends Screen {
             this.minecraft.setScreen(new SettingScreen(lastscreen));
         }));
         //UserInfo的Login分屏
-        tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,Utils.createResourceLocation("openlink","textures/gui/openfrp_icon.png")));
-        tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20, Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(new LoginScreen(new SettingScreen(lastscreen))))));
+        Screen loginScreen = FrpcManager.getInstance().getCurrentFrpcInstance().getLoginScreen(new SettingScreen(lastscreen));
+        ResourceLocation icon = FrpcManager.getInstance().getCurrentFrpcInstance().getIcon();
+        if(loginScreen != null && icon == null){
+            tabLogin_User.add(new Button(this.width/2-20,(this.height-75)/2+60-10,40,20, Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(loginScreen))));
+        } else if(loginScreen == null && icon != null){
+            tabLogin_User.add(new ImageWidget(this.width/2-32,(this.height-75)/2+60-32,0,0,64,64,64,64,icon));
+        } else if(loginScreen != null) {
+            tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,icon));
+            tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20, Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(loginScreen))));
+        } else {
+            tabLogin_User.add(new ComponentWidget(this.font, this.width/2, (this.height-75)/2+60-10, 0xffffff, Utils.translatableText("temp.openlink.tobedone"), true));
+        }
         //Log
         tabLog.add(lastlogselectionlist);
         //Info
@@ -503,16 +514,16 @@ public class SettingScreen extends Screen {
             // 启动时间
             public final String startTime;
             // 隧道ID
-            public final String proxyid;
+            public final String port;
             // Frp服务提供商名称
             public final String provider;
 
-            public Entry(String filePath,String levelName,String date,String startTime,String proxyid,String provider) {
+            public Entry(String filePath, String levelName, String date, String startTime, String port, String provider) {
                 this.filePath=filePath;
                 this.levelName=levelName;
                 this.date=date;
                 this.startTime=startTime;
-                this.proxyid=proxyid;
+                this.port = port;
                 this.provider=provider;
             }
 
@@ -544,7 +555,7 @@ public class SettingScreen extends Screen {
                 fill(poseStack, x, y, x + entryWidth, y + entryHeight, 0x8f2b2b2b);
                 drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.date+" "+this.startTime, x + 4, y + 4, 0x8fffffff);
                 drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.levelName, x + 4, y + 4 + (entryHeight-4) / 2, 0x8fffffff);
-                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.proxyid, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.proxyid), y + 4, 0x8fffffff);
+                drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.port, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.port), y + 4, 0x8fffffff);
                 drawString(poseStack, SettingScreen.LogObjectSelectionList.this.minecraft.font, this.provider, x + entryWidth - 4 - LogObjectSelectionList.this.minecraft.font.width(this.provider), y + 4 + (entryHeight-4) / 2, 0x8fffffff);
                 if(isHovered){
                     renderTooltip(poseStack, Utils.translatableText("text.openlink.doubleclick",new File(filePath).getName()), mouseX, mouseY);

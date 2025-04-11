@@ -2,12 +2,12 @@ package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.OldFrpc;
+import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
-import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.UUIDFixer;
+import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -146,7 +146,7 @@ public class NewShareToLanScreen extends Screen {
             if(!LanConfig.cfg.use_frp){
                 return;
             }
-            OldFrpc.openFrp(i,editBox.getValue());
+            FrpcManager.getInstance().start(i,editBox.getValue());
             try {
                 LanConfig.writeConfig();
             } catch (Exception e) {
@@ -179,8 +179,8 @@ public class NewShareToLanScreen extends Screen {
         editBox.setSuggestion(Utils.translatableText("text.openlink.remote_port").getString());
         editBox.setValue(LanConfig.cfg.last_port_value);
         this.addRenderableWidget(editBox);
-        nodeselection=new Button(this.width/2+5,160,150,20,Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(new NodeSelectionScreen(this)));
-        nodeselection.active=LanConfig.cfg.use_frp;
+        nodeselection=new Button(this.width/2+5,160,150,20,Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(FrpcManager.getInstance().getCurrentFrpcInstance().getNodeSelectionScreen(this)));
+        nodeselection.active=LanConfig.cfg.use_frp&&FrpcManager.getInstance().getCurrentFrpcInstance().getNodeSelectionScreen(this)!=null;
         usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, Utils.translatableText("text.openlink.usingfrp"),((cycleButton, bool) -> {
             LanConfig.cfg.use_frp=bool;
             editBox.active=bool;
@@ -197,7 +197,7 @@ public class NewShareToLanScreen extends Screen {
         this.renderBackground(poseStack);
         drawCenteredString(poseStack, this.font, this.title, this.width / 2, 50, 16777215);
         drawCenteredString(poseStack, this.font, INFO_TEXT, this.width / 2, 82, 16777215);
-        //TODO:添加OF提示（见OF开发者群）
+        drawString(poseStack, this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()),0, this.height-this.font.lineHeight, 0xffffff);
         super.render(poseStack, i, j, f);
     }
 }

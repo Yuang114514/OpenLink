@@ -4,7 +4,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.json.JsonNode;
 import fun.moystudio.openlink.logic.Utils;
-import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;

@@ -5,7 +5,6 @@ import net.fabricmc.api.ModInitializer;
 
 import fun.moystudio.openlink.fabriclike.OpenLinkFabricLike;
 import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.impl.FabricLoaderImpl;
 
 import java.util.ArrayList;

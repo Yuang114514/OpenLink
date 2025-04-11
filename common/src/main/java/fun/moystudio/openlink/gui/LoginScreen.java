@@ -3,14 +3,19 @@ package fun.moystudio.openlink.gui;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.mojang.blaze3d.vertex.PoseStack;
+import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.WebBrowser;
-import fun.moystudio.openlink.network.*;
+import fun.moystudio.openlink.network.LoginGetCodeHttpServer;
+import fun.moystudio.openlink.network.Request;
+import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.*;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 
@@ -68,7 +73,7 @@ public class LoginScreen extends Screen {
     public void render(PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);
         loginTips.renderCentered(poseStack, this.width / 2, 15, 16, 0xffffff);
-        //TODO:添加OF提示（见OF开发者群）
+        drawString(poseStack, this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()),0, this.height-this.font.lineHeight, 0xffffff);
         super.render(poseStack, i, j, f);
     }
 

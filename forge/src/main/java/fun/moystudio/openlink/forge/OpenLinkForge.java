@@ -1,7 +1,6 @@
 package fun.moystudio.openlink.forge;
 
 import fun.moystudio.openlink.frpc.FrpcManager;
-import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.Commands;

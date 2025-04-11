@@ -2,20 +2,16 @@ package fun.moystudio.openlink;
 
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
-import fun.moystudio.openlink.frpc.OldFrpc;
+import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.json.JsonIP;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
-import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
-import java.io.IOException;
-import java.net.SocketException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -60,30 +56,7 @@ public final class OpenLink {
         configdir.mkdirs();
         exedir.mkdirs();
         logdir.mkdirs();
-        //跳过ssl功能
-        try{
-            OldFrpc.init();//安装/检查更新frpc版本
-            Request.readSession();//读取以前的SessionID
-        } catch (SSLHandshakeException e) {
-            e.printStackTrace();
-            LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
-            SSLUtils.ignoreSsl();
-        } catch (SocketException e){
-            e.printStackTrace();
-            disabled=true;
-            LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
-            return;
-        } catch (IOException e) {
-            e.printStackTrace();
-            disabled = true;
-            LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
-            return;
-        } catch (Exception e){
-            throw new RuntimeException(e);
-        }
-        if(SSLUtils.sslIgnored){
-            LOGGER.warn("SSL is ignored. The confirm screen will show after the main game screen loaded.");
-        }
+        OpenFrpFrpcImpl.readSession();//读取以前的SessionID
 
         //LanConfigs Reading
         LanConfig.readConfig();

@@ -2,7 +2,6 @@ package fun.moystudio.openlink.fabriclike;
 
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
-import fun.moystudio.openlink.frpc.OldFrpc;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import net.fabricmc.fabric.api.client.command.v1.ClientCommandManager;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;

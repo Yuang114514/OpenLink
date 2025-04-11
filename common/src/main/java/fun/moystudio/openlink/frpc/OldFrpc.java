@@ -194,7 +194,7 @@ public class OldFrpc {
                 "OpenFrp"+"\n"
         ).getBytes(StandardCharsets.UTF_8));
         OpenFrpFrpcImpl.getUserInfo();
-        runtimeProcess=new ProcessBuilder(frpcExecutableFile.getAbsolutePath(),"-u",Request.token,"-p",String.valueOf(proxyid)).redirectErrorStream(true).start();
+        runtimeProcess=new ProcessBuilder(frpcExecutableFile.getAbsolutePath(),"-u",OpenFrpFrpcImpl.token,"-p",String.valueOf(proxyid)).redirectErrorStream(true).start();
         new Thread(()-> {
             try {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(runtimeProcess.getInputStream()))) {
@@ -254,7 +254,7 @@ public class OldFrpc {
                 if(userinfo.data.proxies==userProxies.data.total){
                     throw new Exception(Utils.translatableText("text.openlink.userproxieslimited").getString());
                 }
-                JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=Request.getNodeList();
+                JsonResponseWithData<JsonTotalAndList<JsonNode>> nodelist=OpenFrpFrpcImpl.getNodeList();
                 JsonNode node=null;
                 for (JsonNode node1:nodelist.data.list){
                     if(node1.id==nodeId){

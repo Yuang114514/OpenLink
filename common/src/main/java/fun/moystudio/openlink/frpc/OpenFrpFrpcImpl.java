@@ -4,6 +4,8 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.gui.LoginScreen;
+import fun.moystudio.openlink.gui.NodeSelectionScreen;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.Utils;
@@ -11,6 +13,7 @@ import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -296,6 +299,16 @@ public class OpenFrpFrpcImpl implements Frpc{
         if(process!=null){
             process.destroy();
         }
+    }
+
+    @Override
+    public Screen getNodeSelectionScreen(Screen lastScreen) {
+        return new NodeSelectionScreen(lastScreen);
+    }
+
+    @Override
+    public Screen getLoginScreen(Screen lastScreen) {
+        return new LoginScreen(lastScreen);
     }
 
     public static void writeSession() {

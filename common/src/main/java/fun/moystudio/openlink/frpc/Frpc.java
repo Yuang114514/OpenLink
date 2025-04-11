@@ -1,5 +1,7 @@
 package fun.moystudio.openlink.frpc;
 
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
@@ -88,6 +90,36 @@ public interface Frpc {
      * @implNote there has to be only one instance of your Frpc implementation.
      */
     static Frpc getInstance() {
+        return null;
+    }
+
+    /**
+     * Return {@code null} by default.<br>
+     * Get the node selection screen of your frp service.
+     * @param lastScreen the parent screen(can be {@code null}).
+     * @return the screen instance of the node selection screen.
+     * @implNote If there is not any node selection screen, do not implement this method.
+     */
+    default Screen getNodeSelectionScreen(@Nullable Screen lastScreen) {
+        return null;
+    }
+    /**
+     * Return {@code null} by default.<br>
+     * Get the login screen of your frp service.
+     * @param lastScreen the parent screen(can be {@code null}).
+     * @return the screen instance of the login screen.
+     * @implNote If there is not any login screen, do not implement this method.
+     */
+    default Screen getLoginScreen(@Nullable Screen lastScreen) {
+        return null;
+    }
+
+    /**
+     * Get the ResourceLocation(or Identifier) of the icon of your frp service.
+     * @return the ResourceLocation(or Identifier) of the icon of your frp service.
+     * @implNote If there is not any icon, do not implement this method.
+     */
+    default ResourceLocation getIcon() {
         return null;
     }
 

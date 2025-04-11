@@ -1,28 +1,18 @@
 package fun.moystudio.openlink.logic;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.gui.*;
-import fun.moystudio.openlink.json.JsonResponseWithData;
-import fun.moystudio.openlink.json.JsonTotalAndList;
-import fun.moystudio.openlink.json.JsonUserProxy;
 import fun.moystudio.openlink.mixin.IScreenAccessor;
 import fun.moystudio.openlink.mixin.IShareToLanLastScreenAccessor;
-import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.SSLUtils;
-import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.List;
-import java.util.Map;
 
 public class EventCallbacks {
     private static final ResourceLocation OPENLINK_SETTING = Utils.createResourceLocation("openlink", "textures/gui/setting_button.png");
@@ -66,7 +56,7 @@ public class EventCallbacks {
                     if(confirmed){
                         SSLUtils.sslIgnored=false;
                         try {
-                            OldFrpc.init();//安装/检查更新frpc版本 TODO: no more OldFrpc
+//                            OldFrpc.init();//安装/检查更新frpc版本 TODO: no more OldFrpc
                             OpenFrpFrpcImpl.readSession();//读取以前的SessionID
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -79,9 +69,9 @@ public class EventCallbacks {
                     minecraft.setScreen(null);
                 }, Utils.literalText("SSL Handshake Error"), Utils.translatableText("text.openlink.sslignored")));
             }
-            if (OldFrpc.hasUpdate) {//TODO: no more OldFrpc
-                minecraft.setScreen(new UpdateScreen());
-            }
+//            if (OldFrpc.hasUpdate) {//TODO: no more OldFrpc
+//                minecraft.setScreen(new UpdateScreen());
+//            }
             FrpcManager.getInstance().stop();
         }
     }
