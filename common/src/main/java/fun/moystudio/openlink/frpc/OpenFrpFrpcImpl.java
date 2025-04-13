@@ -74,6 +74,7 @@ public class OpenFrpFrpcImpl implements Frpc{
     @Override
     public List<String> getUpdateFileUrls() {
         List<String> list = new ArrayList<>();
+        list.add(Uris.frpcDownloadUri2+latestFolderName+"frpc_"+osName+"_"+osArch+ archiveSuffix);
         list.add(Uris.frpcDownloadUri1+latestFolderName+"frpc_"+osName+"_"+osArch+ archiveSuffix);
         list.add(Uris.frpcDownloadUri+latestFolderName+"frpc_"+osName+"_"+osArch+ archiveSuffix);
         return list;
