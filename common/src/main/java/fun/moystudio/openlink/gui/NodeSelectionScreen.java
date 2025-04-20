@@ -130,6 +130,7 @@ public class NodeSelectionScreen extends Screen {
                 return Utils.translatableText("narrator.select",this.node.name);
             }
 
+            @Override
             public boolean mouseClicked(double d, double e, int i) {
                 if (i == 0) {
                     this.select();
