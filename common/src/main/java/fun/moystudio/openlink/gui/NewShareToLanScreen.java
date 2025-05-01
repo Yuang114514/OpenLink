@@ -151,7 +151,7 @@ public class NewShareToLanScreen extends Screen {
             }
             new Thread(()->{
                 FrpcManager.getInstance().start(i,editBox.getValue());
-            }, "Frpc starter");
+            }, "Frpc starter").start();
         }).bounds(this.width / 2 - 155, this.height - 28, 150, 20).tooltip(getToolTip()).build());
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)).bounds(this.width / 2 + 5, this.height - 28, 150, 20).build());
         editBox2=new EditBox(this.font,this.width/2-(OpenLink.disabled||!LanConfig.cfg.use_frp?75:155),OpenLink.disabled?160:190,150,20,Utils.translatableText("text.openlink.local_port"));
