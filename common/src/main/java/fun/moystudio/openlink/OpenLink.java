@@ -56,7 +56,8 @@ public final class OpenLink {
         configdir.mkdirs();
         exedir.mkdirs();
         logdir.mkdirs();
-        OpenFrpFrpcImpl.readSession();//读取以前的SessionID
+
+        OpenFrpFrpcImpl.readSession();//OpenFrpImpl:读取以前的SessionID
 
         //LanConfigs Reading
         LanConfig.readConfig();

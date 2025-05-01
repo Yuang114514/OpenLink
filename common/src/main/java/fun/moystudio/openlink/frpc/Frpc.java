@@ -50,7 +50,7 @@ public interface Frpc {
     /**
      * Initialize your Frpc Impl
      */
-    default void init() {
+    default void init() throws Exception{
     }
     /**
      * @return whether there is a frpc update.

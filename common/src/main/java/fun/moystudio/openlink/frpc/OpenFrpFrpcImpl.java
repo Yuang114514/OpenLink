@@ -33,7 +33,7 @@ public class OpenFrpFrpcImpl implements Frpc{
     public static String Authorization=null,token=null;
 
     @Override
-    public void init() {
+    public void init() throws Exception{
         String os_arch=System.getProperty("os.arch").toLowerCase(),os_name=System.getProperty("os.name");
         if(os_arch.contains("i386")){
             os_arch="386";
@@ -49,7 +49,7 @@ public class OpenFrpFrpcImpl implements Frpc{
             osName="freebsd";
         } else {
             OpenLink.LOGGER.error("Unsupported operating system detected!");
-            throw new RuntimeException("[OpenLink] Unsupported operating system detected!");
+            throw new Exception("[OpenLink] Unsupported operating system detected!");
         }
         osArch = os_arch;
         if(osName.equals("windows")){
@@ -66,10 +66,7 @@ public class OpenFrpFrpcImpl implements Frpc{
 
     @Override
     public boolean isOutdated(Path frpcExecutablePath) {
-        if(latestVersion == null) {
-            return checkUpdate(frpcExecutablePath);
-        }
-        return hasUpdate;
+        return checkUpdate(frpcExecutablePath);
     }
 
     @Override

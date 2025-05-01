@@ -60,7 +60,7 @@ public class FrpcManager {
             if(Frpc.class.isAssignableFrom(clazz)){
                 Class<? extends Frpc> clazz2 = clazz.asSubclass(Frpc.class);
                 try {
-                    Frpc frpcInstance = (Frpc) clazz2.getMethod("getInstance", new Class<?>[]{}).invoke(null);
+                    Frpc frpcInstance = (Frpc) clazz2.getMethod("getInstance").invoke(null);
                     if(frpcInstance == null) {
                         LOGGER.error("Frpc implementation '{}' is annotated with @OpenLinkFrpcImpl, but the static method getInstance() returns null!",annotation.name());
                         continue;
@@ -91,18 +91,28 @@ public class FrpcManager {
     public void setCurrentFrpcId(String id) {//TODO: use this method to create a screen
         if(this.frpcImplInstances.containsKey(id)){
             this.currentFrpcId = id;
+            try {
+                this.getCurrentFrpcInstance().init();
+            } catch (Exception e) {
+                LOGGER.error("Cannot set the current frpc id to {}: cannot initialize this frpc implementation.", id);
+            }
             OpenLink.PREFERENCES.put("frpc_id",id);
         } else {
             LOGGER.error("Cannot set the current frpc id to {}: this frpc implementation is not loaded.", id);
         }
     }
 
-    public List<Pair<Pair<String, String>, Pair<String,Boolean>>> getFrpcImplDetailList(){//TODO: use this method to create a screen
+    public List<Pair<Pair<String, String>, Pair<String,Boolean>>> getFrpcImplDetailList() {//TODO: use this method to create a screen
         List<Pair<Pair<String, String>, Pair<String,Boolean>>> list = new ArrayList<>();
         this.frpcImplInstances.forEach((id, nameAndInstance) -> {
             list.add(Pair.of(Pair.of(id, nameAndInstance.getFirst()), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id))))));
         });
         return list;
+    }
+
+    public Pair<String, Pair<String,Boolean>> getFrpcImplDetail(String id) {
+        Pair<String, ? extends Frpc> nameAndInstance = this.frpcImplInstances.get(id);
+        return Pair.of(nameAndInstance.getFirst(), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id)))));
     }
 
     public void updateFrpcByIds(String... ids) {//TODO: use this method to create a screen

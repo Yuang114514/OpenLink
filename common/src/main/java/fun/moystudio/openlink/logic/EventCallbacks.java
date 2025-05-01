@@ -56,7 +56,7 @@ public class EventCallbacks {
                     if(confirmed){
                         SSLUtils.sslIgnored=false;
                         try {
-//                            OldFrpc.init();//安装/检查更新frpc版本 TODO: no more OldFrpc
+                            FrpcManager.getInstance().getCurrentFrpcInstance().init();
                             OpenFrpFrpcImpl.readSession();//读取以前的SessionID
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -69,16 +69,12 @@ public class EventCallbacks {
                     minecraft.setScreen(null);
                 }, Utils.literalText("SSL Handshake Error"), Utils.translatableText("text.openlink.sslignored")));
             }
-//            if (OldFrpc.hasUpdate) {//TODO: no more OldFrpc
-//                minecraft.setScreen(new UpdateScreen());
-//            }
+            //update
             FrpcManager.getInstance().stop();
         }
     }
 
     public static void onAllModLoadingFinish() {
-        new Thread(() -> {
-            FrpcManager.getInstance().init();
-        },"FrpcManager initializer").start();
+        FrpcManager.getInstance().init();
     }
 }
