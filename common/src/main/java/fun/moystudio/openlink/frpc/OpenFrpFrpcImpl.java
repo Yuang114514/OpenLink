@@ -19,7 +19,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
@@ -34,7 +33,8 @@ public class OpenFrpFrpcImpl implements Frpc{
     private final static Logger LOGGER = LogManager.getLogger(OpenFrpFrpcImpl.class);
     public static long nodeId = -1;
     public static final int MAX_TRAFFIC_STORAGE = 4;
-    public static String Authorization=null,token=null;
+    public static String Authorization = null,token = null;
+    public List<String> downloadUrls = new ArrayList<>();
 
     @Override
     public void init() throws Exception{
@@ -61,6 +61,11 @@ public class OpenFrpFrpcImpl implements Frpc{
         } else {
             archiveSuffix=".tar.gz";
         }
+        Gson gson = new Gson();
+        JsonResponseWithData<JsonDownloadFile> response = gson.fromJson(Request.GET(Uris.openFrpAPIUri+"commonQuery/get?key=software", Request.DEFAULT_HEADER).getFirst(),new TypeToken<JsonResponseWithData<JsonDownloadFile>>(){}.getType());
+        response.data.source.forEach(source -> {
+            downloadUrls.add(source.value+"/");
+        });
         readSession();
     }
 
@@ -86,9 +91,7 @@ public class OpenFrpFrpcImpl implements Frpc{
     @Override
     public List<String> getUpdateFileUrls() {
         List<String> list = new ArrayList<>();
-        list.add(Uris.frpcDownloadUri2+latestFolderName+"frpc_"+osName+"_"+osArch+ archiveSuffix);
-        list.add(Uris.frpcDownloadUri1+latestFolderName+"frpc_"+osName+"_"+osArch+ archiveSuffix);
-        list.add(Uris.frpcDownloadUri+latestFolderName+"frpc_"+osName+"_"+osArch+ archiveSuffix);
+        downloadUrls.forEach(url -> list.add(url+latestFolderName+"frpc_"+osName+"_"+osArch+ archiveSuffix));
         return list;
     }
 
