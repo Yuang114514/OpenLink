@@ -31,6 +31,7 @@ public class FrpcManager {
     private Process frpcProcess = null;
     private final static Logger LOGGER = LogManager.getLogger("OpenLink/FrpcManager");
     private static FrpcManager INSTANCE = null;
+    private boolean initialized = false;
     public static FrpcManager getInstance() {
         if(INSTANCE == null) {
             INSTANCE = new FrpcManager();
@@ -42,6 +43,7 @@ public class FrpcManager {
         this.currentFrpcId = OpenLink.PREFERENCES.get("frpc_id", "openfrp");
         List<String> modPrefixes = OpenLink.GET_ALL_MOD_PREFIX.get();
         for (String prefix : modPrefixes) {
+            System.out.println(prefix);
             this.frpcImplInstances.putAll(getFrpcImplInstanceByPrefix(prefix));
         }
         for (String id : this.frpcImplInstances.keySet()) {
@@ -50,6 +52,16 @@ public class FrpcManager {
                 frpcExecutableFiles.put(id, path);
             }
         }
+        StringBuilder sb = new StringBuilder("Loading " + this.frpcImplInstances.size() + " FrpcImpls:");
+        for (Map.Entry<String, Pair<String, ? extends Frpc>> pair : this.frpcImplInstances.entrySet()) {
+            sb.append(String.format("\n\t- %s %s",pair.getKey(),pair.getValue().getSecond()));
+        }
+        LOGGER.info(sb.toString());
+        initialized = true;
+    }
+
+    public Path getFrpcImplExecutableFile(String id) {
+        return isExecutableFileExist(id)?frpcExecutableFiles.get(id):null;
     }
 
     private Map<String, Pair<String, ? extends Frpc>> getFrpcImplInstanceByPrefix(String prefix){
@@ -159,7 +171,7 @@ public class FrpcManager {
                     outputStream.write(inputStream.readAllBytes());
                     inputStream.close();
                     outputStream.close();
-                    OpenLink.LOGGER.info("Frpc downloaded successfully!");
+                    LOGGER.info("Frpc downloaded successfully!");
                     flag = true;
                     break;
                 } catch (Exception e){
@@ -222,7 +234,12 @@ public class FrpcManager {
         return res[0];
     }
 
+    public boolean isExecutableFileExist(String id) {
+        return frpcExecutableFiles.containsKey(id)&&frpcExecutableFiles.get(id)!=null;
+    }
+
     public void stop() {
+        if(!initialized) return;
         this.getCurrentFrpcInstance().stopFrpcProcess(this.frpcProcess);
         this.frpcProcess = null;
     }

@@ -31,8 +31,8 @@ public class UpdateScreen extends Screen {
         List<Component> list = new ArrayList<>();
         strings.forEach((String)-> list.add(Utils.literalText(String)));
         yes=new Button(this.width/4-40,this.height/5*4-10,80,20,CommonComponents.GUI_YES,button -> this.minecraft.setScreen(new UpdatingScreen()));
-        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {if(FrpcManager.getInstance().getFrpcExecutableFileByDirectory(FrpcManager.getInstance().getFrpcStoragePathById(FrpcManager.getInstance().getCurrentFrpcId()))==null)OpenLink.disabled=true;this.onClose();}, (button, poseStack, i, j) -> {
-            if(FrpcManager.getInstance().getFrpcExecutableFileByDirectory(FrpcManager.getInstance().getFrpcStoragePathById(FrpcManager.getInstance().getCurrentFrpcId()))==null){
+        no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {if(!FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId()))OpenLink.disabled=true;this.onClose();}, (button, poseStack, i, j) -> {
+            if(!FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId())){
                 renderComponentTooltip(poseStack, list, i, j);
             }
         });

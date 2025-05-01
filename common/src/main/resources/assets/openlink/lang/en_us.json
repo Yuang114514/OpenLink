@@ -46,7 +46,7 @@
   "text.openlink.secure": "Secure",
   "text.openlink.sslignored": "Because of your network, SSL is ignored. All of your network requests will be INSECURE! Do you still want to use OpenLink?",
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 SSL ignoring may make your user and password INSECURE. \n§c§o§lPlease don't send IP to anyone YOU DON'T TRUST!",
-  "text.openlink.updatefrpc": "§l§gA new frpc version was found! §r§g Latest version:§l§v %s §r§g, §gcurrent version:§l§v %s §r§g. §bWould you like to update?",
+  "text.openlink.updatefrpc": "§l§gA new frpc version was found! §bWould you like to update?",
   "text.openlink.updatingfrpc": "§o§6Updating frpc...§s(It may takes a while)",
   "text.openlink.userproxieslimited": "§c§lYou have reached the maximum number of proxies.\nPlease delete some proxies!",
   "text.openlink.usingfrp": "Using frp service",

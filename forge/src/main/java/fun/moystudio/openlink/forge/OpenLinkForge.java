@@ -28,7 +28,8 @@ public final class OpenLinkForge {
             List<String> res = new ArrayList<>();
             ModList.get().getMods().forEach(mod -> {
                 try {
-                    res.add(ModList.get().getModContainerById(mod.getModId()).get().getMod().getClass().getPackageName());
+                    String packageName = ModList.get().getModContainerById(mod.getModId()).get().getMod().getClass().getPackageName();
+                    res.add(packageName.substring(0, packageName.lastIndexOf('.')));
                 } catch (Exception ignored) {
                 }
             });

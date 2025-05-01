@@ -43,7 +43,7 @@ import java.util.function.Supplier;
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
         super(Utils.translatableText("gui.openlink.settingscreentitle"));
-        informationList=getInformationList(FrpcManager.getInstance().getCurrentFrpcInstance().getFrpcVersion(FrpcManager.getInstance().getFrpcExecutableFileByDirectory(FrpcManager.getInstance().getFrpcStoragePathById(FrpcManager.getInstance().getCurrentFrpcId()))),OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
+        informationList=getInformationList(FrpcManager.getInstance().getCurrentFrpcInstance().getFrpcVersion(FrpcManager.getInstance().getFrpcImplExecutableFile(FrpcManager.getInstance().getCurrentFrpcId())),OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
         lastscreen=last;
     }
     MultiLineLabel title;

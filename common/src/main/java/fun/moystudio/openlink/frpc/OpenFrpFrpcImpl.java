@@ -15,6 +15,8 @@ import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -29,6 +31,7 @@ public class OpenFrpFrpcImpl implements Frpc{
     private String frpcVersion = null, latestVersion = null, latestFolderName = "OF_0.61.1_4df06100_250122/";
     private String osArch,osName, archiveSuffix;
     private long proxyId;
+    private final static Logger LOGGER = LogManager.getLogger(OpenFrpFrpcImpl.class);
     public static long nodeId = -1;
     public static final int MAX_TRAFFIC_STORAGE = 4;
     public static String Authorization=null,token=null;
@@ -49,7 +52,7 @@ public class OpenFrpFrpcImpl implements Frpc{
         } else if (os_name.contains("FreeBSD")){
             osName="freebsd";
         } else {
-            OpenLink.LOGGER.error("Unsupported operating system detected!");
+            LOGGER.error("Unsupported operating system detected!");
             throw new Exception("[OpenLink] Unsupported operating system detected!");
         }
         osArch = os_arch;
@@ -117,7 +120,7 @@ public class OpenFrpFrpcImpl implements Frpc{
                 try {
                     Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), "{\"proxy_id\":" + jsonUserProxy.id + "}");
                     Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), "{\"proxy_id\":" + jsonUserProxy.id + "}");
-                    OpenLink.LOGGER.info("Deleted proxy: {}",jsonUserProxy.proxyName);
+                    LOGGER.info("Deleted proxy: {}",jsonUserProxy.proxyName);
                 } catch (Exception e) {
                     break;
                 }
@@ -139,7 +142,7 @@ public class OpenFrpFrpcImpl implements Frpc{
             }
         }
         if(node==null){
-            OpenLink.LOGGER.info("Selecting node...");
+            LOGGER.info("Selecting node...");
             List<JsonNode> canUseNodes=new ArrayList<>();
             for(JsonNode now:nodelist.data.list){
                 int groupnumber1=5,usergroupnumber;
@@ -200,7 +203,7 @@ public class OpenFrpFrpcImpl implements Frpc{
             }));
             node=canUseNodes.get(0);//选取最优节点
         }
-        OpenLink.LOGGER.info("Selected node: id:{} allow_port:{} group:{}",node.id,node.allowPort,node.group);
+        LOGGER.info("Selected node: id:{} allow_port:{} group:{}",node.id,node.allowPort,node.group);
         JsonNewProxy newProxy=new JsonNewProxy();
         newProxy.name="openlink_mc_"+localPort;
         newProxy.local_port=String.valueOf(localPort);
@@ -222,7 +225,7 @@ public class OpenFrpFrpcImpl implements Frpc{
                 newProxy.remote_port=Integer.parseInt(remotePort);
             }
             response=Request.POST(Uris.openFrpAPIUri+ "frp/api/newProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), gson.toJson(newProxy));
-            OpenLink.LOGGER.info("Try {}: remote_port:{} flag:{} msg:{}",j,remotePort,gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag,gson.fromJson(response.getFirst(), JsonResponseWithData.class).msg);
+            LOGGER.info("Try {}: remote_port:{} flag:{} msg:{}",j,remotePort,gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag,gson.fromJson(response.getFirst(), JsonResponseWithData.class).msg);
             if(gson.fromJson(response.getFirst(), JsonResponseWithData.class).flag){
                 found=true;
                 break;
@@ -249,9 +252,9 @@ public class OpenFrpFrpcImpl implements Frpc{
     public String getFrpcVersion(Path frpcExecutableFilePath) {
         try {
             return frpcVersion = new String(Runtime.getRuntime().exec(new String[]{frpcExecutableFilePath.toFile().getAbsolutePath(),"-v"}).getInputStream().readAllBytes(), StandardCharsets.UTF_8).split("_")[1];
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            return null;
+            return "does not exists";
         }
     }
 
@@ -274,12 +277,12 @@ public class OpenFrpFrpcImpl implements Frpc{
         latestVersion=frpcVersionJson.data.latest_ver;
         latestFolderName=frpcVersionJson.data.latest_full+"/";
         if(!path.toFile().exists()){
-            OpenLink.LOGGER.warn("The frpc executable file does not exist!");
+            LOGGER.warn("The frpc executable file does not exist!");
             hasUpdate=true;
         } else {
             getFrpcVersion(path);
             if(!frpcVersion.equals(latestVersion)){
-                OpenLink.LOGGER.info("A frpc update was found! Latest version:{} Old version:{}", latestVersion, frpcVersion);
+                LOGGER.info("A frpc update was found! Latest version:{} Old version:{}", latestVersion, frpcVersion);
                 hasUpdate=true;
             }
         }
@@ -288,26 +291,28 @@ public class OpenFrpFrpcImpl implements Frpc{
 
     @Override
     public void stopFrpcProcess(Process process){
-        try {
-            Pair<String, Map<String, List<String>>> response = Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization),"{}");
-            Gson gson=new Gson();
-            JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
-            for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
-                if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
-                    try {
-                        Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), "{\"proxy_id\":" + jsonUserProxy.id + "}");
-                        Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), "{\"proxy_id\":" + jsonUserProxy.id + "}");
-                        OpenLink.LOGGER.info("Deleted proxy: {}",jsonUserProxy.proxyName);
-                    } catch (Exception e) {
-                        break;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         if(process!=null){
             process.destroy();
+            if (Authorization != null){
+                try {
+                    Pair<String, Map<String, List<String>>> response = Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization),"{}");
+                    Gson gson=new Gson();
+                    JsonResponseWithData<JsonTotalAndList<JsonUserProxy>> userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
+                    for (JsonUserProxy jsonUserProxy : userProxies.data.list) {
+                        if (jsonUserProxy.proxyName.contains("openlink_mc_")) {
+                            try {
+                                Request.POST(Uris.openFrpAPIUri + "frp/api/forceOff", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), "{\"proxy_id\":" + jsonUserProxy.id + "}");
+                                Request.POST(Uris.openFrpAPIUri + "frp/api/removeProxy", Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization), "{\"proxy_id\":" + jsonUserProxy.id + "}");
+                                LOGGER.info("Deleted proxy: {}",jsonUserProxy.proxyName);
+                            } catch (Exception e) {
+                                break;
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -340,7 +345,7 @@ public class OpenFrpFrpcImpl implements Frpc{
 
         if(Authorization==null||Authorization.equals("null")){
             Authorization=null;
-            OpenLink.LOGGER.warn("The session does not exists in user preferences!");
+            LOGGER.warn("The session does not exists in user preferences!");
             return;
         }
         try{
@@ -348,7 +353,7 @@ public class OpenFrpFrpcImpl implements Frpc{
             if(responseWithData==null||!responseWithData.flag){
                 Authorization=null;
                 writeSession();
-                OpenLink.LOGGER.warn("The session has been expired!");
+                LOGGER.warn("The session has been expired!");
             }
         } catch (Exception e){
             throw new RuntimeException(e);
