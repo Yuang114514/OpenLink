@@ -20,6 +20,7 @@ import java.net.SocketException;
 public class EventCallbacks {
     private static final ResourceLocation OPENLINK_SETTING = Utils.createResourceLocation("openlink", "textures/gui/setting_button.png");
     private static final ResourceLocation OPENLINK_SETTING_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/setting_button_hovered.png");
+    public static boolean hasUpdate = false;
 
     public static void onScreenInit(Minecraft minecraft, Screen screen){
         if(screen instanceof ShareToLanScreen shareToLanScreen){
@@ -72,8 +73,10 @@ public class EventCallbacks {
                     minecraft.setScreen(null);
                 }, Utils.literalText("SSL Handshake Error"), Utils.translatableText("text.openlink.sslignored")));
             }
-            //update
             FrpcManager.getInstance().stop();
+            if(hasUpdate) {
+                minecraft.setScreen(new UpdateScreen());
+            }
         }
     }
 
@@ -81,6 +84,7 @@ public class EventCallbacks {
         FrpcManager.getInstance().init();
         try{
             FrpcManager.getInstance().getCurrentFrpcInstance().init();
+            hasUpdate = FrpcManager.getInstance().getFrpcImplDetail(FrpcManager.getInstance().getCurrentFrpcId()).getSecond().getSecond();
         } catch (SSLHandshakeException e) {
             e.printStackTrace();
             OpenLink.LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");

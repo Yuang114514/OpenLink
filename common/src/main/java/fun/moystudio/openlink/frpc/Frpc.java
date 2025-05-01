@@ -122,13 +122,21 @@ public interface Frpc {
      * @implNote If your frp service do not have to log in, do not implement this method.
      */
     default boolean isLoggedIn() {
-        return false;
+        return true;
     }
     /**
      * Log out user's account.
      * @implNote If your frp service do not have to log out, do not implement this method.
      */
     default void logOut(){
+    }
+    /**
+     * Get the web panel url
+     * @return the url of your frp service web panel
+     * @implNote If your frp service do not have a web panel, do not implement this method.
+     */
+    default String getPanelUrl(){
+        return null;
     }
     /**
      * YOU HAVE TO CREATE THIS METHOD! We will use reflection to find this method in your frpc implementation.<br>

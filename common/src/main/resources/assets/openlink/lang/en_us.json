@@ -37,7 +37,7 @@
   "text.openlink.node_unavailable": "§c§lUnavailable",
   "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in storage directory,\n§o§l§cplease download it.\n§o§l§c(you can skip the frpc downloading but\n §o§l§call the proxy feature will be disabled)",
   "text.openlink.now": "Now",
-  "text.openlink.ofpanel": "Web OpenFrp Panel",
+  "text.openlink.webpanel": "%s Web Panel",
   "text.openlink.onlinemodebutton": "Auth Mode",
   "text.openlink.openstoragedir": "Open storage folder",
   "text.openlink.proxycount": "Proxies: %s/%s",

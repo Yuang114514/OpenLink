@@ -256,7 +256,6 @@ public class OpenFrpFrpcImpl implements Frpc{
         try {
             return frpcVersion = new String(Runtime.getRuntime().exec(new String[]{frpcExecutableFilePath.toFile().getAbsolutePath(),"-v"}).getInputStream().readAllBytes(), StandardCharsets.UTF_8).split("_")[1];
         } catch (Exception e) {
-            e.printStackTrace();
             return "does not exists";
         }
     }
@@ -285,7 +284,7 @@ public class OpenFrpFrpcImpl implements Frpc{
         }
         latestVersion=frpcVersionJson.data.latest_ver;
         latestFolderName=frpcVersionJson.data.latest_full+"/";
-        if(!path.toFile().exists()){
+        if(path == null || !path.toFile().exists()){
             LOGGER.warn("The frpc executable file does not exist!");
             hasUpdate=true;
         } else {
@@ -323,6 +322,11 @@ public class OpenFrpFrpcImpl implements Frpc{
                 }
             }
         }
+    }
+
+    @Override
+    public String getPanelUrl() {
+        return "https://console.openfrp.net/fastlogin?auth="+Authorization;
     }
 
     @Override

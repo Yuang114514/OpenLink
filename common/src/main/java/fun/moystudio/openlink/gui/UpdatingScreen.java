@@ -1,6 +1,7 @@
 package fun.moystudio.openlink.gui;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.Util;
@@ -38,6 +39,7 @@ public class UpdatingScreen extends Screen {
                 } catch (Exception e){
                     throw new RuntimeException(e);
                 }
+                OpenLink.disabled = false;
             }, "Frpc download thread").start();
         }
     }

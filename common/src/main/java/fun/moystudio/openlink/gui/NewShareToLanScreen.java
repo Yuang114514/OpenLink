@@ -81,7 +81,7 @@ public class NewShareToLanScreen extends Screen {
         if(OpenLink.disabled) return;
         String val = editBox.getValue();
         editBox.setVisible(LanConfig.cfg.use_frp);
-        if(OpenFrpFrpcImpl.Authorization==null){
+        if(!FrpcManager.getInstance().getCurrentFrpcInstance().isLoggedIn()){
             LanConfig.cfg.use_frp=false;
             editBox.setValue("");
             usingfrp.setValue(false);
@@ -142,19 +142,22 @@ public class NewShareToLanScreen extends Screen {
             UUIDFixer.EnableUUIDFixer=LanConfig.getAuthMode()==OnlineModeTabs.OFFLINE_FIXUUID;
             UUIDFixer.ForceOfflinePlayers=Collections.emptyList();//暂时用着，后面再改
             //以上是(被我修改了一点的)原版的代码，以下是OpenLink的Frpc启动及隧道创建，节点选择等主要功能
-            if(OpenLink.disabled) return;
-            if(!LanConfig.cfg.use_frp){
-                return;
-            }
-            FrpcManager.getInstance().start(i,editBox.getValue());
             try {
                 LanConfig.writeConfig();
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
+            if(OpenLink.disabled) return;
+            if(!LanConfig.cfg.use_frp){
+                return;
+            }
+            new Thread(()->{
+                FrpcManager.getInstance().start(i,editBox.getValue());
+            }, "Frpc starter");
+
         },((button1, poseStack, i, j) -> {
             if(OpenLink.disabled) return;
-            if(OpenFrpFrpcImpl.Authorization==null){
+            if(!FrpcManager.getInstance().getCurrentFrpcInstance().isLoggedIn()){
                 List<Component> list=new ArrayList<>();
                 String[] list1= Utils.translatableText("text.openlink.lanlogintips").getString().split("\n");
                 for(String s:list1){

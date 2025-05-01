@@ -2,6 +2,7 @@ package fun.moystudio.openlink.frpc;
 
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.logic.EventCallbacks;
 import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,7 @@ public class FrpcManager {
     private Process frpcProcess = null;
     private final static Logger LOGGER = LogManager.getLogger("OpenLink/FrpcManager");
     private static FrpcManager INSTANCE = null;
-    private boolean initialized = false;
+    public boolean initialized = false;
     public static FrpcManager getInstance() {
         if(INSTANCE == null) {
             INSTANCE = new FrpcManager();
@@ -102,13 +103,14 @@ public class FrpcManager {
 
     public void setCurrentFrpcId(String id) {//TODO: use this method to create a screen
         if(this.frpcImplInstances.containsKey(id)){
-            this.currentFrpcId = id;
             try {
-                this.getCurrentFrpcInstance().init();
+                this.frpcImplInstances.get(id).getSecond().init();
             } catch (Exception e) {
                 LOGGER.error("Cannot set the current frpc id to {}: cannot initialize this frpc implementation.", id);
             }
+            this.currentFrpcId = id;
             OpenLink.PREFERENCES.put("frpc_id",id);
+            EventCallbacks.hasUpdate = getFrpcImplDetail(getCurrentFrpcId()).getSecond().getSecond();
         } else {
             LOGGER.error("Cannot set the current frpc id to {}: this frpc implementation is not loaded.", id);
         }
@@ -117,14 +119,14 @@ public class FrpcManager {
     public List<Pair<Pair<String, String>, Pair<String,Boolean>>> getFrpcImplDetailList() {//TODO: use this method to create a screen
         List<Pair<Pair<String, String>, Pair<String,Boolean>>> list = new ArrayList<>();
         this.frpcImplInstances.forEach((id, nameAndInstance) -> {
-            list.add(Pair.of(Pair.of(id, nameAndInstance.getFirst()), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id))))));
+            list.add(Pair.of(Pair.of(id, nameAndInstance.getFirst()), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcImplExecutableFile(id)))));
         });
         return list;
     }
 
     public Pair<String, Pair<String,Boolean>> getFrpcImplDetail(String id) {
         Pair<String, ? extends Frpc> nameAndInstance = this.frpcImplInstances.get(id);
-        return Pair.of(nameAndInstance.getFirst(), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id)))));
+        return Pair.of(nameAndInstance.getFirst(), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcImplExecutableFile(id))));
     }
 
     public void updateFrpcByIds(String... ids) {//TODO: use this method to create a screen
@@ -166,7 +168,7 @@ public class FrpcManager {
                 try {
                     URL url = new URL(s);
                     BufferedInputStream inputStream = new BufferedInputStream(url.openStream());
-                    executableFilePath = this.getFrpcStoragePathById(id).resolve(url.getFile());
+                    executableFilePath = this.getFrpcStoragePathById(id).resolve(url.getFile().substring(url.getFile().lastIndexOf('/')+1));
                     FileOutputStream outputStream = new FileOutputStream(executableFilePath.toFile());
                     outputStream.write(inputStream.readAllBytes());
                     inputStream.close();
