@@ -3,7 +3,6 @@ package fun.moystudio.openlink.logic;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
-import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.gui.*;
 import fun.moystudio.openlink.mixin.IScreenAccessor;
 import fun.moystudio.openlink.mixin.IShareToLanLastScreenAccessor;
@@ -13,6 +12,10 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.resources.ResourceLocation;
+
+import javax.net.ssl.SSLHandshakeException;
+import java.io.IOException;
+import java.net.SocketException;
 
 public class EventCallbacks {
     private static final ResourceLocation OPENLINK_SETTING = Utils.createResourceLocation("openlink", "textures/gui/setting_button.png");
@@ -57,7 +60,6 @@ public class EventCallbacks {
                         SSLUtils.sslIgnored=false;
                         try {
                             FrpcManager.getInstance().getCurrentFrpcInstance().init();
-                            OpenFrpFrpcImpl.readSession();//读取以前的SessionID
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -76,5 +78,26 @@ public class EventCallbacks {
 
     public static void onAllModLoadingFinish() {
         FrpcManager.getInstance().init();
+        try{
+            FrpcManager.getInstance().getCurrentFrpcInstance().init();
+        } catch (SSLHandshakeException e) {
+            e.printStackTrace();
+            OpenLink.LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
+            try {
+                SSLUtils.ignoreSsl();
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        } catch (SocketException e){
+            e.printStackTrace();
+            OpenLink.disabled = true;
+            OpenLink.LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
+        } catch (IOException e) {
+            e.printStackTrace();
+            OpenLink.disabled = true;
+            OpenLink.LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
     }
 }

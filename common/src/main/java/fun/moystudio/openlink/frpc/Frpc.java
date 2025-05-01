@@ -125,7 +125,7 @@ public interface Frpc {
         return true;
     }
     /**
-     * YOU HAVE TO CREATE THIS METHOD!<br>
+     * YOU HAVE TO CREATE THIS METHOD! We will use reflection to find this method in your frpc implementation.<br>
      * Get the instance of your Frpc implementation.
      * @return the instance of your Frpc implementation
      * @implNote There has to be only one instance of your Frpc implementation.

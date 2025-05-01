@@ -14,6 +14,7 @@ import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -57,6 +58,7 @@ public class OpenFrpFrpcImpl implements Frpc{
         } else {
             archiveSuffix=".tar.gz";
         }
+        readSession();
     }
 
     @Override
@@ -66,7 +68,16 @@ public class OpenFrpFrpcImpl implements Frpc{
 
     @Override
     public boolean isOutdated(Path frpcExecutablePath) {
-        return checkUpdate(frpcExecutablePath);
+        if(latestVersion == null) {
+            return checkUpdate(frpcExecutablePath);
+        }
+        return hasUpdate;
+    }
+
+    @Override
+    public boolean downloadFrpc(Path downloadDir) {
+        this.hasUpdate = false;
+        return false;
     }
 
     @Override
@@ -308,6 +319,11 @@ public class OpenFrpFrpcImpl implements Frpc{
     @Override
     public Screen getLoginScreen(Screen lastScreen) {
         return new LoginScreen(lastScreen);
+    }
+
+    @Override
+    public ResourceLocation getIcon() {
+        return Utils.createResourceLocation("openlink", "gui/openfrp_icon.png");
     }
 
     @Override
