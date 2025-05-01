@@ -3,6 +3,8 @@ package fun.moystudio.openlink;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.FrpcManager;
+import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.json.JsonIP;
 import fun.moystudio.openlink.logic.LanConfig;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.prefs.Preferences;
 import java.util.stream.Stream;
 
@@ -35,6 +38,7 @@ public final class OpenLink {
     public static String VERSION,LOADER, LOADER_VERSION;
     public static List<Pair<String,Class<?>>> CONFLICT_CLASS = new ArrayList<>();
     public static int PREFER_CLASSIFY;
+    public static Supplier<List<String>> GET_ALL_MOD_PREFIX;
     private static final List<Pair<String,String>> CONFLICT_CLASS_NAME=Arrays.asList(//Do NOT use Class object here!!!!!!!(By Terry_MC)
             Pair.of("mcwifipnp","io.github.satxm.mcwifipnp.ShareToLanScreenNew"),
             Pair.of("lanserverproperties","rikka.lanserverproperties.ModifyLanScreen"),
@@ -42,7 +46,7 @@ public final class OpenLink {
     );
 
 
-    public static void init(String version,String loader,String loader_version) throws Exception {
+    public static void init(String version, String loader, String loader_version, Supplier<List<String>> getAllModPrefix) throws Exception {
         VERSION=version;
         LOADER=loader;
         LOADER_VERSION=loader_version;
@@ -51,36 +55,13 @@ public final class OpenLink {
         LOGGER.info("OpenLink Storage Path: "+EXECUTABLE_FILE_STORAGE_PATH);
         PREFERENCES=Preferences.userNodeForPackage(OpenLink.class);
         PREFER_CLASSIFY = getPreferClassify();
+        GET_ALL_MOD_PREFIX = getAllModPrefix;
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);
         configdir.mkdirs();
         exedir.mkdirs();
         logdir.mkdirs();
-        //跳过ssl功能
-        try{
-            Frpc.init();//安装/检查更新frpc版本
-            Request.readSession();//读取以前的SessionID
-        } catch (SSLHandshakeException e) {
-            e.printStackTrace();
-            LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
-            SSLUtils.ignoreSsl();
-        } catch (SocketException e){
-            e.printStackTrace();
-            disabled=true;
-            LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
-            return;
-        } catch (IOException e) {
-            e.printStackTrace();
-            disabled = true;
-            LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
-            return;
-        } catch (Exception e){
-            throw new RuntimeException(e);
-        }
-        if(SSLUtils.sslIgnored){
-            LOGGER.warn("SSL is ignored. The confirm screen will show after the main game screen loaded.");
-        }
 
         //LanConfigs Reading
         LanConfig.readConfig();
