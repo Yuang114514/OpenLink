@@ -1,12 +1,10 @@
 package fun.moystudio.openlink.gui;
 
-import fun.moystudio.openlink.logic.Utils;
-import net.minecraft.client.gui.GuiGraphics;
-import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.Util;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
@@ -23,9 +21,9 @@ public class UpdatingScreen extends Screen {
     @Override
     protected void init() {
         text=MultiLineLabel.create(this.font, Utils.translatableText("text.openlink.updatingfrpc"),this.width-50);
-        this.addRenderableWidget(new Button(this.width/2-60, this.height/5*4-10, 120, 20, Utils.translatableText("text.openlink.openstoragedir"), button -> {
+        this.addRenderableWidget(Button.builder(Utils.translatableText("text.openlink.openstoragedir"), button -> {
             Util.getPlatform().openFile(FrpcManager.getInstance().getFrpcStoragePathById(FrpcManager.getInstance().getCurrentFrpcId()).toFile());
-        }));
+        }).bounds(this.width/2-60, this.height/5*4-10, 120, 20).build());
     }
     @Override
     public void tick(){

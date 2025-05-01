@@ -2,12 +2,10 @@ package fun.moystudio.openlink.gui;
 
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
-import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.logic.OnlineModeTabs;
 import fun.moystudio.openlink.logic.UUIDFixer;
 import fun.moystudio.openlink.logic.Utils;
-import fun.moystudio.openlink.network.Request;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
@@ -16,14 +14,11 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.world.level.GameType;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class NewShareToLanScreen extends Screen {
     private static final Component ALLOW_COMMANDS_LABEL = Utils.translatableText("selectWorld.allowCommands");
@@ -157,8 +152,7 @@ public class NewShareToLanScreen extends Screen {
             new Thread(()->{
                 FrpcManager.getInstance().start(i,editBox.getValue());
             }, "Frpc starter");
-
-        }).bounds(this.width / 2 - 155, this.height - 28, 150, 20).tooltip(getToolTip()));
+        }).bounds(this.width / 2 - 155, this.height - 28, 150, 20).tooltip(getToolTip()).build());
         this.addRenderableWidget(Button.builder(CommonComponents.GUI_CANCEL, (button) -> this.minecraft.setScreen(this.lastScreen)).bounds(this.width / 2 + 5, this.height - 28, 150, 20).build());
         editBox2=new EditBox(this.font,this.width/2-(OpenLink.disabled||!LanConfig.cfg.use_frp?75:155),OpenLink.disabled?160:190,150,20,Utils.translatableText("text.openlink.local_port"));
         editBox2.setSuggestion(Utils.translatableText("text.openlink.local_port").getString());
@@ -175,7 +169,7 @@ public class NewShareToLanScreen extends Screen {
         editBox.setSuggestion(Utils.translatableText("text.openlink.remote_port").getString());
         editBox.setValue(LanConfig.cfg.last_port_value);
         this.addRenderableWidget(editBox);
-        nodeselection=new Button.builder(Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(FrpcManager.getInstance().getCurrentFrpcInstance().getNodeSelectionScreen(this))).bounds(this.width/2+5,160,150,20).build();
+        nodeselection=Button.builder(Utils.translatableText("gui.openlink.nodeselectionscreentitle"),(button)-> this.minecraft.setScreen(FrpcManager.getInstance().getCurrentFrpcInstance().getNodeSelectionScreen(this))).bounds(this.width/2+5,160,150,20).build();
         nodeselection.active=LanConfig.cfg.use_frp&&FrpcManager.getInstance().getCurrentFrpcInstance().getNodeSelectionScreen(this)!=null;
         usingfrp=CycleButton.onOffBuilder(LanConfig.cfg.use_frp).create(this.width / 2 - 155, 160, 150, 20, Utils.translatableText("text.openlink.usingfrp"),((cycleButton, bool) -> {
             LanConfig.cfg.use_frp=bool;
@@ -189,12 +183,12 @@ public class NewShareToLanScreen extends Screen {
                 20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> this.minecraft.setScreen(new SettingScreen(new NewShareToLanScreen(this.lastScreen)))));
     }
 
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        this.renderBackground(poseStack);
-        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 50, 16777215);
-        drawCenteredString(poseStack, this.font, INFO_TEXT, this.width / 2, 82, 16777215);
-        drawString(poseStack, this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()), 0, this.height - this.font.lineHeight, 0xffffff);
-        super.render(poseStack, i, j, f);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.font, this.title, this.width / 2, 50, 16777215);
+        guiGraphics.drawCenteredString(this.font, INFO_TEXT, this.width / 2, 82, 16777215);
+        guiGraphics.drawString(this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()), 0, this.height - this.font.lineHeight, 0xffffff);
+        super.render(guiGraphics, i, j, f);
     }
 
     private Tooltip getToolTip(){

@@ -1,12 +1,11 @@
 package fun.moystudio.openlink.quilt;
 
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.fabriclike.OpenLinkFabricLike;
 import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.loader.impl.QuiltLoaderImpl;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
-
-import fun.moystudio.openlink.fabriclike.OpenLinkFabricLike;
 
 import java.util.ArrayList;
 import java.util.List;

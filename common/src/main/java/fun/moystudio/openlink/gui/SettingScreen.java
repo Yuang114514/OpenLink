@@ -35,7 +35,9 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
@@ -94,12 +96,12 @@ public class SettingScreen extends Screen {
         //Temp variables
         if(FrpcManager.getInstance().getCurrentFrpcId().equals("openfrp")){
             ResourceLocation lastlocationimage=!tabUser.isEmpty()?((ImageWidget)tabUser.get(0)).texture:Utils.createResourceLocation("openlink","textures/gui/default_avatar.png");
-            Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).component: Utils.emptyText();
-            Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).component: Utils.emptyText();
-            Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).component: Utils.emptyText();
-            Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).component: Utils.emptyText();
-            Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).component: Utils.emptyText();
-            int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
+            Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).getMessage(): Utils.emptyText();
+            Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).getMessage(): Utils.emptyText();
+            Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).getMessage(): Utils.emptyText();
+            Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).getMessage(): Utils.emptyText();
+            Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).getMessage(): Utils.emptyText();
+            int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).getX():10;
             List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTraffic();
             tabUser.clear();
             //UserInfo排版用
@@ -115,26 +117,23 @@ public class SettingScreen extends Screen {
                     this.font,
                     10+j+20, 65+5,
                     this.width-20, 60+this.height-75-15,
-                    Utils.translatableText("text.openlink.x_axis_label"), Utils.translatableText("text.openlink.y_axis_label"), lastdatapoints,
-                    (dataXY, poseStack, i1, j1)-> renderComponentTooltip(poseStack,
-                            Arrays.stream(new Component[]{Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
-                            i1,j1)));
-            tabUser.add(new Button(10,65+j+5+40,j,20,Utils.translatableText("text.openlink.logout"),button -> {
+                    Utils.translatableText("text.openlink.x_axis_label"), Utils.translatableText("text.openlink.y_axis_label"), lastdatapoints));
+            tabUser.add(Button.builder(Utils.translatableText("text.openlink.logout"), button -> {
                 FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
                 this.minecraft.setScreen(new SettingScreen(lastscreen));
-            }));
+            }).bounds(10,65+j+5+40,j,20).build());
         } else {
             tabUser.clear();
-            tabUser.add(new Button(this.width/2-20,this.height/2-10,40,20,Utils.translatableText("text.openlink.logout"),button -> {
+            tabUser.add(Button.builder(Utils.translatableText("text.openlink.logout"),button -> {
                 FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
                 this.minecraft.setScreen(new SettingScreen(lastscreen));
-            }));
+            }).bounds(this.width/2-20,this.height/2-10,40,20).build());
         }
 
-        LogObjectSelectionList lastlogselectionlist=!tabLog.isEmpty()?((LogObjectSelectionList)tabLog.get(0)):new LogObjectSelectionList(minecraft,this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,40);
-        lastlogselectionlist.changePos(this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5);
-        InfoObjectSelectionList lastinfoselectionlist=!tabInfo.isEmpty()?((InfoObjectSelectionList)tabInfo.get(0)):new InfoObjectSelectionList(minecraft,this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5,informationList.size()*(this.minecraft.font.lineHeight+5)+5);
-        lastinfoselectionlist.changePos(this.buttonSetting.x+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.x+this.buttonSetting.getWidth(),this.height-5);
+        LogObjectSelectionList lastlogselectionlist=!tabLog.isEmpty()?((LogObjectSelectionList)tabLog.get(0)):new LogObjectSelectionList(minecraft,this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5,40);
+        lastlogselectionlist.changePos(this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5);
+        InfoObjectSelectionList lastinfoselectionlist=!tabInfo.isEmpty()?((InfoObjectSelectionList)tabInfo.get(0)):new InfoObjectSelectionList(minecraft,this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5,informationList.size()*(this.minecraft.font.lineHeight+5)+5);
+        lastinfoselectionlist.changePos(this.buttonSetting.getX()+this.buttonSetting.getWidth()-5,this.height-5-65,5,65,this.buttonSetting.getX()+this.buttonSetting.getWidth(),this.height-5);
         //Clear tabs
         tabLogin_User.clear();
         tabLog.clear();
@@ -144,12 +143,12 @@ public class SettingScreen extends Screen {
         Screen loginScreen = FrpcManager.getInstance().getCurrentFrpcInstance().getLoginScreen(new SettingScreen(lastscreen));
         ResourceLocation icon = FrpcManager.getInstance().getCurrentFrpcInstance().getIcon();
         if(loginScreen != null && icon == null){
-            tabLogin_User.add(new Button(this.width/2-20,(this.height-75)/2+60-10,40,20, Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(loginScreen))));
+            tabLogin_User.add(Button.builder(Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(loginScreen))).bounds(this.width/2-20,(this.height-75)/2+60-10,40,20).build());
         } else if(loginScreen == null && icon != null){
             tabLogin_User.add(new ImageWidget(this.width/2-32,(this.height-75)/2+60-32,0,0,64,64,64,64,icon));
         } else if(loginScreen != null) {
             tabLogin_User.add(new ImageWidget(this.width/2-20-32,(this.height-75)/2+60-32,0,0,64,64,64,64,icon));
-            tabLogin_User.add(new Button(this.width/2+20,(this.height-75)/2+60-10,40,20, Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(loginScreen))));
+            tabLogin_User.add(Button.builder(Utils.translatableText("text.openlink.login"),(button -> this.minecraft.setScreen(loginScreen))).bounds(this.width/2+20,(this.height-75)/2+60-10,40,20).build());
         } else {
             tabLogin_User.add(new ComponentWidget(this.font, this.width/2, (this.height-75)/2+60-10, 0xffffff, Utils.translatableText("temp.openlink.tobedone"), true));
         }
@@ -166,10 +165,10 @@ public class SettingScreen extends Screen {
         }));
         String url = FrpcManager.getInstance().getCurrentFrpcInstance().getPanelUrl();
         if(url != null) {
-            tabSetting.add(new Button(this.width/2-75,65+70,150,20,Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
+            tabSetting.add(Button.builder(Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
                 this.minecraft.keyboardHandler.setClipboard(url);
                 new WebBrowser(url).openBrowser();
-            }));
+            }).bounds(this.width/2-75,65+70,150,20).build());
         }
     }
 

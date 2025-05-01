@@ -8,14 +8,16 @@ import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.WebBrowser;
-import fun.moystudio.openlink.network.*;
-import net.minecraft.client.gui.GuiGraphics;
+import fun.moystudio.openlink.network.LoginGetCodeHttpServer;
+import fun.moystudio.openlink.network.Request;
+import fun.moystudio.openlink.network.Uris;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineLabel;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.CommonComponents;
 
 public class LoginScreen extends Screen {
     public LoginScreen(Screen last) {
@@ -71,7 +73,7 @@ public class LoginScreen extends Screen {
     public void render(GuiGraphics guiGraphics, int i, int j, float f) {
         this.renderBackground(guiGraphics);
         loginTips.renderCentered(guiGraphics, this.width / 2, 15, 16, 0xffffff);
-        drawString(guiGraphics, this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()),0, this.height-this.font.lineHeight, 0xffffff);
+        guiGraphics.drawString(this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()),0, this.height-this.font.lineHeight, 0xffffff);
         super.render(guiGraphics, i, j, f);
     }
 
