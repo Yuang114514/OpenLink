@@ -48,6 +48,11 @@ public interface Frpc {
         return null;
     }
     /**
+     * Initialize your Frpc Impl
+     */
+    default void init() {
+    }
+    /**
      * @return whether there is a frpc update.
      * @param frpcExecutableFilePath the path of the frpc executable file.
      */
@@ -84,16 +89,6 @@ public interface Frpc {
         }
     }
     /**
-     * YOU HAVE TO CREATE THIS METHOD!
-     * Get the instance of your Frpc implementation.
-     * @return the instance of your Frpc implementation
-     * @implNote there has to be only one instance of your Frpc implementation.
-     */
-    static Frpc getInstance() {
-        return null;
-    }
-
-    /**
      * Return {@code null} by default.<br>
      * Get the node selection screen of your frp service.
      * @param lastScreen the parent screen(can be {@code null}).
@@ -128,5 +123,14 @@ public interface Frpc {
      */
     default boolean isLoggedIn() {
         return true;
+    }
+    /**
+     * YOU HAVE TO CREATE THIS METHOD!<br>
+     * Get the instance of your Frpc implementation.
+     * @return the instance of your Frpc implementation
+     * @implNote There has to be only one instance of your Frpc implementation.
+     */
+    static Frpc getInstance() {
+        return null;
     }
 }

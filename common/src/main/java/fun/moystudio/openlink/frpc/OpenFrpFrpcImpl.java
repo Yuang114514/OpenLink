@@ -26,13 +26,14 @@ public class OpenFrpFrpcImpl implements Frpc{
     private static OpenFrpFrpcImpl INSTANCE = null;
     private boolean hasUpdate = false;
     private String frpcVersion = null, latestVersion = null, latestFolderName = "OF_0.61.1_4df06100_250122/";
-    private final String osArch,osName, archiveSuffix;
+    private String osArch,osName, archiveSuffix;
     private long proxyId;
     public static long nodeId = -1;
     public static final int MAX_TRAFFIC_STORAGE = 4;
     public static String Authorization=null,token=null;
 
-    private OpenFrpFrpcImpl() {
+    @Override
+    public void init() {
         String os_arch=System.getProperty("os.arch").toLowerCase(),os_name=System.getProperty("os.name");
         if(os_arch.contains("i386")){
             os_arch="386";
@@ -357,5 +358,4 @@ public class OpenFrpFrpcImpl implements Frpc{
         Pair<String, Map<String, List<String>>> response=Request.POST(Uris.openFrpAPIUri.toString()+"frp/api/getNodeList",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization),"{}");
         return gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonNode>>>(){}.getType());
     }
-
 }
