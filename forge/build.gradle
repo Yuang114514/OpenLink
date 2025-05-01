@@ -43,6 +43,8 @@ dependencies {
     shadowBundle project(path: ':common', configuration: 'transformProductionForge')
 
     forgeRuntimeLibrary('org.reflections:reflections:0.10.2')
+
+    include 'org.reflections:reflections:0.10.2'
 }
 
 processResources {
