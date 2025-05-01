@@ -17,9 +17,9 @@
   "text.openlink.conflict_tip": "请选择将由哪个模组打开局域网联机GUI(此GUI由OpenLink创建)",
   "text.openlink.creatingproxy": "§b§o[OpenLink] 正在创建联机隧道...",
   "text.openlink.doubleclick": "左键双击打开： %s",
+  "text.openlink.lanlogintips": "§o§l§c请先在 OpenLink 设置中登录您的内网穿透服务帐户\n(如果您想要使用联机代理服务：>)",
   "text.openlink.frpcstartsuccessfully": "§b§o[OpenLink] 隧道创建成功！\n点击复制连接IP：§l[%s§b§o§l]",
   "text.openlink.info": "0Frpc信息：\n1版本：%1$s\n0模组信息：\n1版本：%2$s\n1加载器版本：%3$s\n0本地化贡献者：\n1Rimon12_HK、Brian、Floo、biantwin、Дмитрий Делов、Yamisafa、Rimon12_HK、Yuang114514\n0作者信息：\n1程序：Terry_MC\n1策划：zirran_Ya、TheFlareStar\n1美术：LPe806\n1所有者：StarCarefree\n0许可证：SCAUP & MIT\n0更多信息：\n1想要更稳定流程的联机体验？\n1不妨试试星遥游戏 - 联机面板。\n1§nhttps://started.ink/",
-  "text.openlink.lanlogintips": "§o§l§c请先在 OpenLink 设置中登录您的 Natayark 帐户\n(如果您想要使用联机代理服务：>)",
   "text.openlink.loading": "加载中...",
   "text.openlink.local_port": "本地端口（选填）",
   "text.openlink.login": "登录",
@@ -43,12 +43,13 @@
   "text.openlink.updatefrpc": "§l§g发现一个新的frpc核心！§r§g最新核心版本：§l§u%s§r§g，当前核心版本：§l§u%s§r§g。§6你是否需要更新？",
   "text.openlink.updatingfrpc": "§o§s正在更新Frpc核心...§8(这可能会耗费少许时间)",
   "text.openlink.userproxieslimited": "§c§l您的OpenFrp账户已创建的隧道数达到允许的最大数目。\n请删除一个隧道后再次尝试！",
-  "text.openlink.usingfrp": "使用 OpenFrp 进行联机",
+  "text.openlink.usingfrp": "使用内网穿透",
   "text.openlink.x_axis_label": "时间",
   "text.openlink.y_axis_label": "流量(MiB)",
   "text.openlink.openstoragedir": "打开存储文件夹",
   "text.openlink.fastlogin": "快速登录",
   "text.openlink.fastloginconfirm": "登录页面已在您的浏览器中打开。（如果没有，您可以从剪贴板粘贴到您的浏览器）当您完成登录后，请点击下面的任何按钮。",
   "text.openlink.authorization": "输入账户的Authorization代码（您可从OpenFrp面板中获取）",
-  "text.openlink.ofpanel": "OpenFrp网页面板"
+  "text.openlink.ofpanel": "OpenFrp网页面板",
+  "text.openlink.frptip": "§n请将Mod问题反馈到Star Carefree，而不是%s（Frp服务提供商）！"
 }

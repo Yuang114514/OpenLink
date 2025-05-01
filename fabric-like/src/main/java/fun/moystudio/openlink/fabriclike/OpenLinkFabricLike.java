@@ -1,23 +1,26 @@
 package fun.moystudio.openlink.fabriclike;
 
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
+import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.screen.v1.ScreenEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents;
 import net.minecraft.client.Minecraft;
 
+import java.util.List;
+import java.util.function.Supplier;
+
 public final class OpenLinkFabricLike {
-    public static void init(String version,String loader,String loader_version) throws Exception {
+    public static void init(String version, String loader, String loader_version, Supplier<List<String>> getAllModPrefix) throws Exception {
         // Run our common setup.
-        OpenLink.init(version,loader,loader_version);
-        ClientCommandRegistrationCallback.EVENT.register((dispatcher, context)->{
-            dispatcher.register(ClientCommandManager.literal("proxyrestart")
-                    .executes(context1 -> Frpc.openFrp(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
-        });
+        OpenLink.init(version,loader,loader_version,getAllModPrefix);
+        ClientCommandManager.DISPATCHER.register(ClientCommandManager
+                        .literal("proxyrestart")
+                        .executes(context -> FrpcManager.getInstance().start(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
         ScreenEvents.AFTER_INIT.register((client, screen, scaledWidth, scaledHeight)->{
             EventCallbacks.onScreenInit(client,screen);
         });
@@ -25,5 +28,8 @@ public final class OpenLinkFabricLike {
             EventCallbacks.onLevelClear();
         });
         ClientTickEvents.END_CLIENT_TICK.register(EventCallbacks::onClientTick);
+        ClientLifecycleEvents.CLIENT_STARTED.register((Minecraft minecraft)->{
+            EventCallbacks.onAllModLoadingFinish();
+        });
     }
 }

@@ -1,7 +1,5 @@
 package fun.moystudio.openlink.mixin;
 
-import java.util.UUID;
-
 import com.mojang.authlib.GameProfile;
 import fun.moystudio.openlink.logic.UUIDFixer;
 import net.minecraft.core.UUIDUtil;
