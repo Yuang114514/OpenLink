@@ -35,6 +35,8 @@ dependencies {
     common(project(path: ':fabric-like', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':fabric-like', configuration: 'transformProductionFabric')
 
+    implementation 'org.reflections:reflections:0.10.2'
+
     include 'org.reflections:reflections:0.10.2'
 }
 
