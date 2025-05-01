@@ -123,8 +123,13 @@ public class SettingScreen extends Screen {
                             Arrays.stream(new Component[]{Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
                             i1,j1)));
             tabUser.add(new Button(10,65+j+5+40,j,20,Utils.translatableText("text.openlink.logout"),button -> {
-                OpenFrpFrpcImpl.Authorization=null;
-                OpenFrpFrpcImpl.writeSession();
+                FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
+                this.minecraft.setScreen(new SettingScreen(lastscreen));
+            }));
+        } else {
+            tabUser.clear();
+            tabUser.add(new Button(this.width/2-20,this.height/2-10,40,20,Utils.translatableText("text.openlink.logout"),button -> {
+                FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
                 this.minecraft.setScreen(new SettingScreen(lastscreen));
             }));
         }

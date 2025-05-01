@@ -40,6 +40,7 @@ public class EventCallbacks {
             FrpcManager.getInstance().stop();
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
                     20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
+
         }
     }
     public static void onClientStop(){

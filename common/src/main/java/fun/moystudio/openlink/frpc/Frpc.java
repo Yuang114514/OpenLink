@@ -103,7 +103,7 @@ public interface Frpc {
      * Get the login screen of your frp service.
      * @param lastScreen the parent screen(can be {@code null}).
      * @return the screen instance of the login screen.
-     * @implNote If there is not any login screen, do not implement this method.
+     * @implNote If your frp service do not have to log in, do not implement this method.
      */
     default Screen getLoginScreen(@Nullable Screen lastScreen) {
         return null;
@@ -118,11 +118,17 @@ public interface Frpc {
     }
     /**
      * Return {@code true} by default.<br>
-     * @return whether user is logged in.
+     * @return whether user is logged into your frp service.
      * @implNote If your frp service do not have to log in, do not implement this method.
      */
     default boolean isLoggedIn() {
-        return true;
+        return false;
+    }
+    /**
+     * Log out user's account.
+     * @implNote If your frp service do not have to log out, do not implement this method.
+     */
+    default void logOut(){
     }
     /**
      * YOU HAVE TO CREATE THIS METHOD! We will use reflection to find this method in your frpc implementation.<br>

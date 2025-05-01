@@ -258,6 +258,12 @@ public class OpenFrpFrpcImpl implements Frpc{
         }
     }
 
+    @Override
+    public void logOut() {
+        Authorization = null;
+        writeSession();
+    }
+
     public static Frpc getInstance(){
         if(INSTANCE == null){
             INSTANCE = new OpenFrpFrpcImpl();
@@ -328,7 +334,7 @@ public class OpenFrpFrpcImpl implements Frpc{
 
     @Override
     public ResourceLocation getIcon() {
-        return Utils.createResourceLocation("openlink", "gui/openfrp_icon.png");
+        return Utils.createResourceLocation("openlink", "textures/gui/openfrp_icon.png");
     }
 
     @Override

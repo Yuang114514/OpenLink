@@ -41,9 +41,9 @@ public class FrpcManager {
 
     public void init() {
         this.currentFrpcId = OpenLink.PREFERENCES.get("frpc_id", "openfrp");
-        List<String> modPrefixes = OpenLink.GET_ALL_MOD_PREFIX.get();
+        List<String> modPrefixes = OpenLink.GET_ALL_MOD_PREFIX.get().stream().distinct().toList();
         for (String prefix : modPrefixes) {
-            System.out.println(prefix);
+            LOGGER.info("Scanning {}...", prefix);
             this.frpcImplInstances.putAll(getFrpcImplInstanceByPrefix(prefix));
         }
         for (String id : this.frpcImplInstances.keySet()) {
@@ -78,7 +78,7 @@ public class FrpcManager {
                         continue;
                     }
                     res.put(annotation.id(), Pair.of(annotation.name(), frpcInstance));
-                    LOGGER.info("Frpc implementation {} is loaded.", annotation.name());
+                    LOGGER.info("Frpc implementation '{}' is loaded.", annotation.name());
                 } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
                 }
             } else {
