@@ -153,7 +153,7 @@ public class NewShareToLanScreen extends Screen {
             }
             new Thread(()->{
                 FrpcManager.getInstance().start(i,editBox.getValue());
-            }, "Frpc starter");
+            }, "Frpc starter").start();
 
         },((button1, poseStack, i, j) -> {
             if(OpenLink.disabled) return;
