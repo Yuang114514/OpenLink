@@ -53,6 +53,16 @@ public interface Frpc {
     default void init() throws Exception{
     }
     /**
+     * Get the unique id of your frpc implementation.
+     * @return your id.
+     */
+    String id();
+    /**
+     * Get the unique name of your frpc implementation.
+     * @return your name.
+     */
+    String name();
+    /**
      * @return whether there is a frpc update.
      * @param frpcExecutableFilePath the path of the frpc executable file.
      */
@@ -136,15 +146,6 @@ public interface Frpc {
      * @implNote If your frp service do not have a web panel, do not implement this method.
      */
     default String getPanelUrl(){
-        return null;
-    }
-    /**
-     * YOU HAVE TO CREATE THIS METHOD! We will use reflection to find this method in your frpc implementation.<br>
-     * Get the instance of your Frpc implementation.
-     * @return the instance of your Frpc implementation
-     * @implNote There has to be only one instance of your Frpc implementation.
-     */
-    static Frpc getInstance() {
         return null;
     }
 }

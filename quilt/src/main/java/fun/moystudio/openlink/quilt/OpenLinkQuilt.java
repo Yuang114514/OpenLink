@@ -15,18 +15,7 @@ public final class OpenLinkQuilt implements ModInitializer {
     public void onInitialize(ModContainer mod) {
         // Run the Fabric-like setup.
         try {
-            OpenLinkFabricLike.init(QuiltLoader.getModContainer(OpenLink.MOD_ID).get().metadata().version().raw(),"Quilt", QuiltLoaderImpl.VERSION, () -> {
-                List<String> res = new ArrayList<>();
-                QuiltLoader.getEntrypoints("init", ModInitializer.class).forEach(entrypoint -> {
-                    String packageName = entrypoint.getClass().getPackageName();
-                    res.add(packageName.substring(0, packageName.lastIndexOf('.')));
-                });
-                QuiltLoader.getEntrypoints("main", net.fabricmc.api.ModInitializer.class).forEach(entrypoint -> {
-                    String packageName = entrypoint.getClass().getPackageName();
-                    res.add(packageName.substring(0, packageName.lastIndexOf('.')));
-                });
-                return res;
-            });
+            OpenLinkFabricLike.init(QuiltLoader.getModContainer(OpenLink.MOD_ID).get().metadata().version().raw(),"Quilt", QuiltLoaderImpl.VERSION);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

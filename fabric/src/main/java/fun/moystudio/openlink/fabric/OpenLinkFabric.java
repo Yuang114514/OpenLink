@@ -18,14 +18,7 @@ public final class OpenLinkFabric implements ModInitializer {
 
         // Run the Fabric-like setup.
         try {
-            OpenLinkFabricLike.init(FabricLoader.getInstance().getModContainer(OpenLink.MOD_ID).get().getMetadata().getVersion().getFriendlyString(),"Fabric", FabricLoaderImpl.VERSION, () -> {
-                List<String> res = new ArrayList<>();
-                FabricLoader.getInstance().getEntrypoints("main", ModInitializer.class).forEach(entrypoint -> {
-                    String packageName = entrypoint.getClass().getPackageName();
-                    res.add(packageName.substring(0, packageName.lastIndexOf('.')));
-                });
-                return res;
-            });
+            OpenLinkFabricLike.init(FabricLoader.getInstance().getModContainer(OpenLink.MOD_ID).get().getMetadata().getVersion().getFriendlyString(),"Fabric", FabricLoaderImpl.VERSION);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
