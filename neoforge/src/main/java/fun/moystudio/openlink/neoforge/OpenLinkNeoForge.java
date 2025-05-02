@@ -9,6 +9,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
@@ -43,7 +44,7 @@ public final class OpenLinkNeoForge {
         EventCallbacks.onClientTick(Minecraft.getInstance());
     }
 
-    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
     public static final class ModEventSubscriber {
         @SubscribeEvent
         public static void onFinishLoading(FMLLoadCompleteEvent event) {
