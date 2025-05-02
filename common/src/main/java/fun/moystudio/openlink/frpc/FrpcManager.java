@@ -1,5 +1,6 @@
 package fun.moystudio.openlink.frpc;
 
+import com.google.common.reflect.ClassPath;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.logic.EventCallbacks;
@@ -9,7 +10,6 @@ import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.reflections.Reflections;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FrpcManager {
     private final Map<String, Pair<String, ? extends Frpc>> frpcImplInstances = new HashMap<>();
@@ -42,11 +43,10 @@ public class FrpcManager {
 
     public void init() {
         this.currentFrpcId = OpenLink.PREFERENCES.get("frpc_id", "openfrp");
-        List<String> modPrefixes = OpenLink.GET_ALL_MOD_PREFIX.get().stream().distinct().toList();
-        for (String prefix : modPrefixes) {
-            LOGGER.info("Scanning {}...", prefix);
-            this.frpcImplInstances.putAll(getFrpcImplInstanceByPrefix(prefix));
-        }
+        ServiceLoader<Frpc> loader = ServiceLoader.load(Frpc.class);
+        loader.forEach(instance -> {
+            this.frpcImplInstances.put(instance.id(), Pair.of(instance.name(),instance));
+        });
         for (String id : this.frpcImplInstances.keySet()) {
             Path path = this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id));
             if(path!=null){
@@ -63,30 +63,6 @@ public class FrpcManager {
 
     public Path getFrpcImplExecutableFile(String id) {
         return isExecutableFileExist(id)?frpcExecutableFiles.get(id):null;
-    }
-
-    private Map<String, Pair<String, ? extends Frpc>> getFrpcImplInstanceByPrefix(String prefix){
-        Set<Class<?>> classes = new Reflections(prefix).getTypesAnnotatedWith(OpenLinkFrpcImpl.class);
-        Map<String, Pair<String, ? extends Frpc>> res = new HashMap<>();
-        for(Class<?> clazz:classes){
-            OpenLinkFrpcImpl annotation = clazz.getAnnotation(OpenLinkFrpcImpl.class);
-            if(Frpc.class.isAssignableFrom(clazz)){
-                Class<? extends Frpc> clazz2 = clazz.asSubclass(Frpc.class);
-                try {
-                    Frpc frpcInstance = (Frpc) clazz2.getMethod("getInstance").invoke(null);
-                    if(frpcInstance == null) {
-                        LOGGER.error("Frpc implementation '{}' is annotated with @OpenLinkFrpcImpl, but the static method getInstance() returns null!",annotation.name());
-                        continue;
-                    }
-                    res.put(annotation.id(), Pair.of(annotation.name(), frpcInstance));
-                    LOGGER.info("Frpc implementation '{}' is loaded.", annotation.name());
-                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
-                }
-            } else {
-                LOGGER.error("Frpc implementation '{}' is annotated with @OpenLinkFrpcImpl, but it does not implement Frpc!",annotation.name());
-            }
-        }
-        return res;
     }
 
     public String getCurrentFrpcId() {//TODO: use this method to create a screen
@@ -192,6 +168,7 @@ public class FrpcManager {
                     LOGGER.error("Cannot extract frpc archive by id '{}'!", id);
                     return null;
                 }
+                executableFilePath.toFile().getAbsoluteFile().delete();
                 executableFilePath = this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id));
             }
             if(executableFilePath == null){
