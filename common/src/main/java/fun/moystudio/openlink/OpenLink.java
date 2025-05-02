@@ -2,22 +2,15 @@ package fun.moystudio.openlink;
 
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
-import fun.moystudio.openlink.frpc.Frpc;
-import fun.moystudio.openlink.frpc.FrpcManager;
-import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
 import fun.moystudio.openlink.gui.SettingScreen;
 import fun.moystudio.openlink.json.JsonIP;
 import fun.moystudio.openlink.logic.LanConfig;
 import fun.moystudio.openlink.network.Request;
-import fun.moystudio.openlink.network.SSLUtils;
 import fun.moystudio.openlink.network.Uris;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.net.ssl.SSLHandshakeException;
 import java.io.File;
-import java.io.IOException;
-import java.net.SocketException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -38,7 +31,6 @@ public final class OpenLink {
     public static String VERSION,LOADER, LOADER_VERSION;
     public static List<Pair<String,Class<?>>> CONFLICT_CLASS = new ArrayList<>();
     public static int PREFER_CLASSIFY;
-    public static Supplier<List<String>> GET_ALL_MOD_PREFIX;
     private static final List<Pair<String,String>> CONFLICT_CLASS_NAME=Arrays.asList(//Do NOT use Class object here!!!!!!!(By Terry_MC)
             Pair.of("mcwifipnp","io.github.satxm.mcwifipnp.ShareToLanScreenNew"),
             Pair.of("lanserverproperties","rikka.lanserverproperties.ModifyLanScreen"),
@@ -46,7 +38,7 @@ public final class OpenLink {
     );
 
 
-    public static void init(String version, String loader, String loader_version, Supplier<List<String>> getAllModPrefix) throws Exception {
+    public static void init(String version, String loader, String loader_version) throws Exception {
         VERSION=version;
         LOADER=loader;
         LOADER_VERSION=loader_version;
@@ -55,7 +47,6 @@ public final class OpenLink {
         LOGGER.info("OpenLink Storage Path: "+EXECUTABLE_FILE_STORAGE_PATH);
         PREFERENCES=Preferences.userNodeForPackage(OpenLink.class);
         PREFER_CLASSIFY = getPreferClassify();
-        GET_ALL_MOD_PREFIX = getAllModPrefix;
         File configdir=new File(CONFIG_DIR);
         File exedir=new File(EXECUTABLE_FILE_STORAGE_PATH);
         File logdir=new File(EXECUTABLE_FILE_STORAGE_PATH+File.separator+"logs"+File.separator);

@@ -3,6 +3,7 @@ package fun.moystudio.openlink.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
+import fun.moystudio.openlink.logic.EventCallbacks;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.Util;
 import net.minecraft.client.gui.components.Button;
@@ -36,6 +37,7 @@ public class UpdatingScreen extends Screen {
                 try {
                     FrpcManager.getInstance().updateFrpcByIds(FrpcManager.getInstance().getCurrentFrpcId());
                     updated=true;
+                    EventCallbacks.hasUpdate=false;
                 } catch (Exception e){
                     throw new RuntimeException(e);
                 }

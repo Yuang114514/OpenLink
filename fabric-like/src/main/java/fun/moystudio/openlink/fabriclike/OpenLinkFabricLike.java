@@ -14,9 +14,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public final class OpenLinkFabricLike {
-    public static void init(String version, String loader, String loader_version, Supplier<List<String>> getAllModPrefix) throws Exception {
+    public static void init(String version, String loader, String loader_version) throws Exception {
         // Run our common setup.
-        OpenLink.init(version,loader,loader_version,getAllModPrefix);
+        OpenLink.init(version,loader,loader_version);
         ClientCommandManager.DISPATCHER.register(ClientCommandManager
                         .literal("proxyrestart")
                         .executes(context -> FrpcManager.getInstance().start(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));

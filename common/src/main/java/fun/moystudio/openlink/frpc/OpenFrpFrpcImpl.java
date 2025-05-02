@@ -23,10 +23,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.*;
 
-@OpenLinkFrpcImpl(id = "openfrp", name = "OpenFrp")
 public class OpenFrpFrpcImpl implements Frpc{
     private static OpenFrpFrpcImpl INSTANCE = null;
-    private boolean hasUpdate = false;
     private String frpcVersion = null, latestVersion = null, latestFolderName = "OF_0.61.1_4df06100_250122/";
     private String osArch,osName, archiveSuffix;
     private long proxyId;
@@ -70,21 +68,29 @@ public class OpenFrpFrpcImpl implements Frpc{
     }
 
     @Override
+    public String id() {
+        return "openfrp";
+    }
+
+    @Override
+    public String name() {
+        return "OpenFrp";
+    }
+
+    @Override
     public boolean isArchive() {
         return true;
     }
 
+    Path lastFrpcExecutablePath = null;
+
     @Override
     public boolean isOutdated(Path frpcExecutablePath) {
-        if(latestVersion == null) {
-            return checkUpdate(frpcExecutablePath);
-        }
-        return hasUpdate;
+        return checkUpdate(frpcExecutablePath);
     }
 
     @Override
     public boolean downloadFrpc(Path downloadDir) {
-        this.hasUpdate = false;
         return false;
     }
 
@@ -282,19 +288,20 @@ public class OpenFrpFrpcImpl implements Frpc{
             e.printStackTrace();
             return false;
         }
+        boolean result = false;
         latestVersion=frpcVersionJson.data.latest_ver;
         latestFolderName=frpcVersionJson.data.latest_full+"/";
         if(path == null || !path.toFile().exists()){
             LOGGER.warn("The frpc executable file does not exist!");
-            hasUpdate=true;
+            result = true;
         } else {
             getFrpcVersion(path);
             if(!frpcVersion.equals(latestVersion)){
                 LOGGER.info("A frpc update was found! Latest version:{} Old version:{}", latestVersion, frpcVersion);
-                hasUpdate=true;
+                result = true;
             }
         }
-        return hasUpdate;
+        return result;
     }
 
     @Override
