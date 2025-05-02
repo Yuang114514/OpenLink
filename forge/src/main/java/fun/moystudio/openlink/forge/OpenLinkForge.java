@@ -24,17 +24,7 @@ import java.util.List;
 public final class OpenLinkForge {
     public OpenLinkForge() throws Exception {
         // Run our common setup.
-        OpenLink.init(ModList.get().getModFileById(OpenLink.MOD_ID).versionString(),"Forge", ForgeVersion.getVersion(), () -> {
-            List<String> res = new ArrayList<>();
-            ModList.get().getMods().forEach(mod -> {
-                try {
-                    String packageName = ModList.get().getModContainerById(mod.getModId()).get().getMod().getClass().getPackageName();
-                    res.add(packageName.substring(0, packageName.lastIndexOf('.')));
-                } catch (Exception ignored) {
-                }
-            });
-            return res;
-        });
+        OpenLink.init(ModList.get().getModFileById(OpenLink.MOD_ID).versionString(),"Forge", ForgeVersion.getVersion());
     }
 
     @SubscribeEvent
@@ -58,8 +48,11 @@ public final class OpenLinkForge {
         EventCallbacks.onClientTick(Minecraft.getInstance());
     }
 
-    @SubscribeEvent
-    public static void onFinishLoading(FMLLoadCompleteEvent event) {
-        EventCallbacks.onAllModLoadingFinish();
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
+    public static class ModEventBusSubscriber {
+        @SubscribeEvent
+        public static void onFinishLoading(FMLLoadCompleteEvent event) {
+            EventCallbacks.onAllModLoadingFinish();
+        }
     }
 }
