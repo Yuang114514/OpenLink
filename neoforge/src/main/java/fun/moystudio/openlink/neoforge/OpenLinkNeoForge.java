@@ -1,7 +1,6 @@
 package fun.moystudio.openlink.neoforge;
 
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import net.minecraft.client.Minecraft;
@@ -16,24 +15,11 @@ import net.neoforged.neoforge.event.TickEvent;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.internal.versions.neoforge.NeoForgeVersion;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Mod.EventBusSubscriber
 @Mod(OpenLink.MOD_ID)
 public final class OpenLinkNeoForge {
     public OpenLinkNeoForge() throws Exception {
-        OpenLink.init(ModList.get().getModFileById(OpenLink.MOD_ID).versionString(),"NeoForge", NeoForgeVersion.getVersion(), () -> {
-            List<String> res = new ArrayList<>();
-            ModList.get().getMods().forEach(mod -> {
-                try {
-                    String packageName = ModList.get().getModContainerById(mod.getModId()).get().getMod().getClass().getPackageName();
-                    res.add(packageName.substring(0, packageName.lastIndexOf('.')));
-                } catch (Exception ignored) {
-                }
-            });
-            return res;
-        });
+        OpenLink.init(ModList.get().getModFileById(OpenLink.MOD_ID).versionString(),"NeoForge", NeoForgeVersion.getVersion());
     }
 
     @SubscribeEvent
