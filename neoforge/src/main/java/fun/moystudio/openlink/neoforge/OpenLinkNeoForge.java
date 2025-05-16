@@ -12,7 +12,6 @@ import net.neoforged.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.event.TickEvent;
-import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.internal.versions.neoforge.NeoForgeVersion;
 
 @Mod.EventBusSubscriber
@@ -33,10 +32,6 @@ public final class OpenLinkNeoForge {
                 .executes(context -> FrpcManager.getInstance().start(Minecraft.getInstance().getSingleplayerServer().getPort(),"")?1:0));
     }
 
-    @SubscribeEvent
-    public static void onLevelClear(LevelEvent.Unload event){
-        EventCallbacks.onLevelClear();
-    }
 
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event){
