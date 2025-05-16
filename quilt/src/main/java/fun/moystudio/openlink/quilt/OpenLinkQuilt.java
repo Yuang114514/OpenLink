@@ -7,9 +7,6 @@ import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.loader.impl.QuiltLoaderImpl;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class OpenLinkQuilt implements ModInitializer {
     @Override
     public void onInitialize(ModContainer mod) {
