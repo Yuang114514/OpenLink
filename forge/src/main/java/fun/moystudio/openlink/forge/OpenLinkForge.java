@@ -1,5 +1,6 @@
 package fun.moystudio.openlink.forge;
 
+import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.FrpcManager;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import net.minecraft.client.Minecraft;
@@ -11,13 +12,8 @@ import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import fun.moystudio.openlink.OpenLink;
 import net.minecraftforge.fml.event.lifecycle.FMLLoadCompleteEvent;
 import net.minecraftforge.versions.forge.ForgeVersion;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Mod.EventBusSubscriber
 @Mod(OpenLink.MOD_ID)
