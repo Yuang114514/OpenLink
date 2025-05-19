@@ -1,9 +1,10 @@
-package fun.moystudio.openlink.frpc;
+package fun.moystudio.openlink.frpcimpl;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.gui.LoginScreen;
 import fun.moystudio.openlink.gui.NodeSelectionScreen;
 import fun.moystudio.openlink.json.*;

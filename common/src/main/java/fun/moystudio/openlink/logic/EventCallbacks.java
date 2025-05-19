@@ -2,7 +2,7 @@ package fun.moystudio.openlink.logic;
 
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
-import fun.moystudio.openlink.frpc.FrpcManager;
+import fun.moystudio.openlink.frpcimpl.FrpcManager;
 import fun.moystudio.openlink.gui.*;
 import fun.moystudio.openlink.mixin.IScreenAccessor;
 import fun.moystudio.openlink.mixin.IShareToLanLastScreenAccessor;

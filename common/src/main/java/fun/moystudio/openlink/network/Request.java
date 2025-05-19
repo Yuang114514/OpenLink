@@ -1,7 +1,7 @@
 package fun.moystudio.openlink.network;
 
 import com.mojang.datafixers.util.Pair;
-import fun.moystudio.openlink.frpc.OpenFrpFrpcImpl;
+import fun.moystudio.openlink.frpcimpl.OpenFrpFrpcImpl;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

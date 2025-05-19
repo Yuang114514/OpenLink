@@ -41,7 +41,7 @@ dependencies {
     common(project(path: ':fabric-like', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':fabric-like', configuration: 'transformProductionQuilt')
 
-    implementation project(path: ":frpc", configuration: "namedElements")
+    runtimeOnly project(path: ":frpc", configuration: "namedElements")
     include project(":frpc")
 }
 

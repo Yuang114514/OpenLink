@@ -1,7 +1,8 @@
-package fun.moystudio.openlink.frpc;
+package fun.moystudio.openlink.frpcimpl;
 
 import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
+import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.logic.Utils;
