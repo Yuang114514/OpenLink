@@ -1,0 +1,7 @@
+architectury {
+    platformSetupLoomIde()
+}
+
+loom {
+    mixin { useLegacyMixinAp = false }
+}
