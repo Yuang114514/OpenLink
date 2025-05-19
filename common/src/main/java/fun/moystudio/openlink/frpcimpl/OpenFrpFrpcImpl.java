@@ -25,7 +25,6 @@ import java.nio.file.Path;
 import java.util.*;
 
 public class OpenFrpFrpcImpl implements Frpc{
-    private static OpenFrpFrpcImpl INSTANCE = null;
     private String frpcVersion = null, latestVersion = null, latestFolderName = "OF_0.61.1_4df06100_250122/";
     private String osArch,osName, archiveSuffix;
     private long proxyId;
