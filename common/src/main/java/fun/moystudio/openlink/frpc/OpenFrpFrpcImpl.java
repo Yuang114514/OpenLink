@@ -272,13 +272,6 @@ public class OpenFrpFrpcImpl implements Frpc{
         writeSession();
     }
 
-    public static Frpc getInstance(){
-        if(INSTANCE == null){
-            INSTANCE = new OpenFrpFrpcImpl();
-        }
-        return INSTANCE;
-    }
-
     private boolean checkUpdate(Path path) {
         Gson gson=new Gson();
         JsonResponseWithData<JsonDownloadFile> frpcVersionJson;

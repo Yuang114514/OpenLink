@@ -7,6 +7,7 @@
   "gui.openlink.settingscreentitle": "OpenLink Panel",
   "gui.openlink.updatefrpctitle": "§l§gA new frpc version was found!",
   "setting.openlink.information_show": "Sensitive information hiding",
+  "setting.openlink.node_hide": "Unavailable nodes' hiding",
   "tab.openlink.setting_info": "About",
   "tab.openlink.setting_log": "Proxy Log",
   "tab.openlink.setting_setting": "Settings",
@@ -37,10 +38,10 @@
   "text.openlink.node_unavailable": "§c§lUnavailable",
   "text.openlink.nofrpcfile": "§3Unable to find frpc executable file in storage directory,\n§o§l§cplease download it.\n§o§l§c(you can skip the frpc downloading but\n §o§l§call the proxy feature will be disabled)",
   "text.openlink.now": "Now",
-  "text.openlink.webpanel": "%s Web Panel",
   "text.openlink.onlinemodebutton": "Auth Mode",
   "text.openlink.openstoragedir": "Open storage folder",
   "text.openlink.proxycount": "Proxies: %s/%s",
+  "text.openlink.realnametounlock": "§n*Nodes in Chinese Mainland are unavailable because you have not authenticated your real name.",
   "text.openlink.remote_port": "Proxy remote port(Optional)",
   "text.openlink.remoteportnotfound": "§c§lCan not find any available remote port after 5 tries§o§i\n(Maybe you are not lucky today :>)",
   "text.openlink.secure": "Secure",
@@ -50,6 +51,7 @@
   "text.openlink.updatingfrpc": "§o§6Updating frpc...§s(It may takes a while)",
   "text.openlink.userproxieslimited": "§c§lYou have reached the maximum number of proxies.\nPlease delete some proxies!",
   "text.openlink.usingfrp": "Using frp service",
+  "text.openlink.webpanel": "%s Web Panel",
   "text.openlink.x_axis_label": "Time",
   "text.openlink.y_axis_label": "Traffic(MiB)"
 }

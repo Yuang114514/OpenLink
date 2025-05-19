@@ -55,7 +55,7 @@ public class SettingScreen extends Screen {
     List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
     public static List<InfoObjectSelectionList.Information> informationList;
     public static final ResourceLocation BACKGROUND_SETTING=Utils.createResourceLocation("openlink","textures/gui/background_setting.png");
-    public static boolean sensitiveInfoHiding;
+    public static boolean sensitiveInfoHiding, unavailableNodeHiding;
 
     private static List<InfoObjectSelectionList.Information> getInformationList(Object... objects) {
         String[] lines= Utils.translatableText("text.openlink.info",objects).getString().split("\n");
@@ -162,14 +162,20 @@ public class SettingScreen extends Screen {
         tabInfo.add(lastinfoselectionlist);
         //Setting
         tabSetting.add(new ChartWidget(10,65,this.buttonSetting.x+this.buttonSetting.getWidth()-10-5,40, Utils.translatableText("text.openlink.secure"),0x8f2b2b2b));
+        tabSetting.add(new ChartWidget(10,65+40+10, this.buttonSetting.x+this.buttonSetting.getWidth()-10-5, 40, Utils.literalText("OpenFrp"),0x8f2b2b2b));
         tabSetting.add(new ComponentWidget(this.font,15,87,0xffffff, Utils.translatableText("setting.openlink.information_show"),false));
+        tabSetting.add(new ComponentWidget(this.font,15,87+40+10,0xffffff, Utils.translatableText("setting.openlink.node_hide"),false));
         tabSetting.add(CycleButton.onOffBuilder(sensitiveInfoHiding).displayOnlyValue().create(this.buttonSetting.x+this.buttonSetting.getWidth()-75-5,80,75,20, Utils.translatableText("setting.information_show"),(cycleButton, object) -> {
             sensitiveInfoHiding = object;
             OpenLink.PREFERENCES.putBoolean("setting_sensitive_info_hiding", object);
         }));
+        tabSetting.add(CycleButton.onOffBuilder(unavailableNodeHiding).displayOnlyValue().create(this.buttonSetting.x+this.buttonSetting.getWidth()-75-5,80+40+10,75,20, Utils.translatableText("setting.information_show"),(cycleButton, object) -> {
+            unavailableNodeHiding = object;
+            OpenLink.PREFERENCES.putBoolean("setting_unavailable_node_hiding", object);
+        }));
         String url = FrpcManager.getInstance().getCurrentFrpcInstance().getPanelUrl();
         if(url != null) {
-            tabSetting.add(new Button(this.width/2-75,65+70,150,20,Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
+            tabSetting.add(new Button(this.width/2-75,65+40+10+40+10,150,20,Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
                 this.minecraft.keyboardHandler.setClipboard(url);
                 new WebBrowser(url).openBrowser();
             }));
