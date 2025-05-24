@@ -31,7 +31,9 @@ public class FrpcManager {
     private Process frpcProcess = null;
     private final static Logger LOGGER = LogManager.getLogger("OpenLink/FrpcManager");
     private static FrpcManager INSTANCE = null;
+    private String currentIP = null;
     public boolean initialized = false;
+
     public static FrpcManager getInstance() {
         if(INSTANCE == null) {
             INSTANCE = new FrpcManager();
@@ -219,6 +221,7 @@ public class FrpcManager {
         if(!initialized) return;
         this.getCurrentFrpcInstance().stopFrpcProcess(this.frpcProcess);
         this.frpcProcess = null;
+        this.currentIP = null;
     }
 
     public boolean start(int i, String val) {
@@ -275,6 +278,13 @@ public class FrpcManager {
             return false;
         }
         Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(ip));
+        this.currentIP = ip;
         return true;
+    }
+    public String getCurrentIP() {
+        return this.currentIP;
+    }
+    public Process getFrpcProcess() {
+        return this.frpcProcess;
     }
 }

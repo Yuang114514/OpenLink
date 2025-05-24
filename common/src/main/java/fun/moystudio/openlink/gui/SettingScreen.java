@@ -173,9 +173,16 @@ public class SettingScreen extends Screen {
             unavailableNodeHiding = object;
             OpenLink.PREFERENCES.putBoolean("setting_unavailable_node_hiding", object);
         }));
+        tabSetting.add(new Button(this.width/2-150-5,65+40+10+40+10,150,20,Utils.translatableText("text.openlink.wiki"), button -> {
+            this.minecraft.keyboardHandler.setClipboard(Uris.wikiUri.toString());
+            new WebBrowser(Uris.wikiUri.toString()).openBrowser();
+        }));
+        tabSetting.add(new Button(this.width/2+5,65+40+10+40+10,150,20,Utils.translatableText("text.openlink.openstoragedir"), button -> {
+            Util.getPlatform().openFile(FrpcManager.getInstance().getFrpcStoragePathById(FrpcManager.getInstance().getCurrentFrpcId()).toFile());
+        }));
         String url = FrpcManager.getInstance().getCurrentFrpcInstance().getPanelUrl();
         if(url != null) {
-            tabSetting.add(new Button(this.width/2-75,65+40+10+40+10,150,20,Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
+            tabSetting.add(new Button(this.width/2-75,65+40+10+40+10+20+10,150,20,Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
                 this.minecraft.keyboardHandler.setClipboard(url);
                 new WebBrowser(url).openBrowser();
             }));

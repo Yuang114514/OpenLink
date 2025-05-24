@@ -8,6 +8,8 @@ import fun.moystudio.openlink.mixin.IScreenAccessor;
 import fun.moystudio.openlink.mixin.IShareToLanLastScreenAccessor;
 import fun.moystudio.openlink.network.SSLUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.ShareToLanScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -42,6 +44,11 @@ public class EventCallbacks {
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
                     20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
 
+        }
+        if(screen instanceof PauseScreen && FrpcManager.getInstance().getFrpcProcess() != null){
+            ((IScreenAccessor)screen).invokeAddRenderableWidget(new Button(0,screen.height-20,150,20,Utils.translatableText("text.openlink.copyip"),button -> {
+                Minecraft.getInstance().keyboardHandler.setClipboard(FrpcManager.getInstance().getCurrentIP());
+            }));
         }
     }
     public static void onClientStop(){

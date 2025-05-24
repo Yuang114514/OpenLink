@@ -52,6 +52,8 @@
   "text.openlink.userproxieslimited": "§c§lYou have reached the maximum number of proxies.\nPlease delete some proxies!",
   "text.openlink.usingfrp": "Using frp service",
   "text.openlink.webpanel": "%s Web Panel",
+  "text.openlink.wiki": "OpenLink Web Wiki",
   "text.openlink.x_axis_label": "Time",
-  "text.openlink.y_axis_label": "Traffic(MiB)"
+  "text.openlink.y_axis_label": "Traffic(MiB)",
+  "text.openlink.copyip": "Copy IP to connect"
 }
