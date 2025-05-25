@@ -82,8 +82,6 @@ public class OpenFrpFrpcImpl implements Frpc{
         return true;
     }
 
-    Path lastFrpcExecutablePath = null;
-
     @Override
     public boolean isOutdated(Path frpcExecutablePath) {
         return checkUpdate(frpcExecutablePath);
