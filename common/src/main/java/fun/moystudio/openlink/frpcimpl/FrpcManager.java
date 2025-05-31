@@ -65,7 +65,7 @@ public class FrpcManager {
         return isExecutableFileExist(id)?frpcExecutableFiles.get(id):null;
     }
 
-    public String getCurrentFrpcId() {//TODO: use this method to create a screen
+    public String getCurrentFrpcId() {
         return this.currentFrpcId;
     }
 
@@ -73,11 +73,11 @@ public class FrpcManager {
         return this.frpcImplInstances.get(currentFrpcId).getSecond();
     }
 
-    public String getCurrentFrpcName() {//TODO: use this method to create a screen
+    public String getCurrentFrpcName() {
         return this.frpcImplInstances.get(currentFrpcId).getFirst();
     }
 
-    public void setCurrentFrpcId(String id) {//TODO: use this method to create a screen
+    public void setCurrentFrpcId(String id) {
         if(this.frpcImplInstances.containsKey(id)){
             try {
                 this.frpcImplInstances.get(id).getSecond().init();
@@ -92,7 +92,7 @@ public class FrpcManager {
         }
     }
 
-    public List<Pair<Pair<String, String>, Pair<String,Boolean>>> getFrpcImplDetailList() {//TODO: use this method to create a screen
+    public List<Pair<Pair<String, String>, Pair<String,Boolean>>> getFrpcImplDetailList() {
         List<Pair<Pair<String, String>, Pair<String,Boolean>>> list = new ArrayList<>();
         this.frpcImplInstances.forEach((id, nameAndInstance) -> {
             list.add(Pair.of(Pair.of(id, nameAndInstance.getFirst()), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcImplExecutableFile(id)))));
@@ -105,7 +105,7 @@ public class FrpcManager {
         return Pair.of(nameAndInstance.getFirst(), Pair.of(frpcExecutableFiles.containsKey(id)?nameAndInstance.getSecond().getFrpcVersion(frpcExecutableFiles.get(id)):null, nameAndInstance.getSecond().isOutdated(this.getFrpcImplExecutableFile(id))));
     }
 
-    public void updateFrpcByIds(String... ids) {//TODO: use this method to create a screen
+    public void updateFrpcByIds(String... ids) {
         for (String id : ids) {
             if(frpcImplInstances.containsKey(id)) {
                 Frpc instance = this.frpcImplInstances.get(id).getSecond();
@@ -154,6 +154,7 @@ public class FrpcManager {
                     break;
                 } catch (Exception e){
                     e.printStackTrace();
+                    LOGGER.info("An error occurred while downloading frpc by url '{}'",s);
                 }
             }
             if(!flag) {
@@ -183,7 +184,7 @@ public class FrpcManager {
         }
     }
 
-    public Path getFrpcStoragePathById(String id) {//TODO: use this method to create a screen
+    public Path getFrpcStoragePathById(String id) {
         if(this.frpcImplInstances.containsKey(id)){
             Path override = this.frpcImplInstances.get(id).getSecond().frpcDirPathOverride(Path.of(OpenLink.EXECUTABLE_FILE_STORAGE_PATH + id));
             if(override!=null) override.toFile().mkdirs();

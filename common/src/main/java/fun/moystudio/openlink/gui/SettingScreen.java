@@ -182,9 +182,17 @@ public class SettingScreen extends Screen {
         }));
         String url = FrpcManager.getInstance().getCurrentFrpcInstance().getPanelUrl();
         if(url != null) {
-            tabSetting.add(new Button(this.width/2-75,65+40+10+40+10+20+10,150,20,Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
+            tabSetting.add(new Button(this.width/2-150-5,65+40+10+40+10+20+10,150,20,Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
                 this.minecraft.keyboardHandler.setClipboard(url);
                 new WebBrowser(url).openBrowser();
+            }));
+            tabSetting.add(new Button(this.width/2+5, 65+40+10+40+10+20+10, 150, 20, Utils.translatableText("gui.openlink.frpcselectionscreentitle"), button -> {
+                this.minecraft.setScreen(new FrpcImplSelectionScreen(new SettingScreen(lastscreen)));
+            }));
+        }
+        else {
+            tabSetting.add(new Button(this.width/2-75, 65+40+10+40+10+20+10, 150, 20, Utils.translatableText("gui.openlink.frpcselectionscreentitle"), button -> {
+                this.minecraft.setScreen(new FrpcImplSelectionScreen(new SettingScreen(lastscreen)));
             }));
         }
     }
