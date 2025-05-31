@@ -3,8 +3,7 @@ package fun.moystudio.openlink.frpcimpl;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import fun.moystudio.openlink.frpc.Frpc;
-import fun.moystudio.openlink.json.JsonDownloadFile;
-import fun.moystudio.openlink.json.JsonResponseWithData;
+import fun.moystudio.openlink.json.JsonFrpcSakura;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
@@ -13,14 +12,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
 
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SakuraFrpFrpcImpl implements Frpc {
     private final static Logger LOGGER = LogManager.getLogger(SakuraFrpFrpcImpl.class);
-    private String osArch,osName, archiveSuffix;
-    public List<String> downloadUrls = new ArrayList<>();
+    private String osArch,osName,downloadUrl,latestVersion,frpcVersion;
 
     @Override
     public String id() {
@@ -57,22 +57,42 @@ public class SakuraFrpFrpcImpl implements Frpc {
             throw new Exception("[OpenLink] Unsupported operating system detected!");
         }
         osArch = os_arch;
-        if(osName.equals("windows")){
-            archiveSuffix=".zip";
-        } else {
-            archiveSuffix=".tar.gz";
-        }
-        Gson gson = new Gson();
-        JsonResponseWithData<JsonDownloadFile> response = gson.fromJson(Request.GET(Uris.openFrpAPIUri+"commonQuery/get?key=software", Request.DEFAULT_HEADER).getFirst(),new TypeToken<JsonResponseWithData<JsonDownloadFile>>(){}.getType());
-        response.data.source.forEach(source -> {
-            downloadUrls.add(source.value+"/");
-        });
 //        readSession();
     }
 
     @Override
     public boolean isOutdated(@Nullable Path frpcExecutableFilePath) {
-        return false;
+        return checkUpdate(frpcExecutableFilePath);
+    }
+
+    @Override
+    public List<String> getUpdateFileUrls() {
+        return List.of(downloadUrl);
+    }
+
+    private boolean checkUpdate(Path path) {
+        Gson gson=new Gson();
+        JsonFrpcSakura response;
+        try {
+            response = gson.fromJson(Request.GET(Uris.sakuraFrpAPIUri+"/system/clients", Request.DEFAULT_HEADER).getFirst(),new TypeToken<JsonFrpcSakura>(){}.getType());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        boolean result = false;
+        latestVersion=response.frpc.ver;
+        if(path == null || !path.toFile().exists()){
+            LOGGER.warn("The frpc executable file does not exist!");
+            result = true;
+        } else {
+            getFrpcVersion(path);
+            if(frpcVersion==null||!frpcVersion.equals(latestVersion)){
+                downloadUrl = response.frpc.archs.get(osName+"_"+osArch).url;
+                LOGGER.info("A frpc update was found! Latest version:{} Old version:{}", latestVersion, frpcVersion);
+                result = true;
+            }
+        }
+        return result;
     }
 
     @Override
@@ -87,6 +107,10 @@ public class SakuraFrpFrpcImpl implements Frpc {
 
     @Override
     public String getFrpcVersion(Path frpcExecutableFilePath) {
-        return "";
+        try {
+            return frpcVersion = new String(Runtime.getRuntime().exec(new String[]{frpcExecutableFilePath.toFile().getAbsolutePath(),"-v"}).getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            return "does not exists";
+        }
     }
 }
