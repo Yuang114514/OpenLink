@@ -61,13 +61,13 @@ public class SettingScreen extends Screen {
         String[] lines= Utils.translatableText("text.openlink.info",objects).getString().split("\n");
         List<InfoObjectSelectionList.Information> informations=new ArrayList<>();
         for (String line:lines){
-            if(line.startsWith("#")){
+            if(line.startsWith("#")||line.isEmpty()){
                 continue;
             }
-            if(line.charAt(0)=='1'){
+            if(line.startsWith("1")){
                 informations.add(new InfoObjectSelectionList.Information(Utils.literalText(line.substring(1)),true));
             }
-            else if(line.charAt(0)=='0'){
+            else if(line.startsWith("0")){
                 informations.add(new InfoObjectSelectionList.Information(Utils.literalText(line.substring(1)),false));
             }
             else{
@@ -128,7 +128,11 @@ public class SettingScreen extends Screen {
             }));
         } else {
             tabUser.clear();
-            tabUser.add(new Button(this.width/2-20,this.height/2-10,40,20,Utils.translatableText("text.openlink.logout"),button -> {
+            ResourceLocation icon = FrpcManager.getInstance().getCurrentFrpcInstance().getIcon();
+            if(icon!=null){
+                tabUser.add(new ImageWidget(this.width/2-32,this.height/2+50-10-64-5,0,0,64,64,64,64,icon));
+            }
+            tabUser.add(new Button(this.width/2-20,this.height/2+50-10,40,20,Utils.translatableText("text.openlink.logout"),button -> {
                 FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
                 this.minecraft.setScreen(new SettingScreen(lastscreen));
             }));
@@ -446,9 +450,6 @@ public class SettingScreen extends Screen {
 
     @Override
     public void tick(){
-        if (OpenLink.disabled) {
-            this.onClose();
-        }
         try {
             onTab();
         } catch (Exception e) {

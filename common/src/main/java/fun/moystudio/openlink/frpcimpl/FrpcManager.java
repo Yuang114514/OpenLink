@@ -44,16 +44,26 @@ public class FrpcManager {
     public void init() {
         this.currentFrpcId = OpenLink.PREFERENCES.get("frpc_id", "openfrp");
         ServiceLoader<Frpc> loader = ServiceLoader.load(Frpc.class);
-        loader.forEach(instance -> {
+        for(Frpc instance:loader) {
+            try {
+                instance.init();
+            } catch (Exception e) {
+                LOGGER.error("Cannot load {}: cannot initialize this frpc implementation.", instance.id());
+                continue;
+            }
             this.frpcImplInstances.put(instance.id(), Pair.of(instance.name(),instance));
-        });
+        }
         for (String id : this.frpcImplInstances.keySet()) {
             Path path = this.getFrpcExecutableFileByDirectory(this.getFrpcStoragePathById(id));
             if(path!=null){
                 frpcExecutableFiles.put(id, path);
             }
         }
-        StringBuilder sb = new StringBuilder("Loading " + this.frpcImplInstances.size() + " FrpcImpls:");
+        if(!this.frpcImplInstances.containsKey(currentFrpcId)){
+            LOGGER.error("Cannot load frpc id from user preferences: cannot find {}",currentFrpcId);
+            currentFrpcId = "openfrp";
+        }
+        StringBuilder sb = new StringBuilder("Loaded " + this.frpcImplInstances.size() + " FrpcImpls:");
         for (Map.Entry<String, Pair<String, ? extends Frpc>> pair : this.frpcImplInstances.entrySet()) {
             sb.append(String.format("\n\t- %s %s",pair.getKey(),pair.getValue().getSecond()));
         }
@@ -79,11 +89,6 @@ public class FrpcManager {
 
     public void setCurrentFrpcId(String id) {
         if(this.frpcImplInstances.containsKey(id)){
-            try {
-                this.frpcImplInstances.get(id).getSecond().init();
-            } catch (Exception e) {
-                LOGGER.error("Cannot set the current frpc id to {}: cannot initialize this frpc implementation.", id);
-            }
             this.currentFrpcId = id;
             OpenLink.PREFERENCES.put("frpc_id",id);
             EventCallbacks.hasUpdate = getFrpcImplDetail(getCurrentFrpcId()).getSecond().getSecond();

@@ -79,6 +79,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
             e.printStackTrace();
             return false;
         }
+        downloadUrl = response.frpc.archs.get(osName+"_"+osArch).url;
         boolean result = false;
         latestVersion=response.frpc.ver;
         if(path == null || !path.toFile().exists()){
@@ -87,7 +88,6 @@ public class SakuraFrpFrpcImpl implements Frpc {
         } else {
             getFrpcVersion(path);
             if(frpcVersion==null||!frpcVersion.equals(latestVersion)){
-                downloadUrl = response.frpc.archs.get(osName+"_"+osArch).url;
                 LOGGER.info("A frpc update was found! Latest version:{} Old version:{}", latestVersion, frpcVersion);
                 result = true;
             }
@@ -108,7 +108,8 @@ public class SakuraFrpFrpcImpl implements Frpc {
     @Override
     public String getFrpcVersion(Path frpcExecutableFilePath) {
         try {
-            return frpcVersion = new String(Runtime.getRuntime().exec(new String[]{frpcExecutableFilePath.toFile().getAbsolutePath(),"-v"}).getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            String version = new String(Runtime.getRuntime().exec(new String[]{frpcExecutableFilePath.toFile().getAbsolutePath(),"-v"}).getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+            return frpcVersion = version.substring(0,version.length()-1);
         } catch (Exception e) {
             return "does not exists";
         }

@@ -29,6 +29,12 @@ public class EventCallbacks {
             minecraft.setScreen(new NewShareToLanScreen(((IShareToLanLastScreenAccessor)shareToLanScreen).getLastScreen()));
             return;
         }
+        if(screen instanceof TitleScreen){
+            FrpcManager.getInstance().stop();
+            ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
+                    20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
+
+        }
         if(OpenLink.disabled) return;
         for(Pair<String, Class<?>> classPair:OpenLink.CONFLICT_CLASS){
             if(classPair.getSecond().isInstance(screen)){
@@ -38,12 +44,6 @@ public class EventCallbacks {
                 minecraft.setScreen(new ConflictSelectionScreen(classPair.getFirst()));
                 return;
             }
-        }
-        if(screen instanceof TitleScreen){
-            FrpcManager.getInstance().stop();
-            ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
-                    20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
-
         }
         if(screen instanceof PauseScreen && FrpcManager.getInstance().getFrpcProcess() != null){
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new Button(0,screen.height-20,150,20,Utils.translatableText("text.openlink.copyip"),button -> {
@@ -56,6 +56,7 @@ public class EventCallbacks {
     }
 
     public static void onClientTick(Minecraft minecraft){
+        OpenLink.disabled = FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId());
         if(minecraft.screen instanceof TitleScreen){
             if(OpenLink.disabled) return;
             if (SSLUtils.sslIgnored){
