@@ -2,8 +2,11 @@ package fun.moystudio.openlink.frpcimpl;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.json.JsonFrpcSakura;
+import fun.moystudio.openlink.json.JsonResponseWithData;
+import fun.moystudio.openlink.json.JsonUserInfo;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
@@ -14,13 +17,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class SakuraFrpFrpcImpl implements Frpc {
     private final static Logger LOGGER = LogManager.getLogger(SakuraFrpFrpcImpl.class);
     private String osArch,osName,downloadUrl,latestVersion,frpcVersion;
+    public static String token;
 
     @Override
     public String id() {
@@ -57,7 +60,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
             throw new Exception("[OpenLink] Unsupported operating system detected!");
         }
         osArch = os_arch;
-//        readSession();
+        readSession();
     }
 
     @Override
@@ -68,6 +71,29 @@ public class SakuraFrpFrpcImpl implements Frpc {
     @Override
     public List<String> getUpdateFileUrls() {
         return List.of(downloadUrl);
+    }
+
+    private static void readSession() {
+        token=OpenLink.PREFERENCES.get("token_sakura",null);
+        if(token==null||token.equals("null")){
+            token=null;
+            LOGGER.warn("The session does not exists in user preferences!");
+            return;
+        }
+        try{
+            JsonResponseWithData<JsonUserInfo> responseWithData = /*getUserInfo()*/null;//TODO: getUserInfo()
+            if(responseWithData==null||!responseWithData.flag){
+                token=null;
+                writeSession();
+                LOGGER.warn("The session has been expired!");
+            }
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void writeSession() {
+        OpenLink.PREFERENCES.put("token_sakura", Objects.requireNonNullElse(token, "null"));
     }
 
     private boolean checkUpdate(Path path) {

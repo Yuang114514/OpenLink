@@ -88,11 +88,6 @@ public class OpenFrpFrpcImpl implements Frpc{
     }
 
     @Override
-    public boolean downloadFrpc(Path downloadDir) {
-        return false;
-    }
-
-    @Override
     public List<String> getUpdateFileUrls() {
         List<String> list = new ArrayList<>();
         downloadUrls.forEach(url -> list.add(url+latestFolderName+"frpc_"+osName+"_"+osArch+ archiveSuffix));
@@ -347,11 +342,11 @@ public class OpenFrpFrpcImpl implements Frpc{
         return Authorization!=null;
     }
 
-    public static void writeSession() {
+    private static void writeSession() {
         OpenLink.PREFERENCES.put("authorization", Objects.requireNonNullElse(Authorization, "null"));
     }
 
-    public static void readSession() {
+    private static void readSession() {
         Authorization=OpenLink.PREFERENCES.get("authorization",null);
 
         if(Authorization==null||Authorization.equals("null")){
