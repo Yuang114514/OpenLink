@@ -73,7 +73,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
         return List.of(downloadUrl);
     }
 
-    private static void readSession() {
+    public static void readSession() {
         token=OpenLink.PREFERENCES.get("token_sakura",null);
         if(token==null||token.equals("null")){
             token=null;
@@ -92,7 +92,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
         }
     }
 
-    private static void writeSession() {
+    public static void writeSession() {
         OpenLink.PREFERENCES.put("token_sakura", Objects.requireNonNullElse(token, "null"));
     }
 

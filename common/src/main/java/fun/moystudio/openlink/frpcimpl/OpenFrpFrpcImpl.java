@@ -342,11 +342,11 @@ public class OpenFrpFrpcImpl implements Frpc{
         return Authorization!=null;
     }
 
-    private static void writeSession() {
+    public static void writeSession() {
         OpenLink.PREFERENCES.put("authorization", Objects.requireNonNullElse(Authorization, "null"));
     }
 
-    private static void readSession() {
+    public static void readSession() {
         Authorization=OpenLink.PREFERENCES.get("authorization",null);
 
         if(Authorization==null||Authorization.equals("null")){
