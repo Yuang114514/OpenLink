@@ -35,7 +35,6 @@ public class EventCallbacks {
                     20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
 
         }
-        if(OpenLink.disabled) return;
         for(Pair<String, Class<?>> classPair:OpenLink.CONFLICT_CLASS){
             if(classPair.getSecond().isInstance(screen)){
                 if(ConflictSelectionScreen.canOpen!=null&& ConflictSelectionScreen.canOpen.equals(classPair)){
@@ -45,6 +44,7 @@ public class EventCallbacks {
                 return;
             }
         }
+        if(OpenLink.disabled) return;
         if(screen instanceof PauseScreen && FrpcManager.getInstance().getFrpcProcess() != null){
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new Button(0,screen.height-20,150,20,Utils.translatableText("text.openlink.copyip"),button -> {
                 Minecraft.getInstance().keyboardHandler.setClipboard(FrpcManager.getInstance().getCurrentIP());
@@ -56,7 +56,7 @@ public class EventCallbacks {
     }
 
     public static void onClientTick(Minecraft minecraft){
-        OpenLink.disabled = FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId());
+        OpenLink.disabled = !FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId());
         if(minecraft.screen instanceof TitleScreen){
             if(OpenLink.disabled) return;
             if (SSLUtils.sslIgnored){

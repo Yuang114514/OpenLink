@@ -52,9 +52,9 @@ public class SettingScreen extends Screen {
     SettingTabs lasttab=null;
     SettingScreenButton buttonLog,buttonInfo,buttonUser,buttonSetting;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
-    List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
+    public List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
     public static List<InfoObjectSelectionList.Information> informationList;
-    public static final ResourceLocation BACKGROUND_SETTING=Utils.createResourceLocation("openlink","textures/gui/background_setting.png");
+    public static final ResourceLocation BACKGROUND_SETTING=Utils.createResourceLocation("openlink","textures/gui/background_setting.png"), FRP_BUTTON = Utils.createResourceLocation("openlink", "textures/gui/frp_change_button.png"), FRP_BUTTON_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/frp_change_button_hovered.png");
     public static boolean sensitiveInfoHiding, unavailableNodeHiding;
 
     private static List<InfoObjectSelectionList.Information> getInformationList(Object... objects) {
@@ -122,9 +122,12 @@ public class SettingScreen extends Screen {
                     (dataXY, poseStack, i1, j1)-> renderComponentTooltip(poseStack,
                             Arrays.stream(new Component[]{Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
                             i1,j1)));
-            tabUser.add(new Button(10,65+j+5+40,j,20,Utils.translatableText("text.openlink.logout"),button -> {
+            tabUser.add(new Button(10,65+j+5+40,j-25,20,Utils.translatableText("text.openlink.logout"),button -> {
                 FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
                 this.minecraft.setScreen(new SettingScreen(lastscreen));
+            }));
+            tabUser.add(new ImageButtonWithHoveredState(10+j-25+5, 65+j+5+40, 20, 20, 0, 0, 20, FRP_BUTTON, FRP_BUTTON_HOVERED, 20, 20, button -> {
+                this.minecraft.setScreen(new FrpcImplSelectionScreen(new SettingScreen(lastscreen)));
             }));
         } else {
             tabUser.clear();
