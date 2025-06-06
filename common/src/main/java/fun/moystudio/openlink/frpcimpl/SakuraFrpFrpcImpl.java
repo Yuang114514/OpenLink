@@ -4,12 +4,12 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
-import fun.moystudio.openlink.json.JsonFrpcSakura;
-import fun.moystudio.openlink.json.JsonResponseWithData;
-import fun.moystudio.openlink.json.JsonUserInfo;
+import fun.moystudio.openlink.gui.LoginScreenSakura;
+import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -81,8 +81,8 @@ public class SakuraFrpFrpcImpl implements Frpc {
             return;
         }
         try{
-            JsonResponseWithData<JsonUserInfo> responseWithData = /*getUserInfo()*/null;//TODO: getUserInfo()
-            if(responseWithData==null||!responseWithData.flag){
+            JsonUserInfoSakura responseWithData = getUserInfo();
+            if(responseWithData==null){
                 token=null;
                 writeSession();
                 LOGGER.warn("The session has been expired!");
@@ -92,15 +92,54 @@ public class SakuraFrpFrpcImpl implements Frpc {
         }
     }
 
+    @Override
+    public boolean isLoggedIn() {
+        return token!=null;
+    }
+
+    @Override
+    public Screen getLoginScreen(Screen last) {
+        return new LoginScreenSakura(last);
+    }
+
+    public static JsonUserInfoSakura getUserInfo() {
+        Gson gson=new Gson();
+        JsonUserInfoSakura response;
+        try {
+            response = gson.fromJson(Request.GET(Uris.sakuraFrpAPIUri+"user/info?token="+token, Request.DEFAULT_HEADER).getFirst(), new TypeToken<JsonUserInfoSakura>(){}.getType());
+            if(isBadResponse(response)) {
+                LOGGER.error("Incorrect token!");
+                return null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return response;
+    }
+
     public static void writeSession() {
         OpenLink.PREFERENCES.put("token_sakura", Objects.requireNonNullElse(token, "null"));
+    }
+
+    @Override
+    public void logOut() {
+        token = null;
+        writeSession();
+    }
+
+    public static boolean isBadResponse(JsonBaseResponseSakura response) {
+        return response.code >= 400;
     }
 
     private boolean checkUpdate(Path path) {
         Gson gson=new Gson();
         JsonFrpcSakura response;
         try {
-            response = gson.fromJson(Request.GET(Uris.sakuraFrpAPIUri+"/system/clients", Request.DEFAULT_HEADER).getFirst(),new TypeToken<JsonFrpcSakura>(){}.getType());
+            response = gson.fromJson(Request.GET(Uris.sakuraFrpAPIUri+"system/clients", Request.DEFAULT_HEADER).getFirst(),new TypeToken<JsonFrpcSakura>(){}.getType());
+            if(isBadResponse(response)) {
+                return false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return false;

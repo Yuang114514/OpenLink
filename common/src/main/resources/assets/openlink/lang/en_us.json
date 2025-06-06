@@ -32,6 +32,7 @@
   "text.openlink.local_port": "Local server port(Optional)",
   "text.openlink.login": "Login",
   "text.openlink.logintips": "Please login your Natayark account",
+  "text.openlink.logintips_sakura": "Please login your SakuraFrp account",
   "text.openlink.logout": "Logout",
   "text.openlink.no_account": "§o§cDon't have an account?",
   "text.openlink.nodata": "No data(you didn't use the proxy service before)",
@@ -51,6 +52,8 @@
   "text.openlink.secure": "Secure",
   "text.openlink.sslignored": "Because of your network, SSL is ignored. All of your network requests will be INSECURE! Do you still want to use OpenLink?",
   "text.openlink.sslwarning": "§b§o[OpenLink] §r§3 SSL ignoring may make your user and password INSECURE. \n§c§o§lPlease don't send IP to anyone YOU DON'T TRUST!",
+  "text.openlink.token": "Enter access token to login(you can get it from Web SakuraFrp Panel)",
+  "text.openlink.updatebutton": "Update selected frpc",
   "text.openlink.updatefrpc": "§l§gA new frpc version was found! §bWould you like to update?",
   "text.openlink.updatingfrpc": "§o§6Updating frpc...§s(It may takes a while)",
   "text.openlink.userproxieslimited": "§c§lYou have reached the maximum number of proxies.\nPlease delete some proxies!",
@@ -58,6 +61,5 @@
   "text.openlink.webpanel": "%s Web Panel",
   "text.openlink.wiki": "OpenLink Web Wiki",
   "text.openlink.x_axis_label": "Time",
-  "text.openlink.y_axis_label": "Traffic(MiB)",
-  "text.openlink.updatebutton": "Update selected frpc"
+  "text.openlink.y_axis_label": "Traffic(MiB)"
 }

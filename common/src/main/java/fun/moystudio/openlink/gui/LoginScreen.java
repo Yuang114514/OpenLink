@@ -56,6 +56,7 @@ public class LoginScreen extends Screen {
             try {
                 JsonResponseWithData<JsonUserInfo> response = OpenFrpFrpcImpl.getUserInfo();
                 if(response!=null&&response.flag){
+                    OpenFrpFrpcImpl.writeSession();
                     this.onClose();
                 } else {
                     OpenFrpFrpcImpl.Authorization = null;

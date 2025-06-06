@@ -63,15 +63,11 @@ public class EventCallbacks {
                 minecraft.setScreen(new ConfirmScreenWithLanguageButton(confirmed->{
                     if(confirmed){
                         SSLUtils.sslIgnored=false;
-                        try {
-                            FrpcManager.getInstance().getCurrentFrpcInstance().init();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        FrpcManager.getInstance().initialized = false;
+                        FrpcManager.getInstance().init();//Reinit
                     }
                     else{
-                        OpenLink.LOGGER.error("Minecraft closed because of SSL.");
-                        minecraft.stop();
+                        OpenLink.disabled = true;
                     }
                     minecraft.setScreen(null);
                 }, Utils.literalText("SSL Handshake Error"), Utils.translatableText("text.openlink.sslignored")));
@@ -86,24 +82,7 @@ public class EventCallbacks {
     public static void onAllModLoadingFinish() {
         FrpcManager.getInstance().init();
         try{
-            FrpcManager.getInstance().getCurrentFrpcInstance().init();
             hasUpdate = FrpcManager.getInstance().getFrpcImplDetail(FrpcManager.getInstance().getCurrentFrpcId()).getSecond().getSecond();
-        } catch (SSLHandshakeException e) {
-            e.printStackTrace();
-            OpenLink.LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
-            try {
-                SSLUtils.ignoreSsl();
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
-            }
-        } catch (SocketException e){
-            e.printStackTrace();
-            OpenLink.disabled = true;
-            OpenLink.LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
-        } catch (IOException e) {
-            e.printStackTrace();
-            OpenLink.disabled = true;
-            OpenLink.LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
         } catch (Exception e){
             throw new RuntimeException(e);
         }

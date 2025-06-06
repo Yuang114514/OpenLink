@@ -2,7 +2,7 @@ package fun.moystudio.openlink.json;
 
 import java.util.Map;
 
-public class JsonFrpcSakura {
+public class JsonFrpcSakura extends JsonBaseResponseSakura{
     public client frpc;
     public static class client {
         public String ver;

@@ -6,12 +6,15 @@ import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.logic.EventCallbacks;
 import fun.moystudio.openlink.logic.Extract;
 import fun.moystudio.openlink.logic.Utils;
+import fun.moystudio.openlink.network.SSLUtils;
 import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
+import javax.net.ssl.SSLHandshakeException;
 import java.io.*;
+import java.net.SocketException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
@@ -47,7 +50,24 @@ public class FrpcManager {
         for(Frpc instance:loader) {
             try {
                 instance.init();
+            } catch (SSLHandshakeException e) {
+                e.printStackTrace();
+                OpenLink.LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
+                try {
+                    SSLUtils.ignoreSsl();
+                } catch (Exception ex) {
+                    throw new RuntimeException(ex);
+                }
+            } catch (SocketException e){
+                e.printStackTrace();
+                OpenLink.disabled = true;
+                OpenLink.LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
+            } catch (IOException e) {
+                e.printStackTrace();
+                OpenLink.disabled = true;
+                OpenLink.LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
             } catch (Exception e) {
+                e.printStackTrace();
                 LOGGER.error("Cannot load {}: cannot initialize this frpc implementation.", instance.id());
                 continue;
             }
