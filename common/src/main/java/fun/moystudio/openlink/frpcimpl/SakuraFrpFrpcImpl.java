@@ -167,7 +167,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
     @Override
     public Process createFrpcProcess(Path frpcExecutableFilePath, int localPort, @Nullable String remotePort) throws Exception {
         nodeId=-1;
-        return new ProcessBuilder(frpcExecutableFilePath.toFile().getAbsolutePath(), "-f",token+":"+proxyId).redirectErrorStream(true).start();
+        return new ProcessBuilder(frpcExecutableFilePath.toFile().getAbsolutePath(), "-f",token+":"+proxyId,"-n").redirectErrorStream(true).start();
     }
 
     @Override
