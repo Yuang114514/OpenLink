@@ -147,14 +147,14 @@ public class OpenFrpFrpcImpl implements Frpc{
             LOGGER.info("Selecting node...");
             List<JsonNode> canUseNodes=new ArrayList<>();
             for(JsonNode now:nodelist.data.list){
-                int groupnumber1=5,usergroupnumber;
+                int groupnumber1=0,usergroupnumber=0;
                 if(now.group.contains("svip")){
                     groupnumber1=3;
                 }
-                if(now.group.contains("vip")){
+                else if(now.group.contains("vip")){
                     groupnumber1=2;
                 }
-                if(now.group.contains("normal")){
+                else if(now.group.contains("normal")){
                     groupnumber1=1;
                 }
                 if(userinfo.data.group.contains("svip")){
@@ -176,29 +176,31 @@ public class OpenFrpFrpcImpl implements Frpc{
                 if(OpenLink.PREFER_CLASSIFY!=-1&&o1.classify!=o2.classify&&(o1.classify== OpenLink.PREFER_CLASSIFY)!=(o2.classify==OpenLink.PREFER_CLASSIFY))
                     return o1.classify==OpenLink.PREFER_CLASSIFY?-1:1;
                 if(!o1.group.equals(o2.group)){
-                    int first=5,second=5;
+                    int first=0,second=0;
                     if(o1.group.contains("svip")){
                         first=3;
                     }
-                    if(o1.group.contains("vip")){
+                    else if(o1.group.contains("vip")){
                         first=2;
                     }
-                    if(o1.group.contains("normal")){
+                    else if(o1.group.contains("normal")){
                         first=1;
                     }
                     if(o2.group.contains("svip")){
                         second=3;
                     }
-                    if(o2.group.contains("vip")) {
+                    else if(o2.group.contains("vip")) {
                         second=2;
                     }
-                    if(o2.group.contains("normal")){
+                    else if(o2.group.contains("normal")){
                         second=1;
                     }
-                    return first>second?-1:1;
+                    if(first != second){
+                        return first>second?-1:1;
+                    }
                 }
-                if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)<1e-5)
-                    return o2.bandwidth*o2.bandwidthMagnification>o1.bandwidth*o1.bandwidthMagnification?1:-1;
+                if(Math.abs(o1.bandwidth*o1.bandwidthMagnification-o2.bandwidth*o2.bandwidthMagnification)>1e-5)
+                    return Double.compare(o2.bandwidth*o2.bandwidthMagnification,o1.bandwidth*o1.bandwidthMagnification);
                 if(userinfo.data.realname&&o1.needRealname!=o2.needRealname)
                     return o1.needRealname?-1:1;
                 return 0;
