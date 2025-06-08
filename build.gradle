@@ -21,6 +21,9 @@ subprojects {
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
         archivesName = "$rootProject.archives_name-$project.name-$rootProject.minecraft_version"
+        if(project.name == "frpc") {
+            archivesName = "$rootProject.archives_name-$project.name"
+        }
     }
 
     repositories {
