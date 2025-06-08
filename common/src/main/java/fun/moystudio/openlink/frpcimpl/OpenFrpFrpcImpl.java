@@ -237,7 +237,7 @@ public class OpenFrpFrpcImpl implements Frpc{
                 break;
             }
         }//创建隧道
-        if(!found) throw new Exception(Utils.translatableText("text.openlink.remoteportnotfound").getString());
+        if(!found) throw new Exception(Utils.translatableText("text.openlink.remoteportnotfound").getString() + "last msg:" +gson.fromJson(response.getFirst(), JsonResponseWithData.class).msg);
         LanConfig.cfg.last_port_value=String.valueOf(newProxy.remote_port).equals(remotePort)?remotePort:"";
         response=Request.POST(Uris.openFrpAPIUri+"frp/api/getUserProxies",Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER, OpenFrpFrpcImpl.Authorization),"{}");
         userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonResponseWithData<JsonTotalAndList<JsonUserProxy>>>(){}.getType());
