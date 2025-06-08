@@ -6,6 +6,7 @@ import fun.moystudio.openlink.frpcimpl.SakuraFrpFrpcImpl;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.WebBrowser;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -26,7 +27,7 @@ public class LoginScreenSakura extends Screen {
         token.setMaxLength(100);
         token.setSuggestion(Utils.translatableText("text.openlink.token").getString());
         this.addRenderableWidget(token);
-        this.addRenderableWidget(new Button(this.width / 2 + 160, this.height / 2, 40, 20, CommonComponents.GUI_DONE, button -> {
+        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
             SakuraFrpFrpcImpl.token = token.getValue();
             if(SakuraFrpFrpcImpl.getUserInfo()!=null) {
                 SakuraFrpFrpcImpl.writeSession();
@@ -35,8 +36,8 @@ public class LoginScreenSakura extends Screen {
                 SakuraFrpFrpcImpl.token = null;
             }
             SakuraFrpFrpcImpl.writeSession();
-        }));
-        this.addRenderableWidget(new Button(this.width / 2 - 100, this.height / 6 * 4 , 200, 20, Utils.translatableText("text.openlink.no_account"), (button) -> new WebBrowser("https://www.natfrp.com/").openBrowser()));
+        }).bounds(this.width / 2 + 160, this.height / 2, 40, 20).build());
+        this.addRenderableWidget(Button.builder(Utils.translatableText("text.openlink.no_account"), (button) -> new WebBrowser("https://www.natfrp.com/").openBrowser()).bounds(this.width / 2 - 100, this.height / 6 * 4 , 200, 20).build());
     }
 
     @Override
@@ -45,11 +46,11 @@ public class LoginScreenSakura extends Screen {
     }
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        this.renderBackground(poseStack);
-        drawCenteredString(poseStack, this.font, this.title, this.width/2, 15, 0xffffff);
-        drawString(poseStack, this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()),0, this.height-this.font.lineHeight, 0xffffff);
-        super.render(poseStack, i, j, f);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        guiGraphics.drawCenteredString(this.font, this.title, this.width/2, 15, 0xffffff);
+        guiGraphics.drawString(this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()),0, this.height-this.font.lineHeight, 0xffffff);
+        super.render(guiGraphics, i, j, f);
     }
 
     @Override

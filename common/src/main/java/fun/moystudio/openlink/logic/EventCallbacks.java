@@ -46,9 +46,9 @@ public class EventCallbacks {
         }
         if(OpenLink.disabled) return;
         if(screen instanceof PauseScreen && FrpcManager.getInstance().getFrpcProcess() != null){
-            ((IScreenAccessor)screen).invokeAddRenderableWidget(new Button(0,screen.height-20,150,20,Utils.translatableText("text.openlink.copyip"),button -> {
+            ((IScreenAccessor)screen).invokeAddRenderableWidget(Button.builder(Utils.translatableText("text.openlink.copyip"),button -> {
                 Minecraft.getInstance().keyboardHandler.setClipboard(FrpcManager.getInstance().getCurrentIP());
-            }));
+            }).bounds(0,screen.height-20,150,20).build());
         }
     }
     public static void onClientStop(){

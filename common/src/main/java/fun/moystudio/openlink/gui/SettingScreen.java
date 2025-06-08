@@ -127,10 +127,6 @@ public class SettingScreen extends Screen {
                     10+j+20, 65+5,
                     this.width-20, 60+this.height-75-15,
                     Utils.translatableText("text.openlink.x_axis_label"), Utils.translatableText("text.openlink.y_axis_label"), lastdatapoints));
-            tabUser.add(Button.builder(Utils.translatableText("text.openlink.logout"), button -> {
-                FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
-                this.minecraft.setScreen(new SettingScreen(lastscreen));
-            }).bounds(10,65+j+5+40,j,20).build());
             tabUser.add(Button.builder(Utils.translatableText("text.openlink.logout"),button -> {
                 FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
                 this.minecraft.setScreen(new SettingScreen(lastscreen));
@@ -140,12 +136,12 @@ public class SettingScreen extends Screen {
             }));
         } else if(FrpcManager.getInstance().getCurrentFrpcId().equals("sakurafrp")) {
             ResourceLocation lastlocationimage = !tabUser.isEmpty() ? ((ImageWidget) tabUser.get(0)).texture : Utils.createResourceLocation("openlink", "textures/gui/sakurafrp_icon.png");
-            Component lastcomponent1 = tabUser.size() >= 2 ? ((ComponentWidget) tabUser.get(1)).component : Utils.emptyText();
-            Component lastcomponent2 = tabUser.size() >= 3 ? ((ComponentWidget) tabUser.get(2)).component : Utils.emptyText();
-            Component lastcomponent3 = tabUser.size() >= 4 ? ((ComponentWidget) tabUser.get(3)).component : Utils.emptyText();
-            Component lastcomponent4 = tabUser.size() >= 5 ? ((ComponentWidget) tabUser.get(4)).component : Utils.emptyText();
-            Component lastcomponent5 = tabUser.size() >= 6 ? ((ComponentWidget) tabUser.get(5)).component : Utils.emptyText();
-            int lastx2 = tabUser.size() >= 3 ? ((ComponentWidget) tabUser.get(2)).x : 10;
+            Component lastcomponent1 = tabUser.size() >= 2 ? ((ComponentWidget) tabUser.get(1)).getMessage() : Utils.emptyText();
+            Component lastcomponent2 = tabUser.size() >= 3 ? ((ComponentWidget) tabUser.get(2)).getMessage() : Utils.emptyText();
+            Component lastcomponent3 = tabUser.size() >= 4 ? ((ComponentWidget) tabUser.get(3)).getMessage() : Utils.emptyText();
+            Component lastcomponent4 = tabUser.size() >= 5 ? ((ComponentWidget) tabUser.get(4)).getMessage() : Utils.emptyText();
+            Component lastcomponent5 = tabUser.size() >= 6 ? ((ComponentWidget) tabUser.get(5)).getMessage() : Utils.emptyText();
+            int lastx2 = tabUser.size() >= 3 ? ((ComponentWidget) tabUser.get(2)).getX() : 10;
             List<Pair<String, Long>> lastdatapoints = tabUser.size() >= 7 ? ((LineChartWidget) tabUser.get(6)).dataPoints : readTrafficSakura();
             tabUser.clear();
             int j = Math.min((this.width - 20) / 4, (this.height - 75) / 5 * 3);
@@ -214,31 +210,31 @@ public class SettingScreen extends Screen {
             sensitiveInfoHiding = object;
             OpenLink.PREFERENCES.putBoolean("setting_sensitive_info_hiding", object);
         }));
-        tabSetting.add(CycleButton.onOffBuilder(unavailableNodeHiding).displayOnlyValue().create(this.buttonSetting.x+this.buttonSetting.getWidth()-75-5,80+40+10,75,20, Utils.translatableText("setting.information_show"),(cycleButton, object) -> {
+        tabSetting.add(CycleButton.onOffBuilder(unavailableNodeHiding).displayOnlyValue().create(this.buttonSetting.getX()+this.buttonSetting.getWidth()-75-5,80+40+10,75,20, Utils.translatableText("setting.information_show"),(cycleButton, object) -> {
             unavailableNodeHiding = object;
             OpenLink.PREFERENCES.putBoolean("setting_unavailable_node_hiding", object);
         }));
-        tabSetting.add(new Button(this.width/2-150-5,65+40+10+40+10,150,20,Utils.translatableText("text.openlink.wiki"), button -> {
+        tabSetting.add(Button.builder(Utils.translatableText("text.openlink.wiki"), button -> {
             this.minecraft.keyboardHandler.setClipboard(Uris.wikiUri.toString());
             new WebBrowser(Uris.wikiUri.toString()).openBrowser();
-        }));
-        tabSetting.add(new Button(this.width/2+5,65+40+10+40+10,150,20,Utils.translatableText("text.openlink.openstoragedir"), button -> {
+        }).bounds(this.width/2-150-5,65+40+10+40+10,150,20).build());
+        tabSetting.add(Button.builder(Utils.translatableText("text.openlink.openstoragedir"), button -> {
             Util.getPlatform().openFile(FrpcManager.getInstance().getFrpcStoragePathById(FrpcManager.getInstance().getCurrentFrpcId()).toFile());
-        }));
+        }).bounds(this.width/2+5,65+40+10+40+10,150,20).build());
         String url = FrpcManager.getInstance().getCurrentFrpcInstance().getPanelUrl();
         if(url != null) {
             tabSetting.add(Button.builder(Utils.translatableText("text.openlink.webpanel", FrpcManager.getInstance().getCurrentFrpcName()),button -> {
                 this.minecraft.keyboardHandler.setClipboard(url);
                 new WebBrowser(url).openBrowser();
-            }).bounds(this.width/2-150-5,65+40+10+40+10+20+10,150,20,).build());
+            }).bounds(this.width/2-150-5,65+40+10+40+10+20+10,150,20).build());
             tabSetting.add(Button.builder(Utils.translatableText("gui.openlink.frpcselectionscreentitle"), button -> {
                 this.minecraft.setScreen(new FrpcImplSelectionScreen(new SettingScreen(lastscreen)));
-            }).bounds(this.width/2+5, 65+40+10+40+10+20+10, 150, 20));
+            }).bounds(this.width/2+5, 65+40+10+40+10+20+10, 150, 20).build());
         }
         else {
-            tabSetting.add(new Button(this.width/2-75, 65+40+10+40+10+20+10, 150, 20, Utils.translatableText("gui.openlink.frpcselectionscreentitle"), button -> {
+            tabSetting.add(Button.builder(Utils.translatableText("gui.openlink.frpcselectionscreentitle"), button -> {
                 this.minecraft.setScreen(new FrpcImplSelectionScreen(new SettingScreen(lastscreen)));
-            }));
+            }).bounds(this.width/2-75, 65+40+10+40+10+20+10, 150, 20).build());
         }
     }
 
@@ -429,11 +425,11 @@ public class SettingScreen extends Screen {
                     ComponentWidget nowgroup=(ComponentWidget)tabUser.get(4);
                     ComponentWidget nowproxy=(ComponentWidget)tabUser.get(5);
                     LineChartWidget nowtraffic=(LineChartWidget)tabUser.get(6);
-                    nowuser.component=Utils.translatableText("text.openlink.loading");
-                    nowid.component=Utils.emptyText();
-                    nowemail.component=Utils.emptyText();
-                    nowgroup.component=Utils.emptyText();
-                    nowproxy.component=Utils.emptyText();
+                    nowuser.setMessage(Utils.translatableText("text.openlink.loading"));
+                    nowid.setMessage(Utils.emptyText());
+                    nowemail.setMessage(Utils.emptyText());
+                    nowgroup.setMessage(Utils.emptyText());
+                    nowproxy.setMessage(Utils.emptyText());
                     tabUser.set(1,nowuser);
                     new Thread(() -> {
                         Gson gson = new Gson();
@@ -454,12 +450,12 @@ public class SettingScreen extends Screen {
                             return;
                         }
                         nowavatar.texture=new WebTextureResourceLocation(userInfoSakura.avatar).location;
-                        nowuser.component= Utils.literalText(userInfoSakura.name);
-                        nowid.component= Utils.literalText("#"+userInfoSakura.id);
-                        nowid.x=10+nowuser.font.width(nowuser.component)+1;
-                        nowemail.component= Utils.literalText(userInfoSakura.speed);
-                        nowgroup.component= Utils.literalText(userInfoSakura.group.name);
-                        nowproxy.component= Utils.translatableText("text.openlink.proxycount",userProxySakura.size(),userInfoSakura.tunnels);
+                        nowuser.setMessage(Utils.literalText(userInfoSakura.name));
+                        nowid.setMessage(Utils.literalText("#"+userInfoSakura.id));
+                        nowid.setX(10+nowuser.font.width(nowuser.getMessage())+1);
+                        nowemail.setMessage(Utils.literalText(userInfoSakura.speed));
+                        nowgroup.setMessage(Utils.literalText(userInfoSakura.group.name));
+                        nowproxy.setMessage(Utils.translatableText("text.openlink.proxycount",userProxySakura.size(),userInfoSakura.tunnels));
                         List<Pair<String,Long>> dataPoints=readTrafficSakura();
                         dataPoints.add(new Pair<>(Utils.translatableText("text.openlink.now").getString(),Long.valueOf((long)(SakuraFrpFrpcImpl.getUserInfo().traffic.get(1)/1048576F))));
                         nowtraffic.dataPoints=dataPoints;

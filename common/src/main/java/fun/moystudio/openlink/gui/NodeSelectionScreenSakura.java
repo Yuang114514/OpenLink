@@ -6,6 +6,7 @@ import fun.moystudio.openlink.frpcimpl.SakuraFrpFrpcImpl;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
@@ -35,7 +36,7 @@ public class NodeSelectionScreenSakura extends Screen {
             selectionList=new NodeSelectionList(this.minecraft);
         }
         selectionList.changePos(this.width, this.height, 32, this.height-65+4);
-        this.addWidget(done=new Button(this.width / 2 - 100, this.height - 38, 200, 20, CommonComponents.GUI_DONE, (button) -> {
+        this.addWidget(done=Button.builder(CommonComponents.GUI_DONE, (button) -> {
             if(selectionList==null||selectionList.getSelected()==null||selectionList.getSelected().node.getSecond().id==-1){
                 SakuraFrpFrpcImpl.nodeId=-1;
                 this.minecraft.setScreen(lastscreen);
@@ -43,22 +44,22 @@ public class NodeSelectionScreenSakura extends Screen {
             }
             SakuraFrpFrpcImpl.nodeId=selectionList.getSelected().node.getSecond().id;
             this.minecraft.setScreen(lastscreen);
-        }));
+        }).bounds(this.width / 2 - 100, this.height - 38, 200, 20).build());
         this.addWidget(selectionList);
     }
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        super.render(poseStack, i, j, f);
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, i, j, f);
         if(selectionList!=null){
-            selectionList.render(poseStack,i,j,f);
+            selectionList.render(guiGraphics,i,j,f);
             if(selectionList.userInfo!=null&&selectionList.userInfo.realname==0) {
-                drawString(poseStack,this.minecraft.font, Utils.translatableText("text.openlink.realnametounlock"),0,this.height-this.minecraft.font.lineHeight, 0xffffff);
+                guiGraphics.drawString(this.minecraft.font, Utils.translatableText("text.openlink.realnametounlock"),0,this.height-this.minecraft.font.lineHeight, 0xffffff);
             }
         }
-        drawCenteredString(poseStack,this.font,this.title,this.width/2,16,0xffffff);
-        done.render(poseStack,i,j,f);
+        guiGraphics.drawCenteredString(this.font,this.title,this.width/2,16,0xffffff);
+        done.render(guiGraphics,i,j,f);
     }
 
     class NodeSelectionList extends ObjectSelectionList<NodeSelectionList.Entry>{
@@ -113,7 +114,7 @@ public class NodeSelectionScreenSakura extends Screen {
         }
 
         @Override
-        protected boolean isFocused(){
+        public boolean isFocused(){
             return NodeSelectionScreenSakura.this.getFocused() == this;
         }
 
@@ -125,11 +126,6 @@ public class NodeSelectionScreenSakura extends Screen {
         @Override
         public int getRowWidth() {
             return super.getRowWidth() + 50;
-        }
-
-        @Override
-        public void render(PoseStack poseStack, int i, int j, float f) {
-            super.render(poseStack, i, j, f);
         }
 
         public class Entry extends ObjectSelectionList.Entry<Entry>{
@@ -158,8 +154,8 @@ public class NodeSelectionScreenSakura extends Screen {
             }
 
             @Override
-            public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
-                fill(poseStack,x,y,x+entryWidth,y+entryHeight,0x8f2b2b2b);
+            public void render(GuiGraphics guiGraphics, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
+                guiGraphics.fill(x,y,x+entryWidth,y+entryHeight,0x8f2b2b2b);
                 String group;
                 switch ((int) this.node.getFirst().vip) {
                     case 0:
@@ -172,10 +168,10 @@ public class NodeSelectionScreenSakura extends Screen {
                         group="§e§l白银";
                 }
                 boolean unavailable = (userInfo!=null&&node.getFirst().vip>userInfo.group.level)||node.getSecond().online!=0||(node.getFirst().flag&(1<<2))==0;
-                drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, "#"+this.node.getSecond().id+" "+this.node.getFirst().name+" "+group, x + 4, y + 4, 0xffffffff);
-                drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, this.node.getFirst().description==""?"通用穿透节点":this.node.getFirst().description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
-                drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, unavailable?Utils.translatableText("text.openlink.node_unavailable"):Utils.translatableText("text.openlink.node_available"), x + entryWidth - 4 - NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font.width(unavailable?Utils.translatableText("text.openlink.node_unavailable"):Utils.translatableText("text.openlink.node_available")), y + 4, 0xffffffff);
-                drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, this.node.getSecond().load+"%", x + entryWidth - 4 - NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font.width(this.node.getSecond().load+"%"), y + 4 + (entryHeight-4) / 2, 0xffffffff);
+                guiGraphics.drawString(NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, "#"+this.node.getSecond().id+" "+this.node.getFirst().name+" "+group, x + 4, y + 4, 0xffffffff);
+                guiGraphics.drawString(NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, this.node.getFirst().description==""?"通用穿透节点":this.node.getFirst().description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
+                guiGraphics.drawString(NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, unavailable?Utils.translatableText("text.openlink.node_unavailable"):Utils.translatableText("text.openlink.node_available"), x + entryWidth - 4 - NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font.width(unavailable?Utils.translatableText("text.openlink.node_unavailable"):Utils.translatableText("text.openlink.node_available")), y + 4, 0xffffffff);
+                guiGraphics.drawString(NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, this.node.getSecond().load+"%", x + entryWidth - 4 - NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font.width(this.node.getSecond().load+"%"), y + 4 + (entryHeight-4) / 2, 0xffffffff);
             }
         }
     }

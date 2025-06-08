@@ -37,7 +37,7 @@ public class UpdateScreen extends Screen {
         this.addRenderableWidget(no);
         this.addRenderableWidget(Button.builder(Utils.translatableText("text.openlink.openstoragedir"), button -> {
             Util.getPlatform().openFile(FrpcManager.getInstance().getFrpcStoragePathById(FrpcManager.getInstance().getCurrentFrpcId()).toFile());
-        }).toolt.bounds(this.width/2-60, this.height/5*4-10, 120, 20).build());
+        }).tooltip(getTooltip()).bounds(this.width/2-60, this.height/5*4-10, 120, 20).build());
         //以下为原版语言按钮(修改了一下位置)
         this.addRenderableWidget(new ImageButton(this.width/4-70, this.height/5*4-10, 20, 20, 0, 106, 20, Button.WIDGETS_LOCATION, 256, 256, (button) -> this.minecraft.setScreen(new LanguageSelectScreen(this, this.minecraft.options, this.minecraft.getLanguageManager())), Utils.translatableText("narrator.button.language")));
     }

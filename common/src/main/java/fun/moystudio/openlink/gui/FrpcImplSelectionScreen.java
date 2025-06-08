@@ -5,6 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.frpcimpl.FrpcManager;
 import fun.moystudio.openlink.logic.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
@@ -31,30 +32,30 @@ public class FrpcImplSelectionScreen extends Screen {
         }
         selectionList.changePos(this.width, this.height, 32, this.height-65+4);
         this.addWidget(selectionList);
-        this.addWidget(done = new Button(this.width / 2 + 5, this.height - 38, 150, 20, CommonComponents.GUI_DONE, (button) -> {
+        this.addWidget(done = Button.builder(CommonComponents.GUI_DONE, (button) -> {
             if (selectionList.getSelected() != null) {
                 FrpcManager.getInstance().setCurrentFrpcId(selectionList.getSelected().id);
             }
             this.onClose();
-        }));
-        this.addWidget(update = new Button(this.width / 2 - 150 - 5, this.height - 38, 150, 20, Utils.translatableText("text.openlink.updatebutton"), button -> {
+        }).bounds(this.width / 2 + 5, this.height - 38, 150, 20).build());
+        this.addWidget(update = Button.builder(Utils.translatableText("text.openlink.updatebutton"), button -> {
             if (selectionList.getSelected() != null) {
                 FrpcManager.getInstance().updateFrpcByIds(selectionList.getSelected().id);
                 this.minecraft.setScreen(new FrpcImplSelectionScreen(lastscreen));
             }
-        }));
+        }).bounds(this.width / 2 - 150 - 5, this.height - 38, 150, 20).build());
     }
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        super.render(poseStack,i,j,f);
-        this.renderBackground(poseStack);
+    public void render(GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics,i,j,f);
         if(selectionList!=null){
-            selectionList.render(poseStack,i,j,f);
+            selectionList.render(guiGraphics,i,j,f);
         }
-        drawCenteredString(poseStack,this.font,this.title,this.width/2,16,0xffffff);
-        done.render(poseStack,i,j,f);
-        update.render(poseStack,i,j,f);
+        guiGraphics.drawCenteredString(this.font,this.title,this.width/2,16,0xffffff);
+        done.render(guiGraphics,i,j,f);
+        update.render(guiGraphics,i,j,f);
     }
 
     @Override
@@ -95,7 +96,7 @@ public class FrpcImplSelectionScreen extends Screen {
         }
 
         @Override
-        protected boolean isFocused(){
+        public boolean isFocused(){
             return FrpcImplSelectionScreen.this.getFocused() == this;
         }
 
@@ -107,11 +108,6 @@ public class FrpcImplSelectionScreen extends Screen {
         @Override
         public int getRowWidth() {
             return super.getRowWidth() + 50;
-        }
-
-        @Override
-        public void render(PoseStack poseStack, int i, int j, float f) {
-            super.render(poseStack, i, j, f);
         }
 
         public class Entry extends ObjectSelectionList.Entry<FrpcImplSelectionScreen.FrpcImplSelectionList.Entry> {
@@ -146,12 +142,12 @@ public class FrpcImplSelectionScreen extends Screen {
             }
 
             @Override
-            public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
-                fill(poseStack,x,y,x+entryWidth,y+entryHeight,0x8f2b2b2b);
-                drawString(poseStack, FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font, name, x + 4, y + 4, 0xffffffff);
-                drawString(poseStack, FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font, id, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
-                drawString(poseStack, FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font, version, x + entryWidth - 4 - FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font.width(version), y + 4, 0xffffffff);
-                drawString(poseStack, FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font, isOutdated?Utils.translatableText("text.openlink.outdated"):Utils.translatableText("text.openlink.latest"), x + entryWidth - 4 - FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font.width(isOutdated?Utils.translatableText("text.openlink.outdated"):Utils.translatableText("text.openlink.latest")), y + 4 + (entryHeight-4) / 2, 0xffffffff);
+            public void render(GuiGraphics guiGraphics, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
+                guiGraphics.fill(x,y,x+entryWidth,y+entryHeight,0x8f2b2b2b);
+                guiGraphics.drawString(FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font, name, x + 4, y + 4, 0xffffffff);
+                guiGraphics.drawString(FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font, id, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
+                guiGraphics.drawString(FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font, version, x + entryWidth - 4 - FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font.width(version), y + 4, 0xffffffff);
+                guiGraphics.drawString(FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font, isOutdated?Utils.translatableText("text.openlink.outdated"):Utils.translatableText("text.openlink.latest"), x + entryWidth - 4 - FrpcImplSelectionScreen.FrpcImplSelectionList.this.minecraft.font.width(isOutdated?Utils.translatableText("text.openlink.outdated"):Utils.translatableText("text.openlink.latest")), y + 4 + (entryHeight-4) / 2, 0xffffffff);
 
             }
         }
