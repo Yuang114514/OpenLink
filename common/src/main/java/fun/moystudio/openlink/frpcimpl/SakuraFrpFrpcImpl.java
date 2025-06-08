@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpc.Frpc;
 import fun.moystudio.openlink.gui.LoginScreenSakura;
+import fun.moystudio.openlink.gui.NodeSelectionScreenSakura;
 import fun.moystudio.openlink.json.*;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.network.Request;
@@ -157,6 +158,11 @@ public class SakuraFrpFrpcImpl implements Frpc {
     }
 
     @Override
+    public Screen getNodeSelectionScreen(Screen last) {
+        return new NodeSelectionScreenSakura(last);
+    }
+
+    @Override
     public void logOut() {
         token = null;
         writeSession();
@@ -273,7 +279,6 @@ public class SakuraFrpFrpcImpl implements Frpc {
 
         Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat> nodePairToUse = null;
         for(Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat> nodePair:nodeList) {
-            System.out.println(nodePair.getFirst()+" "+nodePair.getSecond());
             if(nodePair.getSecond().id==nodeId)
                 nodePairToUse = nodePair;
         }
@@ -316,7 +321,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
             throw new Exception("Cannot create the proxy! msg:"+newProxyResponse.msg);
         }
         proxyId = newProxyResponse.id;
-        return newProxyResponse.remote;
+        return "please copy the second ip you see. 请复制聊天栏中第二个ip地址.";
     }
 
     public static Map<String,List<String>> getTokenHeader() {

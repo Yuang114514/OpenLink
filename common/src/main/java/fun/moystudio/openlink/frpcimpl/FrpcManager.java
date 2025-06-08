@@ -26,6 +26,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FrpcManager {
     private final Map<String, Pair<String, ? extends Frpc>> frpcImplInstances = new HashMap<>();
@@ -279,6 +281,15 @@ public class FrpcManager {
                             while ((line = reader.readLine()) != null) {
                                 fo.write("\n".getBytes(StandardCharsets.UTF_8));
                                 fo.write(line.getBytes(StandardCharsets.UTF_8));
+                                if(this.currentIP==null){
+                                    Pattern pattern = Pattern.compile("(?<=>>).*?(?=<<)");
+                                    Matcher matcher = pattern.matcher(line);
+                                    if (matcher.find()) {
+                                        String nowIp = matcher.group();
+                                        this.currentIP=nowIp;
+                                        Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(nowIp));
+                                    }
+                                }
                             }
                         }
                     } catch (Exception e) {
@@ -296,8 +307,10 @@ public class FrpcManager {
             Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyRestartText());
             return false;
         }
-        Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(ip));
-        this.currentIP = ip;
+        if(!this.currentFrpcId.equals("sakurafrp")){
+            Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(ip));
+            this.currentIP = ip;
+        }
         return true;
     }
     public String getCurrentIP() {
