@@ -278,14 +278,7 @@ public class FrpcManager {
                             FileOutputStream fo=new FileOutputStream(logFile,true);
                             while ((line = reader.readLine()) != null) {
                                 fo.write("\n".getBytes(StandardCharsets.UTF_8));
-                                String[] parts = line.split("\u001B\\[");
-                                for(String part:parts) {
-                                    if(part.isEmpty()) {
-                                        continue;
-                                    }
-                                    String text = part.substring(part.indexOf("m") + 1);
-                                    fo.write(text.getBytes(StandardCharsets.UTF_8));
-                                }
+                                fo.write(line.getBytes(StandardCharsets.UTF_8));
                             }
                         }
                     } catch (Exception e) {

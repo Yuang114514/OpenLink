@@ -1,5 +1,7 @@
 package fun.moystudio.openlink.gui;
 
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -7,12 +9,16 @@ import com.mojang.datafixers.util.Pair;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpcimpl.FrpcManager;
 import fun.moystudio.openlink.frpcimpl.OpenFrpFrpcImpl;
+import fun.moystudio.openlink.frpcimpl.SakuraFrpFrpcImpl;
 import fun.moystudio.openlink.json.JsonResponseWithData;
 import fun.moystudio.openlink.json.JsonUserInfo;
+import fun.moystudio.openlink.json.JsonUserInfoSakura;
+import fun.moystudio.openlink.json.JsonUserProxySakura;
 import fun.moystudio.openlink.logic.SettingTabs;
 import fun.moystudio.openlink.logic.Utils;
 import fun.moystudio.openlink.logic.WebBrowser;
 import fun.moystudio.openlink.mixin.IScreenAccessor;
+import fun.moystudio.openlink.network.Request;
 import fun.moystudio.openlink.network.Uris;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -52,6 +58,8 @@ public class SettingScreen extends Screen {
     SettingTabs lasttab=null;
     SettingScreenButton buttonLog,buttonInfo,buttonUser,buttonSetting;
     JsonResponseWithData<JsonUserInfo> userInfo=null;
+    JsonUserInfoSakura userInfoSakura=null;
+    JsonUserProxySakura userProxySakura=null;
     public List<Widget> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
     public static List<InfoObjectSelectionList.Information> informationList;
     public static final ResourceLocation BACKGROUND_SETTING=Utils.createResourceLocation("openlink","textures/gui/background_setting.png"), FRP_BUTTON = Utils.createResourceLocation("openlink", "textures/gui/frp_change_button.png"), FRP_BUTTON_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/frp_change_button_hovered.png");
@@ -108,6 +116,38 @@ public class SettingScreen extends Screen {
             //UserInfo排版用
             int j=Math.min((this.width-20)/4,(this.height-75)/5*3);
             //UserInfo
+            tabUser.add(new ImageWidget(10,65,0,0,j,j,j,j,lastlocationimage));
+            tabUser.add(new ComponentWidget(this.font,10,65+j+5,0xffffff,lastcomponent1,false));
+            tabUser.add(new ComponentWidget(this.font,lastx2,65+j+5,0xacacac,lastcomponent2,false));
+            tabUser.add(new ComponentWidget(this.font,10,65+j+5+10,0xacacac,lastcomponent3,false));
+            tabUser.add(new ComponentWidget(this.font,10,65+j+5+20,0xacacac,lastcomponent4,false));
+            tabUser.add(new ComponentWidget(this.font,10,65+j+5+30,0xacacac,lastcomponent5,false));
+            tabUser.add(new LineChartWidget(
+                    this.font,
+                    10+j+20, 65+5,
+                    this.width-20, 60+this.height-75-15,
+                    Utils.translatableText("text.openlink.x_axis_label"), Utils.translatableText("text.openlink.y_axis_label"), lastdatapoints,
+                    (dataXY, poseStack, i1, j1)-> renderComponentTooltip(poseStack,
+                            Arrays.stream(new Component[]{Utils.literalText(dataXY.getFirst()+", "+dataXY.getSecond()+"MiB")}).toList(),
+                            i1,j1)));
+            tabUser.add(new Button(10,65+j+5+40,j-25,20,Utils.translatableText("text.openlink.logout"),button -> {
+                FrpcManager.getInstance().getCurrentFrpcInstance().logOut();
+                this.minecraft.setScreen(new SettingScreen(lastscreen));
+            }));
+            tabUser.add(new ImageButtonWithHoveredState(10+j-25+5, 65+j+5+40, 20, 20, 0, 0, 20, FRP_BUTTON, FRP_BUTTON_HOVERED, 20, 20, button -> {
+                this.minecraft.setScreen(new FrpcImplSelectionScreen(new SettingScreen(lastscreen)));
+            }));
+        } else if(FrpcManager.getInstance().getCurrentFrpcId().equals("sakurafrp")) {
+            ResourceLocation lastlocationimage=!tabUser.isEmpty()?((ImageWidget)tabUser.get(0)).texture:Utils.createResourceLocation("openlink","textures/gui/sakurafrp_icon.png");
+            Component lastcomponent1=tabUser.size()>=2?((ComponentWidget)tabUser.get(1)).component: Utils.emptyText();
+            Component lastcomponent2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).component: Utils.emptyText();
+            Component lastcomponent3=tabUser.size()>=4?((ComponentWidget)tabUser.get(3)).component: Utils.emptyText();
+            Component lastcomponent4=tabUser.size()>=5?((ComponentWidget)tabUser.get(4)).component: Utils.emptyText();
+            Component lastcomponent5=tabUser.size()>=6?((ComponentWidget)tabUser.get(5)).component: Utils.emptyText();
+            int lastx2=tabUser.size()>=3?((ComponentWidget)tabUser.get(2)).x:10;
+            List<Pair<String,Long>> lastdatapoints=tabUser.size()>=7?((LineChartWidget)tabUser.get(6)).dataPoints:readTrafficSakura();
+            tabUser.clear();
+            int j=Math.min((this.width-20)/4,(this.height-75)/5*3);
             tabUser.add(new ImageWidget(10,65,0,0,j,j,j,j,lastlocationimage));
             tabUser.add(new ComponentWidget(this.font,10,65+j+5,0xffffff,lastcomponent1,false));
             tabUser.add(new ComponentWidget(this.font,lastx2,65+j+5,0xacacac,lastcomponent2,false));
@@ -437,6 +477,55 @@ public class SettingScreen extends Screen {
                         tabUser.set(4,nowgroup);
                         tabUser.set(5,nowproxy);
                     }, "Request thread").start();
+                } else if(first && FrpcManager.getInstance().getCurrentFrpcId().equals("sakurafrp")) {
+                    ImageWidget nowavatar=(ImageWidget)tabUser.get(0);
+                    ComponentWidget nowuser=(ComponentWidget)tabUser.get(1);
+                    ComponentWidget nowid=(ComponentWidget)tabUser.get(2);
+                    ComponentWidget nowemail=(ComponentWidget)tabUser.get(3);
+                    ComponentWidget nowgroup=(ComponentWidget)tabUser.get(4);
+                    ComponentWidget nowproxy=(ComponentWidget)tabUser.get(5);
+                    LineChartWidget nowtraffic=(LineChartWidget)tabUser.get(6);
+                    nowuser.component=Utils.translatableText("text.openlink.loading");
+                    nowid.component=Utils.emptyText();
+                    nowemail.component=Utils.emptyText();
+                    nowgroup.component=Utils.emptyText();
+                    nowproxy.component=Utils.emptyText();
+                    tabUser.set(1,nowuser);
+                    new Thread(() -> {
+                        Gson gson = new Gson();
+                        try {
+                            userInfoSakura = SakuraFrpFrpcImpl.getUserInfo();
+                            if(userInfoSakura==null||SakuraFrpFrpcImpl.isBadResponse(userInfoSakura)){
+                                SakuraFrpFrpcImpl.token=null;
+                                SakuraFrpFrpcImpl.writeSession();
+                                throw new Exception("[OpenLink] Session expired!");
+                            }
+                            userProxySakura = gson.fromJson(Request.GET(Uris.sakuraFrpAPIUri+"tunnels", SakuraFrpFrpcImpl.getTokenHeader()).getFirst(), new TypeToken<JsonUserProxySakura>(){}.getType());
+                            if(JsonUserProxySakura.isBadResponse(userProxySakura)) {
+                                throw new Exception("[OpenLink] Cannot get the user tunnel list!");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            renderableTabWidgets=tabLogin_User;
+                            return;
+                        }
+                        nowavatar.texture=new WebTextureResourceLocation(userInfoSakura.avatar).location;
+                        nowuser.component= Utils.literalText(userInfoSakura.name);
+                        nowid.component= Utils.literalText("#"+userInfoSakura.id);
+                        nowid.x=10+nowuser.font.width(nowuser.component)+1;
+                        nowemail.component= Utils.literalText(userInfoSakura.speed);
+                        nowgroup.component= Utils.literalText(userInfoSakura.group.name);
+                        nowproxy.component= Utils.translatableText("text.openlink.proxycount",userProxySakura.size(),userInfoSakura.tunnels);
+                        List<Pair<String,Long>> dataPoints=readTrafficSakura();
+                        dataPoints.add(new Pair<>(Utils.translatableText("text.openlink.now").getString(),Long.valueOf((long)(SakuraFrpFrpcImpl.getUserInfo().traffic.get(1)/1048576F))));
+                        nowtraffic.dataPoints=dataPoints;
+                        tabUser.set(0,nowavatar);
+                        tabUser.set(1,nowuser);
+                        tabUser.set(2,nowid);
+                        tabUser.set(3,nowemail);
+                        tabUser.set(4,nowgroup);
+                        tabUser.set(5,nowproxy);
+                    }, "Request thread").start();
                 }
                 renderableTabWidgets=tabUser;
             }
@@ -464,6 +553,19 @@ public class SettingScreen extends Screen {
 
     public List<Pair<String,Long>> readTraffic(){
         String origin=OpenLink.PREFERENCES.get("traffic_storage","");
+        String[] spilt=origin.split(";");
+        List<Pair<String,Long>> res=new ArrayList<>();
+        for(String s:spilt) {
+            if(!s.isEmpty()) {
+                String[] split = s.split(",");
+                res.add(new Pair<>(split[0], Long.parseLong(split[1])));
+            }
+        }
+        return res;
+    }
+
+    public List<Pair<String,Long>> readTrafficSakura(){
+        String origin=OpenLink.PREFERENCES.get("traffic_storage_sakura","");
         String[] spilt=origin.split(";");
         List<Pair<String,Long>> res=new ArrayList<>();
         for(String s:spilt) {

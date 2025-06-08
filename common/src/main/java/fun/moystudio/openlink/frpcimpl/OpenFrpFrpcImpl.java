@@ -103,7 +103,7 @@ public class OpenFrpFrpcImpl implements Frpc{
         }
         list.add(String.format(Locale.getDefault(),"%tD %tT",new Date(),new Date())+","+getUserInfo().data.traffic);
         OpenLink.PREFERENCES.put("traffic_storage", String.join(";", list));
-        return new ProcessBuilder(frpcExecutableFilePath.toFile().getAbsolutePath(),"-u",token,"-p",String.valueOf(proxyId),"-n").redirectErrorStream(true).start();
+        return new ProcessBuilder(frpcExecutableFilePath.toFile().getAbsolutePath(),"-u",token,"-p",String.valueOf(proxyId),"-n","--disable_log_color").redirectErrorStream(true).start();
     }
 
     @Override
@@ -161,8 +161,10 @@ public class OpenFrpFrpcImpl implements Frpc{
                     usergroupnumber=3;
                 }else if(userinfo.data.group.contains("vip")){
                     usergroupnumber=2;
-                }else{
+                }else if(now.group.contains("normal")){
                     usergroupnumber=1;
+                }else if(now.group.contains("dev")){
+                    usergroupnumber=5;
                 }
                 if(groupnumber1>usergroupnumber||!now.protocolSupport.tcp||now.status!=200||now.fullyLoaded||(now.needRealname&&!userinfo.data.realname)){
                     continue;

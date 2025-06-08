@@ -35,9 +35,9 @@ public class UpdateScreen extends Screen {
         no=new Button(this.width/4*3-40,this.height/5*4-10,80,20,CommonComponents.GUI_NO,button -> {
             if(!FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId())){
                 OpenLink.disabled=true;
-                EventCallbacks.hasUpdate=false;
-                this.onClose();
             }
+            EventCallbacks.hasUpdate=false;
+            this.onClose();
         }, (button, poseStack, i, j) -> {
             if(!FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId())){
                 renderComponentTooltip(poseStack, list, i, j);

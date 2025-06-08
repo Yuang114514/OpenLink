@@ -28,6 +28,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
     private long proxyId;
     public static String token;
     public static long nodeId = -1;
+    public static final int MAX_TRAFFIC_STORAGE = 4;
 
     @Override
     public String id() {
@@ -110,16 +111,45 @@ public class SakuraFrpFrpcImpl implements Frpc {
         Gson gson=new Gson();
         JsonUserInfoSakura response;
         try {
-            response = gson.fromJson(Request.GET(Uris.sakuraFrpAPIUri+"user/info?token="+token, Request.DEFAULT_HEADER).getFirst(), new TypeToken<JsonUserInfoSakura>(){}.getType());
+            response = gson.fromJson(Request.GET(Uris.sakuraFrpAPIUri+"user/info", getTokenHeader()).getFirst(), new TypeToken<JsonUserInfoSakura>(){}.getType());
             if(isBadResponse(response)) {
                 LOGGER.error("Incorrect token!");
                 return null;
             }
+            if(!token.equals(response.token)) token=response.token;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
         return response;
+    }
+
+    public static List<Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat>> getNodeList() {
+        Gson gson = new Gson();
+        Pair<String, Map<String, List<String>>> response;
+        List<Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat>> result = new ArrayList<>();
+        try {
+            response=Request.GET(Uris.sakuraFrpAPIUri+"nodes", getTokenHeader());
+            JsonNodesSakura nodes = gson.fromJson(response.getFirst(), new TypeToken<JsonNodesSakura>(){}.getType());
+            response=Request.GET(Uris.sakuraFrpAPIUri+"node/stats", getTokenHeader());
+            JsonNodeStatsSakura nodeStats = gson.fromJson(response.getFirst(), new TypeToken<JsonNodeStatsSakura>(){}.getType());
+            Map<Long, Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat>> idToNode = new HashMap<>();
+            for(Map.Entry<String,JsonNodesSakura.node> n:nodes.entrySet()) {
+                long id = Long.parseLong(n.getKey());
+                idToNode.put(id, Pair.of(n.getValue(), null));
+            }
+            for(JsonNodeStatsSakura.node_stat stat:nodeStats.nodes) {
+                idToNode.put(stat.id,Pair.of(idToNode.get(stat.id).getFirst(),stat));
+            }
+            for(Map.Entry<Long,Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat>> entry:idToNode.entrySet()) {
+                if(entry.getValue().getFirst()==null||entry.getValue().getSecond()==null) {
+                    continue;
+                }
+                result.add(entry.getValue());
+            }
+        } catch (Exception ignored) {
+        }
+        return result;
     }
 
     public static void writeSession() {
@@ -167,7 +197,44 @@ public class SakuraFrpFrpcImpl implements Frpc {
     @Override
     public Process createFrpcProcess(Path frpcExecutableFilePath, int localPort, @Nullable String remotePort) throws Exception {
         nodeId=-1;
-        return new ProcessBuilder(frpcExecutableFilePath.toFile().getAbsolutePath(), "-f",token+":"+proxyId,"-n").redirectErrorStream(true).start();
+        List<String> list=new ArrayList<>(List.of(OpenLink.PREFERENCES.get("traffic_storage_sakura", "").split(";")));
+        while(list.size()>=MAX_TRAFFIC_STORAGE){
+            list.remove(0);
+        }
+        list.add(String.format(Locale.getDefault(),"%tD %tT",new Date(),new Date())+","+((long)(getUserInfo().traffic.get(1)/1048576F)));
+        OpenLink.PREFERENCES.put("traffic_storage_sakura", String.join(";", list));
+        return new ProcessBuilder(frpcExecutableFilePath.toFile().getAbsolutePath(), "-f",token+":"+proxyId,"-n","--disable_log_color").redirectErrorStream(true).start();
+    }
+
+    @Override
+    public void stopFrpcProcess(Process process){
+        if(process!=null) {
+            process.destroy();
+            if(token!=null) {
+                Gson gson = new Gson();
+                Pair<String, Map<String, List<String>>> response= null;
+                try {
+                    response = Request.GET(Uris.sakuraFrpAPIUri+"tunnels", getTokenHeader());
+                } catch (Exception e) {
+                    return;
+                }
+                JsonUserProxySakura userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonUserProxySakura>(){}.getType());
+                if(JsonUserProxySakura.isBadResponse(userProxies)) {
+                    return;
+                }
+                //OpenLink隧道命名规则：openlink_mc_[本地端口号]
+                for(JsonUserProxySakura.tunnel userTunnel:userProxies) {
+                    if(userTunnel.name.contains("openlink_mc_")){
+                        try {
+                            Request.POST(Uris.sakuraFrpAPIUri+"tunnel/delete", getTokenHeader(), "{\"ids\":\""+userTunnel.id+"\"}");
+                            LOGGER.info("Deleted tunnel: {}",userTunnel.name);
+                        } catch (Exception e) {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -178,7 +245,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
             Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.sslwarning"));
         }
         Minecraft.getInstance().gui.getChat().addMessage(Utils.translatableText("text.openlink.creatingproxy"));
-        Pair<String, Map<String, List<String>>> response=Request.GET(Uris.sakuraFrpAPIUri+"tunnels?token="+token, Request.DEFAULT_HEADER);
+        Pair<String, Map<String, List<String>>> response=Request.GET(Uris.sakuraFrpAPIUri+"tunnels", getTokenHeader());
         JsonUserProxySakura userProxies = gson.fromJson(response.getFirst(), new TypeToken<JsonUserProxySakura>(){}.getType());
         if(JsonUserProxySakura.isBadResponse(userProxies)) {
             LOGGER.error("Cannot get the user tunnel list!");
@@ -188,7 +255,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
         for(JsonUserProxySakura.tunnel userTunnel:userProxies) {
             if(userTunnel.name.contains("openlink_mc_")){
                 try {
-                    Request.POST(Uris.sakuraFrpAPIUri+"tunnel/delete?token="+token, Request.DEFAULT_HEADER, "{\"ids\":\""+userTunnel.id+"\"}");
+                    Request.POST(Uris.sakuraFrpAPIUri+"tunnel/delete", getTokenHeader(), "{\"ids\":\""+userTunnel.id+"\"}");
                     LOGGER.info("Deleted tunnel: {}",userTunnel.name);
                 } catch (Exception e) {
                     break;
@@ -196,33 +263,24 @@ public class SakuraFrpFrpcImpl implements Frpc {
             }
         }
         Thread.sleep(1000);
-        response=Request.GET(Uris.sakuraFrpAPIUri+"tunnels?token="+token, Request.DEFAULT_HEADER);
+        response=Request.GET(Uris.sakuraFrpAPIUri+"tunnels", getTokenHeader());
         userProxies=gson.fromJson(response.getFirst(), new TypeToken<JsonUserProxySakura>(){}.getType());
         JsonUserInfoSakura userInfo = getUserInfo();
         if(userInfo.tunnels == userProxies.size()) {
             throw new Exception(Utils.translatableText("text.openlink.userproxieslimited").getString());
         }
-        response=Request.GET(Uris.sakuraFrpAPIUri+"nodes?token="+token, Request.DEFAULT_HEADER);
-        JsonNodesSakura nodes = gson.fromJson(response.getFirst(), new TypeToken<JsonNodesSakura>(){}.getType());
-        response=Request.GET(Uris.sakuraFrpAPIUri+"node/stats?token="+token, Request.DEFAULT_HEADER);
-        JsonNodeStatsSakura nodeStats = gson.fromJson(response.getFirst(), new TypeToken<JsonNodeStatsSakura>(){}.getType());
-        Map.Entry<String,JsonNodesSakura.node> node = null;
-        Map<Long, Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat>> idToNode = new HashMap<>();
-        for(Map.Entry<String,JsonNodesSakura.node> n:nodes.entrySet()) {
-            long id = Long.parseLong(n.getKey());
-            idToNode.put(id, Pair.of(n.getValue(), null));
-        }
-        for(JsonNodeStatsSakura.node_stat stat:nodeStats.nodes) {
-            idToNode.put(stat.id,Pair.of(idToNode.get(stat.id).getFirst(),stat));
-        }
+        List<Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat>> nodeList = getNodeList();
+
         Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat> nodePairToUse = null;
-        if(idToNode.containsKey(nodeId)) {
-            nodePairToUse = idToNode.get(nodeId);
+        for(Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat> nodePair:nodeList) {
+            System.out.println(nodePair.getFirst()+" "+nodePair.getSecond());
+            if(nodePair.getSecond().id==nodeId)
+                nodePairToUse = nodePair;
         }
         if(nodePairToUse == null) {
             LOGGER.info("Selecting node...");
             List<Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat>> canUseNodes = new ArrayList<>();
-            for(Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat> nodePair:idToNode.values()) {
+            for(Pair<JsonNodesSakura.node, JsonNodeStatsSakura.node_stat> nodePair:nodeList) {
                 if(nodePair.getFirst().vip>userInfo.group.level||nodePair.getSecond().online!=0||(nodePair.getFirst().flag&(1<<2))==0) {
                     continue;
                 }
@@ -248,13 +306,21 @@ public class SakuraFrpFrpcImpl implements Frpc {
         JsonNewProxySakura newProxy = new JsonNewProxySakura();
         newProxy.name="openlink_mc_"+localPort;
         newProxy.node=nodePairToUse.getSecond().id;
-        response = Request.POST(Uris.sakuraFrpAPIUri+"tunnels?token="+token,Request.DEFAULT_HEADER,gson.toJson(newProxy));
+        newProxy.local_port=String.valueOf(localPort);
+        if(remotePort!=null) {
+            newProxy.remote=remotePort;
+        }
+        response = Request.POST(Uris.sakuraFrpAPIUri+"tunnels",getTokenHeader(),gson.toJson(newProxy));
         JsonNewProxyResponseSakura newProxyResponse = gson.fromJson(response.getFirst(),new TypeToken<JsonNewProxyResponseSakura>(){}.getType());
         if(isBadResponse(newProxyResponse)) {
-            throw new Exception("Cannot create the proxy!");
+            throw new Exception("Cannot create the proxy! msg:"+newProxyResponse.msg);
         }
         proxyId = newProxyResponse.id;
         return newProxyResponse.remote;
+    }
+
+    public static Map<String,List<String>> getTokenHeader() {
+        return Request.getHeaderWithAuthorization(Request.DEFAULT_HEADER,"Bearer "+token);
     }
 
     @Override
