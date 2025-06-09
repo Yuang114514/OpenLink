@@ -281,15 +281,6 @@ public class FrpcManager {
                             while ((line = reader.readLine()) != null) {
                                 fo.write("\n".getBytes(StandardCharsets.UTF_8));
                                 fo.write(line.getBytes(StandardCharsets.UTF_8));
-                                if(this.currentIP==null){
-                                    Pattern pattern = Pattern.compile("(?<=>>).*?(?=<<)");
-                                    Matcher matcher = pattern.matcher(line);
-                                    if (matcher.find()) {
-                                        String nowIp = matcher.group();
-                                        this.currentIP=nowIp;
-                                        Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(nowIp));
-                                    }
-                                }
                             }
                         }
                     } catch (Exception e) {
@@ -307,10 +298,8 @@ public class FrpcManager {
             Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyRestartText());
             return false;
         }
-        if(!this.currentFrpcId.equals("sakurafrp")){
-            Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(ip));
-            this.currentIP = ip;
-        }
+        Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyStartText(ip));
+        this.currentIP = ip;
         return true;
     }
     public String getCurrentIP() {

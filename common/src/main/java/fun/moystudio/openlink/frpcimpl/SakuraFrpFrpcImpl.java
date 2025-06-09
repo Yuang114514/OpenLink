@@ -321,7 +321,7 @@ public class SakuraFrpFrpcImpl implements Frpc {
             throw new Exception("Cannot create the proxy! msg:"+newProxyResponse.msg);
         }
         proxyId = newProxyResponse.id;
-        return "please copy the second ip you see. 请复制聊天栏中第二个ip地址.";
+        return nodePairToUse.getFirst().host+":"+newProxyResponse.remote;
     }
 
     public static Map<String,List<String>> getTokenHeader() {
