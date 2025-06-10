@@ -77,7 +77,7 @@ subprojects {
 }
 
 subprojects {
-    if(project.path == ":fabric" || project.path == ":quilt" || project.path == ":forge" || project.path == ":neoforge") {
+    if(project.path == ":forge" || project.path == ":neoforge") {//stupid forge family
         loom {
             mods {
                 main {
