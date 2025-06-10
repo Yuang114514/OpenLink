@@ -75,3 +75,16 @@ subprojects {
         }
     }
 }
+
+subprojects {
+    if(project.path == ":forge" || project.path == ":neoforge") {//stupid forge family
+        loom {
+            mods {
+                main {
+                    sourceSet project.sourceSets.main
+                    sourceSet project(":frpc").sourceSets.main
+                }
+            }
+        }
+    }
+}
