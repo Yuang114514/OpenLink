@@ -75,3 +75,16 @@ subprojects {
         }
     }
 }
+
+subprojects {
+    if(project.path == ":fabric" || project.path == ":quilt" || project.path == ":forge" || project.path == ":neoforge") {
+        loom {
+            mods {
+                main {
+                    sourceSet project.sourceSets.main
+                    sourceSet project(":frpc").sourceSets.main
+                }
+            }
+        }
+    }
+}
