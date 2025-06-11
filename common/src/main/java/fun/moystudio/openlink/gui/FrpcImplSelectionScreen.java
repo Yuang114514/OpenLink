@@ -88,9 +88,8 @@ public class FrpcImplSelectionScreen extends Screen {
         }
 
         public void changePos(int width, int height, int y0, int y1){
-            this.width=width;
-            this.height=height;
             this.setY(y0);
+            this.setSize(width, y1 - y0);
         }
 
         @Override
