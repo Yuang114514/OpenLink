@@ -97,7 +97,6 @@ public class NodeSelectionScreenSakura extends Screen {
                     this.minecraft.setScreen(lastscreen);
                 }
             },"Request thread").start();
-            this.setRenderBackground(false);
             if (this.getSelected() != null) {
                 this.centerScrollOn(this.getSelected());
             }
