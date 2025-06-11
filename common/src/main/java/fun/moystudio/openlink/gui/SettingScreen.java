@@ -460,7 +460,7 @@ public class SettingScreen extends Screen {
                         StringBuilder sha256=new StringBuilder();
                         for (byte b:messageDigest.digest(userInfo.data.email.toLowerCase().getBytes(StandardCharsets.UTF_8)))
                             sha256.append(String.format("%02x",b));
-                        nowavatar.texture=new WebTextureResourceLocation(Uris.weavatarUri.toString()+ sha256+".png?s=400").location;
+                        nowavatar.texture=new WebTextureResourceLocation(Uris.weavatarUri.toString()+ sha256+".png?s=400", nowavatar.texture).location;
                         nowuser.component= Utils.literalText(userInfo.data.username);
                         nowid.component= Utils.literalText("#"+userInfo.data.id);
                         nowid.x=10+nowuser.font.width(nowuser.component)+1;
@@ -509,7 +509,7 @@ public class SettingScreen extends Screen {
                             renderableTabWidgets=tabLogin_User;
                             return;
                         }
-                        nowavatar.texture=new WebTextureResourceLocation(userInfoSakura.avatar).location;
+                        nowavatar.texture=new WebTextureResourceLocation(userInfoSakura.avatar, nowavatar.texture).location;
                         nowuser.component= Utils.literalText(userInfoSakura.name);
                         nowid.component= Utils.literalText("#"+userInfoSakura.id);
                         nowid.x=10+nowuser.font.width(nowuser.component)+1;
