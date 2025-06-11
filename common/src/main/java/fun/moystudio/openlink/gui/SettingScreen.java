@@ -62,7 +62,7 @@ public class SettingScreen extends Screen {
     JsonUserProxySakura userProxySakura=null;
     public List<Renderable> renderableTabWidgets,tabLog=new ArrayList<>(),tabInfo=new ArrayList<>(),tabUser=new ArrayList<>(),tabLogin_User=new ArrayList<>(), tabSetting=new ArrayList<>();
     public static List<InfoObjectSelectionList.Information> informationList;
-    public static final ResourceLocation BACKGROUND_SETTING=Utils.createResourceLocation("openlink","textures/gui/background_setting.png"), FRP_BUTTON = Utils.createResourceLocation("openlink", "textures/gui/frp_change_button.png"), FRP_BUTTON_HOVERED = Utils.createResourceLocation("openlink", "textures/gui/frp_change_button_hovered.png");
+    public static final ResourceLocation BACKGROUND_SETTING=Utils.createResourceLocation("openlink","textures/gui/background_setting.png"), FRP_BUTTON = Utils.createResourceLocation("openlink", "widget/frp_change_button"), FRP_BUTTON_HOVERED = Utils.createResourceLocation("openlink", "widget/frp_change_button_hovered");
     public static boolean sensitiveInfoHiding, unavailableNodeHiding;
 
     private static List<InfoObjectSelectionList.Information> getInformationList(Object... objects) {
