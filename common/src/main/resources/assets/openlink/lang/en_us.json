@@ -46,6 +46,7 @@
   "text.openlink.openstoragedir": "Open storage folder",
   "text.openlink.outdated": "§cOutdated",
   "text.openlink.proxycount": "Proxies: %s/%s",
+  "text.openlink.nodes": "Nodes",
   "text.openlink.realnametounlock": "§n*Nodes in Chinese Mainland are unavailable because you have not authenticated your real name.",
   "text.openlink.remote_port": "Proxy remote port(Optional)",
   "text.openlink.remoteportnotfound": "§c§lCan not find any available remote port after 5 tries§o§i\n(Maybe you are not lucky today :>)",
