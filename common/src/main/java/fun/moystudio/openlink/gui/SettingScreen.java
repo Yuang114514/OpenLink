@@ -203,7 +203,7 @@ public class SettingScreen extends Screen {
         tabInfo.add(lastinfoselectionlist);
         //Setting
         tabSetting.add(new ChartWidget(10,65,this.buttonSetting.getX()+this.buttonSetting.getWidth()-10-5,40, Utils.translatableText("text.openlink.secure"),0x8f2b2b2b));
-        tabSetting.add(new ChartWidget(10,65+40+10, this.buttonSetting.getX()+this.buttonSetting.getWidth()-10-5, 40, Utils.literalText("OpenFrp"),0x8f2b2b2b));
+        tabSetting.add(new ChartWidget(10,65+40+10, this.buttonSetting.getX()+this.buttonSetting.getWidth()-10-5, 40, Utils.translatableText("text.openlink.nodes"),0x8f2b2b2b));
         tabSetting.add(new ComponentWidget(this.font,15,87,0xffffff, Utils.translatableText("setting.openlink.information_show"),false));
         tabSetting.add(new ComponentWidget(this.font,15,87+40+10,0xffffff, Utils.translatableText("setting.openlink.node_hide"),false));
         tabSetting.add(CycleButton.onOffBuilder(sensitiveInfoHiding).displayOnlyValue().create(this.buttonSetting.getX()+this.buttonSetting.getWidth()-75-5,80,75,20, Utils.translatableText("setting.information_show"),(cycleButton, object) -> {
@@ -400,7 +400,7 @@ public class SettingScreen extends Screen {
                         StringBuilder sha256=new StringBuilder();
                         for (byte b:messageDigest.digest(userInfo.data.email.toLowerCase().getBytes(StandardCharsets.UTF_8)))
                             sha256.append(String.format("%02x",b));
-                        nowavatar.texture=new WebTextureResourceLocation(Uris.weavatarUri.toString()+ sha256+".png?s=400").location;
+                        nowavatar.texture=new WebTextureResourceLocation(Uris.weavatarUri.toString()+ sha256+".png?s=400",nowavatar.texture).location;
                         nowuser.setMessage(Utils.literalText(userInfo.data.username));
                         nowid.setMessage(Utils.literalText("#"+userInfo.data.id));
                         nowid.setX(10+nowuser.font.width(nowuser.getMessage())+1);
@@ -449,7 +449,7 @@ public class SettingScreen extends Screen {
                             renderableTabWidgets=tabLogin_User;
                             return;
                         }
-                        nowavatar.texture=new WebTextureResourceLocation(userInfoSakura.avatar).location;
+                        nowavatar.texture=new WebTextureResourceLocation(userInfoSakura.avatar, nowavatar.texture).location;
                         nowuser.setMessage(Utils.literalText(userInfoSakura.name));
                         nowid.setMessage(Utils.literalText("#"+userInfoSakura.id));
                         nowid.setX(10+nowuser.font.width(nowuser.getMessage())+1);
