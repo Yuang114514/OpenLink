@@ -46,7 +46,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class git SettingScreen extends Screen {
+public class SettingScreen extends Screen {
     public SettingScreen(Screen last) {
         super(Utils.translatableText("gui.openlink.settingscreentitle"));
         informationList=getInformationList(FrpcManager.getInstance().getCurrentFrpcInstance().getFrpcVersion(FrpcManager.getInstance().getFrpcImplExecutableFile(FrpcManager.getInstance().getCurrentFrpcId())),OpenLink.VERSION,OpenLink.LOADER+" "+OpenLink.LOADER_VERSION);
