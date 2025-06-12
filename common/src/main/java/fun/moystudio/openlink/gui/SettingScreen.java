@@ -42,7 +42,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -389,7 +388,7 @@ public class SettingScreen extends Screen {
                                 throw new Exception("[OpenLink] Session expired!");
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            OpenLink.LOGGER.error("", e);
                             renderableTabWidgets=tabLogin_User;
                             return;
                         }
@@ -445,7 +444,7 @@ public class SettingScreen extends Screen {
                                 throw new Exception("[OpenLink] Cannot get the user tunnel list!");
                             }
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            OpenLink.LOGGER.error("", e);
                             renderableTabWidgets=tabLogin_User;
                             return;
                         }
@@ -485,7 +484,7 @@ public class SettingScreen extends Screen {
         try {
             onTab();
         } catch (Exception e) {
-            e.printStackTrace();
+            OpenLink.LOGGER.error("", e);
             this.onClose();
         }
         lasttab=tab;
