@@ -13,7 +13,7 @@ import java.util.List;
 @Mixin(Screen.class)
 public interface IScreenAccessor {
     @Accessor("children")
-    List<GuiEventListener> getChildren();
+    List<GuiEventListener> accessChildren();
     @Invoker("addRenderableWidget")
     <T extends GuiEventListener & Renderable & NarratableEntry> T invokeAddRenderableWidget(T guiEventListener);
 }

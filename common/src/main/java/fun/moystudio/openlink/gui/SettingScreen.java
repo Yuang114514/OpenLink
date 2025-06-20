@@ -238,7 +238,7 @@ public class SettingScreen extends Screen {
     }
 
     public List<? extends GuiEventListener> getChildrenWithTabRenderables(){
-        List<GuiEventListener> list=(((IScreenAccessor)this).getChildren());
+        List<GuiEventListener> list=(((IScreenAccessor)this).accessChildren());
         if(renderableTabWidgets!=null){
             renderableTabWidgets.forEach(widget -> {
                 if (widget instanceof GuiEventListener guiEventListener) {
