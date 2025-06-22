@@ -51,23 +51,23 @@ public class FrpcManager {
             try {
                 instance.init();
             } catch (SSLHandshakeException e) {
-                e.printStackTrace();
-                OpenLink.LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
+                LOGGER.error("", e);
+                LOGGER.error("SSL Handshake Error! Ignoring SSL(Not Secure)");
                 try {
                     SSLUtils.ignoreSsl();
                 } catch (Exception ex) {
                     throw new RuntimeException(ex);
                 }
             } catch (SocketException e){
-                e.printStackTrace();
+                LOGGER.error("", e);
                 OpenLink.disabled = true;
-                OpenLink.LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
+                LOGGER.error("Socket Error! Are you still connecting to the network? All the features will be disabled!");
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.error("", e);
                 OpenLink.disabled = true;
-                OpenLink.LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
+                LOGGER.error("IO Error! Are you still connecting to the network? All the features will be disabled!");
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("", e);
                 LOGGER.error("Cannot load {}: cannot initialize this frpc implementation.", instance.id());
                 continue;
             }
@@ -178,7 +178,7 @@ public class FrpcManager {
                     flag = true;
                     break;
                 } catch (Exception e){
-                    e.printStackTrace();
+                    LOGGER.error("", e);
                     LOGGER.info("An error occurred while downloading frpc by url '{}'",s);
                 }
             }
@@ -190,7 +190,7 @@ public class FrpcManager {
                 try {
                     Extract.ExtractBySuffix(executableFilePath.toFile().getAbsoluteFile());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    LOGGER.error("", e);
                     LOGGER.error("Cannot extract frpc archive by id '{}'!", id);
                     return null;
                 }
@@ -278,18 +278,11 @@ public class FrpcManager {
                             FileOutputStream fo=new FileOutputStream(logFile,true);
                             while ((line = reader.readLine()) != null) {
                                 fo.write("\n".getBytes(StandardCharsets.UTF_8));
-                                String[] parts = line.split("\u001B\\[");
-                                for(String part:parts) {
-                                    if(part.isEmpty()) {
-                                        continue;
-                                    }
-                                    String text = part.substring(part.indexOf("m") + 1);
-                                    fo.write(text.getBytes(StandardCharsets.UTF_8));
-                                }
+                                fo.write(line.getBytes(StandardCharsets.UTF_8));
                             }
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        LOGGER.error("", e);
                     }
                 },"Frpc logger").start();
 
@@ -298,7 +291,7 @@ public class FrpcManager {
                 return false;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error("", e);
             Minecraft.getInstance().gui.getChat().addMessage(Utils.literalText("§4[OpenLink] "+e.getClass().getName()+":"+e.getMessage()));
             Minecraft.getInstance().gui.getChat().addMessage(Utils.proxyRestartText());
             return false;

@@ -40,6 +40,7 @@ public class FrpcImplSelectionScreen extends Screen {
         this.addWidget(update = new Button(this.width / 2 - 150 - 5, this.height - 38, 150, 20, Utils.translatableText("text.openlink.updatebutton"), button -> {
             if (selectionList.getSelected() != null) {
                 FrpcManager.getInstance().updateFrpcByIds(selectionList.getSelected().id);
+                this.minecraft.setScreen(new FrpcImplSelectionScreen(lastscreen));
             }
         }));
     }

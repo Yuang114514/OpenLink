@@ -21,9 +21,6 @@ subprojects {
     base {
         // Set up a suffixed format for the mod jar names, e.g. `example-fabric`.
         archivesName = "$rootProject.archives_name-$project.name-$rootProject.minecraft_version"
-        if(project.name == "frpc") {
-            archivesName = "$rootProject.archives_name-$project.name"
-        }
     }
 
     repositories {
@@ -32,6 +29,13 @@ subprojects {
         // Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
         // See https://docs.gradle.org/current/userguide/declaring_repositories.html
         // for more information about repositories.
+        maven {
+            url "https://api.modrinth.com/maven"
+            content {
+                includeGroup "maven.modrinth"
+            }
+        }
+        mavenLocal()
     }
 
     loom {
