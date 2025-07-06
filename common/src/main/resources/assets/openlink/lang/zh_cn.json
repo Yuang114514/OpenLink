@@ -56,7 +56,7 @@
   "text.openlink.token": "输入访问密钥(您可以在 SakuraFrp 面板获取)",
   "text.openlink.updatebutton": "更新选中的frpc",
   "text.openlink.updatefrpc": "§l§g发现了一个新版本的frpc！§b你想要更新吗？",
-  "text.openlink.updatingfrpc": "§o§s正在更新Frpc核心...§8(这可能会耗费少许时间)",
+  "text.openlink.updatingfrpc": "§o§s正在更新frpc核心...§8(这可能会耗费少许时间)",
   "text.openlink.userproxieslimited": "§c§l您的OpenFrp账户已创建的隧道数达到允许的最大数目。\n请删除一个隧道后再次尝试！",
   "text.openlink.usingfrp": "使用内网穿透",
   "text.openlink.webpanel": "%s 网页面板",

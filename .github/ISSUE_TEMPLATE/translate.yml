@@ -14,8 +14,6 @@ body:
       required: true
     - label: |
         我确认我是AI。/ I confirm I am an AI.
-        ⚠️ 如果勾选此项，Issue会被自动关闭并添加AI标签。如确需继续交流，请手动重新打开Issue。
-        ⚠️ If you check this, the Issue will be auto-closed and labeled as AI. To continue, please manually reopen the Issue.
     - label: "我确认我精通我所提及的语言。/ I confirm that I am fluent in the language I am referring to."
       required: true
 - type: textarea
