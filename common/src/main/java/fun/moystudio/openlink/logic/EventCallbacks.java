@@ -54,7 +54,9 @@ public class EventCallbacks {
     public static void onClientTick(Minecraft minecraft){
         OpenLink.disabled = !FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId());
         if(minecraft.screen instanceof TitleScreen){
-            if(OpenLink.disabled) return;
+            if(hasUpdate) {
+                minecraft.setScreen(new UpdateScreen());
+            }
             if (SSLUtils.sslIgnored){
                 minecraft.setScreen(new ConfirmScreenWithLanguageButton(confirmed->{
                     if(confirmed){
@@ -68,10 +70,8 @@ public class EventCallbacks {
                     minecraft.setScreen(null);
                 }, Utils.literalText("SSL Handshake Error"), Utils.translatableText("text.openlink.sslignored")));
             }
+            if(OpenLink.disabled) return;
             FrpcManager.getInstance().stop();
-            if(hasUpdate) {
-                minecraft.setScreen(new UpdateScreen());
-            }
         }
     }
 
