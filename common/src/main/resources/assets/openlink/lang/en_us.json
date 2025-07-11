@@ -43,7 +43,7 @@
   "text.openlink.nodes": "Nodes",
   "text.openlink.nofrpcfile": "§3FRPC executable not found in storage directory.\n§o§l§cPlease download it.\n§o§l§c(Proxy features will be disabled if skipped)",
   "text.openlink.now": "Current",
-  "text.openlink.onlinemodebutton": "Authentication Mode",
+  "text.openlink.onlinemodebutton": "Auth Mode",
   "text.openlink.openstoragedir": "Open Storage Folder",
   "text.openlink.outdated": "§cOutdated",
   "text.openlink.proxycount": "Active Proxies: %s/%s",
