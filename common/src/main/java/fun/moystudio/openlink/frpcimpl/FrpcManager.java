@@ -250,6 +250,10 @@ public class FrpcManager {
         this.currentIP = null;
     }
 
+    private String getValidLevelName() {
+        return Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName().replaceAll("[\\/:*?\"<>|]", "_");
+    }
+
     public boolean start(int i, String val) {
         Frpc frpc = this.getCurrentFrpcInstance();
         String ip;
@@ -261,7 +265,7 @@ public class FrpcManager {
                 File logFile=new File(OpenLink.EXECUTABLE_FILE_STORAGE_PATH+"logs"+File.separator+
                         localDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))+"_"+
                         localTime.getHour()+"."+localTime.getMinute()+"."+localTime.getSecond()+"_"+
-                        Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+".log");
+                        getValidLevelName()+".log");
                 logFile.createNewFile();
                 LOGGER.info("Frpc Log File Path:"+logFile);
                 new FileOutputStream(logFile).write((Minecraft.getInstance().getSingleplayerServer().getWorldData().getLevelName()+"\n"+
