@@ -1,5 +1,6 @@
 package fun.moystudio.openlink.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpcimpl.OpenFrpFrpcImpl;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.components.ObjectSelectionList;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -21,6 +23,10 @@ public class NodeSelectionScreen extends Screen {
     Screen lastscreen;
     NodeSelectionList selectionList;
     Button done;
+
+    private static final ResourceLocation FAVORITE_ICON_TRUE = Utils.createResourceLocation("openlink", "textures/gui/favorite_true.png");
+    private static final ResourceLocation FAVORITE_ICON_FALSE = Utils.createResourceLocation("openlink", "textures/gui/favorite_false.png");
+
     public NodeSelectionScreen(Screen lastscreen) {
         super(Utils.translatableText("gui.openlink.nodeselectionscreentitle"));
         this.lastscreen=lastscreen;
@@ -179,6 +185,9 @@ public class NodeSelectionScreen extends Screen {
                 drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
                 drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.fullyLoaded||this.node.status!=200?Utils.translatableText("text.openlink.node_unavailable"):(this.node.needRealname?Utils.translatableText("text.openlink.node_needrealname"):Utils.translatableText("text.openlink.node_available")), x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.fullyLoaded||this.node.status!=200?Utils.translatableText("text.openlink.node_unavailable"):(this.node.needRealname?Utils.translatableText("text.openlink.node_needrealname"):Utils.translatableText("text.openlink.node_available"))), y + 4, 0xffffffff);
                 drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:""), x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:"")), y + 4 + (entryHeight-4) / 2, 0xffffffff);
+                RenderSystem.setShaderColor(1.0F,1.0F,1.0F,1.0F);
+                RenderSystem.setShaderTexture(0,FAVORITE_ICON_FALSE);
+                blit(poseStack, x - 25, (y+entryHeight)/2, 0, 0, 20, 20, 20, 20);
             }
         }
     }
