@@ -35,7 +35,7 @@ dependencies {
     common(project(path: ':fabric-like', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':fabric-like', configuration: 'transformProductionFabric')
 
-    modImplementation include("maven.modrinth:openlink_frpc_api:1.0.0-fabric")
+    modImplementation include("maven.modrinth:openlink-frpc-api:1.0.0-fabric")
 //    modImplementation include("fun.moystudio.openlink.frpc:openlink-frpc-api-fabric:1.0.0")
 }
 
