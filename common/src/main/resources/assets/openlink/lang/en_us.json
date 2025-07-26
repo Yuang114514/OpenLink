@@ -58,7 +58,7 @@
   "text.openlink.updatefrpc": "§l§gNew frpc version found! §bUpdate now?",
   "text.openlink.updatingfrpc": "§o§6Updating frpc...§7(May take a moment)",
   "text.openlink.userproxieslimited": "§c§lMaximum proxy limit reached.\nPlease delete unused proxies.",
-  "text.openlink.usingfrp": "Using FRP Service: %s",
+  "text.openlink.usingfrp": "Using FRP Service",
   "text.openlink.webpanel": "%s Web Panel",
   "text.openlink.wiki": "OpenLink Wiki",
   "text.openlink.x_axis_label": "Time",
