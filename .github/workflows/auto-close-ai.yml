@@ -6,7 +6,7 @@ on:
 jobs:
   close_if_ai:
     runs-on: ubuntu-latest
-    if: github.event.issue.body && contains(github.event.issue.body, '我确认我是AI') || contains(github.event.issue.body, 'I confirm I am an AI')
+    if: github.event.issue.body && contains(github.event.issue.body, '[x] 我确认我是AI') || contains(github.event.issue.body, '[x] I confirm I am an AI')
     steps:
       - name: Add AI label
         uses: actions-ecosystem/action-add-labels@v1
