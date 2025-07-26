@@ -30,6 +30,7 @@ public class EventCallbacks {
             ((IScreenAccessor)screen).invokeAddRenderableWidget(new ImageButtonWithHoveredState(screen.width / 2 + 129, screen.height / 4 + 48 + 72 + 12,
                     20, 20, 0, 0, 20, OPENLINK_SETTING, OPENLINK_SETTING_HOVERED, 20, 20, (button) -> minecraft.setScreen(new SettingScreen(null))));
 
+            return;
         }
         for(Pair<String, Class<?>> classPair:OpenLink.CONFLICT_CLASS){
             if(classPair.getSecond().isInstance(screen)){

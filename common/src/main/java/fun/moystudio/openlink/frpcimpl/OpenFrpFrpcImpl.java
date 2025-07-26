@@ -147,14 +147,14 @@ public class OpenFrpFrpcImpl implements Frpc{
             LOGGER.info("Selecting node...");
             List<JsonNode> canUseNodes=new ArrayList<>();
             for(JsonNode now:nodelist.data.list){
-                int groupnumber1=0,usergroupnumber=0;
+                int groupnumber1=5,usergroupnumber=0;
                 if(now.group.contains("svip")){
                     groupnumber1=3;
                 }
-                else if(now.group.contains("vip")){
+                if(now.group.contains("vip")){
                     groupnumber1=2;
                 }
-                else if(now.group.contains("normal")){
+                if(now.group.contains("normal")){
                     groupnumber1=1;
                 }
                 if(userinfo.data.group.contains("svip")){

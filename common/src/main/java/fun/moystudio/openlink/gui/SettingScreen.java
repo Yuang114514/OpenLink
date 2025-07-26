@@ -367,13 +367,13 @@ public class SettingScreen extends Screen {
         title.renderCentered(poseStack,this.width/2,15);
         if(tab==SettingTabs.USER) {
             if(FrpcManager.getInstance().getCurrentFrpcId().equals("openfrp")&&wrlof!=null) {
-                if(wrlof.stream!=null) wrlof.read();
+                if(wrlof.data!=null) wrlof.read();
                 ImageWidget nowavatar=(ImageWidget)tabUser.get(0);
                 nowavatar.texture = wrlof.location;
                 wrlof = null;
             }
             if(FrpcManager.getInstance().getCurrentFrpcId().equals("sakurafrp")&&wrlsf!=null) {
-                if(wrlsf.stream!=null) wrlsf.read();
+                if(wrlsf.data!=null) wrlsf.read();
                 ImageWidget nowavatar=(ImageWidget)tabUser.get(0);
                 nowavatar.texture = wrlsf.location;
                 wrlsf = null;
