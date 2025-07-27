@@ -3,10 +3,8 @@ package fun.moystudio.openlink.gui;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fun.moystudio.openlink.OpenLink;
 import fun.moystudio.openlink.frpcimpl.FrpcManager;
-import fun.moystudio.openlink.logic.LanConfig;
-import fun.moystudio.openlink.logic.OnlineModeTabs;
-import fun.moystudio.openlink.logic.UUIDFixer;
-import fun.moystudio.openlink.logic.Utils;
+import fun.moystudio.openlink.frpcimpl.OpenFrpFrpcImpl;
+import fun.moystudio.openlink.logic.*;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -178,6 +176,11 @@ public class NewShareToLanScreen extends Screen {
         this.addRenderableWidget(allowpvp);
         this.addRenderableWidget(new ImageButtonWithHoveredState(this.width / 2 + 5 + 150 + 10, this.height - 28,
                 20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> this.minecraft.setScreen(new SettingScreen(new NewShareToLanScreen(this.lastScreen)))));
+        if(FrpcManager.getInstance().getCurrentFrpcId().equals("openfrp") && OpenFrpFrpcImpl.Authorization!=null) {
+            this.addRenderableWidget(new Button(this.width/2 - 75, 5, 150, 20, Utils.translatableText("text.openlink.daily_sign"), button -> {
+                new WebBrowser("https://console.openfrp.net/fastlogin?auth="+OpenFrpFrpcImpl.Authorization+"type=sign").openBrowser();
+            }));
+        }
         if(OpenLink.disabled) return;
         editBox=new EditBox(this.font,this.width / 2 + 5, 190, 150, 20, editBox, Utils.translatableText("text.openlink.remote_port"));
         editBox.setSuggestion(Utils.translatableText("text.openlink.remote_port").getString());
