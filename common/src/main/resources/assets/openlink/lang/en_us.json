@@ -38,7 +38,7 @@
   "text.openlink.nodata": "No Data (Proxy service not used previously)",
   "text.openlink.node_autoselect": "Auto-Select Node",
   "text.openlink.node_available": "§a§lAvailable",
-  "text.openlink.node_needrealname": "§6§lRequires Real-Name Authentication",
+  "text.openlink.node_needrealname": "§6§lRequires Real-Name",
   "text.openlink.node_unavailable": "§c§lUnavailable",
   "text.openlink.nodes": "Nodes",
   "text.openlink.nofrpcfile": "§3FRPC executable not found in storage directory.\n§o§l§cPlease download it.\n§o§l§c(Proxy features will be disabled if skipped)",

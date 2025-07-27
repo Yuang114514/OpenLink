@@ -53,7 +53,7 @@ public class EventCallbacks {
     }
 
     public static void onClientTick(Minecraft minecraft){
-        OpenLink.disabled = !FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId());
+//        OpenLink.disabled = !FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId());
         if(minecraft.screen instanceof TitleScreen){
             if(hasUpdate) {
                 minecraft.setScreen(new UpdateScreen());

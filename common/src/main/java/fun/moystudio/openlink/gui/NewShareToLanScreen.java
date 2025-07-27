@@ -78,7 +78,7 @@ public class NewShareToLanScreen extends Screen {
         if(OpenLink.disabled) return;
         String val = editBox.getValue();
         editBox.setVisible(LanConfig.cfg.use_frp);
-        if(!FrpcManager.getInstance().getCurrentFrpcInstance().isLoggedIn()){
+        if(!FrpcManager.getInstance().getCurrentFrpcInstance().isLoggedIn()||FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId())){
             LanConfig.cfg.use_frp=false;
             editBox.setValue("");
             usingfrp.setValue(false);
@@ -177,7 +177,7 @@ public class NewShareToLanScreen extends Screen {
         this.addRenderableWidget(new ImageButtonWithHoveredState(this.width / 2 + 5 + 150 + 10, this.height - 28,
                 20, 20, 0, 0, 20, SETTING, SETTING_HOVERED, 20, 20, (button) -> this.minecraft.setScreen(new SettingScreen(new NewShareToLanScreen(this.lastScreen)))));
         if(FrpcManager.getInstance().getCurrentFrpcId().equals("openfrp") && OpenFrpFrpcImpl.Authorization!=null) {
-            this.addRenderableWidget(new Button(this.width/2 - 75, 5, 150, 20, Utils.translatableText("text.openlink.daily_sign"), button -> {
+            this.addRenderableWidget(new Button(this.width/2 - 50, 60, 100, 20, Utils.translatableText("text.openlink.daily_sign"), button -> {
                 new WebBrowser("https://console.openfrp.net/fastlogin?auth="+OpenFrpFrpcImpl.Authorization+"type=sign").openBrowser();
             }));
         }
@@ -200,7 +200,7 @@ public class NewShareToLanScreen extends Screen {
 
     public void render(PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);
-        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 50, 16777215);
+        drawCenteredString(poseStack, this.font, this.title, this.width / 2, 40, 16777215);
         drawCenteredString(poseStack, this.font, INFO_TEXT, this.width / 2, 82, 16777215);
         drawString(poseStack, this.font, Utils.translatableText("text.openlink.frptip", FrpcManager.getInstance().getCurrentFrpcName()),0, this.height-this.font.lineHeight, 0xffffff);
         super.render(poseStack, i, j, f);
