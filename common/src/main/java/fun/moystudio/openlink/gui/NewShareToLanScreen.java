@@ -78,7 +78,7 @@ public class NewShareToLanScreen extends Screen {
         if(OpenLink.disabled) return;
         String val = editBox.getValue();
         editBox.setVisible(LanConfig.cfg.use_frp);
-        if(!FrpcManager.getInstance().getCurrentFrpcInstance().isLoggedIn()||FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId())){
+        if(!FrpcManager.getInstance().getCurrentFrpcInstance().isLoggedIn()||!FrpcManager.getInstance().isExecutableFileExist(FrpcManager.getInstance().getCurrentFrpcId())){
             LanConfig.cfg.use_frp=false;
             editBox.setValue("");
             usingfrp.setValue(false);
