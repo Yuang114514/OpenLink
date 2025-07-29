@@ -17,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class NodeSelectionScreen extends Screen {
@@ -147,7 +148,7 @@ public class NodeSelectionScreen extends Screen {
             JsonNode node;
             public Entry(JsonNode node){
                 this.node=node;
-                favoriteButton = new ImageButton(0,0,20,20,0,0,0,FAVORITE_ICON_FALSE, button -> {
+                favoriteButton = new ImageButton(0,0,20,20,0,0,0,FAVORITE_ICON_FALSE,20,20,button -> {
                     changeFavoriteState();
                 });
             }
@@ -195,14 +196,25 @@ public class NodeSelectionScreen extends Screen {
                         group="§6§l"+group;
                     }
                 }
+                String description = this.node.description;
+                boolean flag = false;
+                while(x + 4 + NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(description+"...") > x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:""))) {
+                    description=description.substring(0, description.length() - 1);
+                    flag = true;
+                }
+                if(flag) {
+                    description+="...";
+                }
                 drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, "#"+this.node.id+" "+this.node.name+(group!=null&&!group.equals("ADMIN")&&!group.equals("DEV")?" "+group:""), x + 4, y + 4, 0xffffffff);
-                drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
+                drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
                 drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.fullyLoaded||this.node.status!=200?Utils.translatableText("text.openlink.node_unavailable"):(this.node.needRealname?Utils.translatableText("text.openlink.node_needrealname"):Utils.translatableText("text.openlink.node_available")), x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.fullyLoaded||this.node.status!=200?Utils.translatableText("text.openlink.node_unavailable"):(this.node.needRealname?Utils.translatableText("text.openlink.node_needrealname"):Utils.translatableText("text.openlink.node_available"))), y + 4, 0xffffffff);
                 drawString(poseStack, NodeSelectionScreen.NodeSelectionList.this.minecraft.font, this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:""), x + entryWidth - 4 - NodeSelectionScreen.NodeSelectionList.this.minecraft.font.width(this.node.bandwidth+"Mbps"+(this.node.bandwidthMagnification>1?" * "+this.node.bandwidthMagnification:"")), y + 4 + (entryHeight-4) / 2, 0xffffffff);
                 favoriteButton.x=x-25;
-                favoriteButton.y=(y+entryHeight)/2-10;
+                favoriteButton.y=(y+entryHeight)/2+10;
                 favoriteButton.render(poseStack, mouseX, mouseY, f);
-
+                if(this.isMouseOver(mouseX, mouseY)) {
+                    renderComponentTooltip(poseStack, Arrays.stream(this.node.description.replaceAll("(.{20})", "$1\n").split("\n")).map(s->(Component)Utils.literalText(s)).toList(), mouseX, mouseY);
+                }
             }
         }
     }

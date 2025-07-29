@@ -163,7 +163,7 @@ public class NodeSelectionScreenSakura extends Screen {
             @Override
             public void render(PoseStack poseStack, int i, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean isHovered, float f) {
                 fill(poseStack,x,y,x+entryWidth,y+entryHeight,0x8f2b2b2b);
-                String group;
+                String group,description= this.node.getFirst().description;
                 switch ((int) this.node.getFirst().vip) {
                     case 0:
                         group="普通";
@@ -174,9 +174,17 @@ public class NodeSelectionScreenSakura extends Screen {
                     default:
                         group="§e§l白银";
                 }
+                boolean flag = false;
+                while(x + 4 + NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font.width(description+"...") > x + entryWidth - 4 - NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font.width(this.node.getSecond().load+"%")) {
+                    description=description.substring(0, description.length() - 1);
+                    flag = true;
+                }
+                if(flag) {
+                    description+="...";
+                }
                 boolean unavailable = (userInfo!=null&&node.getFirst().vip>userInfo.group.level)||node.getSecond().online!=0||(node.getFirst().flag&(1<<2))==0;
                 drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, "#"+this.node.getSecond().id+" "+this.node.getFirst().name+" "+group, x + 4, y + 4, 0xffffffff);
-                drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, this.node.getFirst().description==""?"通用穿透节点":this.node.getFirst().description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
+                drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, this.node.getFirst().description.isEmpty()?"通用穿透节点":description, x + 4, y + 4 + (entryHeight-4) / 2, 0xffffffff);
                 drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, unavailable?Utils.translatableText("text.openlink.node_unavailable"):Utils.translatableText("text.openlink.node_available"), x + entryWidth - 4 - NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font.width(unavailable?Utils.translatableText("text.openlink.node_unavailable"):Utils.translatableText("text.openlink.node_available")), y + 4, 0xffffffff);
                 drawString(poseStack, NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font, this.node.getSecond().load+"%", x + entryWidth - 4 - NodeSelectionScreenSakura.NodeSelectionList.this.minecraft.font.width(this.node.getSecond().load+"%"), y + 4 + (entryHeight-4) / 2, 0xffffffff);
             }
