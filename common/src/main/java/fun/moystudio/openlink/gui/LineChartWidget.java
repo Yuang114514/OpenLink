@@ -70,7 +70,7 @@ public class LineChartWidget extends GuiComponent implements Widget, GuiEventLis
         double base = Math.pow(10, exponent);
         double normalized = value / base;
 
-        double[] niceNumbers = {1, 2, 5, 10};
+        double[] niceNumbers = {1, 5, 10};
         for (double nice : niceNumbers) {
             if (normalized <= nice) {
                 return nice * base;
