@@ -1,5 +1,7 @@
 package fun.moystudio.openlink.gui;
 
+//也是ds写得，我也搞不懂这些玩意
+
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.platform.Window;
