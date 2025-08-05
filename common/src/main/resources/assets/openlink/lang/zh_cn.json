@@ -62,5 +62,5 @@
   "text.openlink.wiki": "OpenLink维基",
   "text.openlink.x_axis_label": "时间",
   "text.openlink.y_axis_label": "流量",
-  "text.openlink.y_axis_label_with_unit": "%s（%s）"
+  "text.openlink.y_axis_label_with_unit": "%S（%s）"
 }
